@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GinberFi</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#4A90E2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="GinberFi">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/gastos.css">
+    <link rel="stylesheet" href="css/huchas.css">
+    <link rel="stylesheet" href="css/resumen.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+    <!-- Header -->
+    <header role="banner" class="app-header">
+        <div class="header-content">
+            <h1 class="app-name">GinberFi</h1>
+            <div class="balance-selector" id="balanceSelector">
+                <span class="balance-amount" id="balanceAmount">0.00 BOB</span>
+                <span class="balance-arrow">▼</span>
+            </div>
+        </div>
+        
+        <!-- Balance Dropdown -->
+        <div class="balance-dropdown" id="balanceDropdown">
+            <div class="accounts-list" id="accountsList">
+                <!-- Accounts will be populated by JavaScript -->
+            </div>
+            <button class="config-accounts-btn" id="configAccountsBtn">
+                <span class="pig-icon">🐷</span>
+                Configurar Cuentas
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <!-- Gastos Tab Content -->
+        <div class="tab-content active" id="gastosTab">
+            <div class="categories-container" id="categoriesContainer">
+                <div class="empty-state" id="emptyCategoriesState">
+                    <p>No hay categorías creadas</p>
+                    <button class="add-category-btn" id="addCategoryBtn">Crear Primera Categoría</button>
+                </div>
+            </div>
+            <button class="fab" id="addNewCategoryFab">+</button>
+        </div>
+
+        <!-- Huchas Tab Content -->
+        <div class="tab-content" id="huchasTab">
+            <div class="accounts-container" id="accountsContainer">
+                <div class="empty-state" id="emptyAccountsState">
+                    <p>No hay cuentas creadas</p>
+                    <button class="add-account-btn" id="addAccountBtn">Crear Primera Cuenta</button>
+                </div>
+            </div>
+            <button class="fab" id="addNewAccountFab">+</button>
+        </div>
+
+        <!-- Resumen Tab Content -->
+        <div class="tab-content" id="resumenTab">
+            <div class="stats-container" id="statsContainer">
+                <p>Estadísticas y configuraciones próximamente...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navigation -->
+    <nav role="tablist" class="app-navigation">
+        <button role="tab" class="nav-tab" data-tab="huchas" id="huchasNavBtn">
+            <span class="nav-icon">🐷</span>
+            <span class="nav-label">Huchas</span>
+        </button>
+        <button role="tab" class="nav-tab active" data-tab="gastos" id="gastosNavBtn">
+            <span class="nav-icon">💰</span>
+            <span class="nav-label">Gastos</span>
+        </button>
+        <button role="tab" class="nav-tab" data-tab="resumen" id="resumenNavBtn">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Resumen</span>
+        </button>
+    </nav>
+
+    <!-- Modals Container -->
+    <div class="modals-container" id="modalsContainer"></div>
+
+    <!-- JavaScript Files -->
+    <script src="js/base.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/gastos.js"></script>
+    <script src="js/huchas.js"></script>
+    <script src="js/resumen.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

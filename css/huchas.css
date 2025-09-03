@@ -1,0 +1,270 @@
+/* Huchas Tab Styles */
+.accounts-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .account-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+  
+  .account-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .account-header {
+    background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-green));
+    padding: var(--spacing-lg);
+    color: var(--dark-blue);
+  }
+  
+  .account-name-header {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .account-purpose {
+    font-size: var(--font-size-sm);
+    opacity: 0.8;
+    font-style: italic;
+  }
+  
+  .account-balance-display {
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: var(--light-green);
+  }
+  
+  .balance-amount-large {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .balance-currency {
+    font-size: var(--font-size-base);
+    color: var(--text-light);
+    font-weight: 500;
+  }
+  
+  .account-actions {
+    display: flex;
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+  
+  .action-btn {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .move-money-btn {
+    background: var(--pastel-pink);
+    color: var(--dark-blue);
+  }
+  
+  .move-money-btn:hover {
+    background: #FF9EDB;
+    transform: translateY(-1px);
+  }
+  
+  .add-income-btn {
+    background: var(--pastel-green);
+    color: var(--dark-blue);
+  }
+  
+  .add-income-btn:hover {
+    background: #A3E0A3;
+    transform: translateY(-1px);
+  }
+  
+  .action-icon {
+    font-size: var(--font-size-base);
+  }
+  
+  /* Account Creation Form */
+  .create-account-section {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .section-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+  }
+  
+  .form-group {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .form-row {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+  }
+  
+  .currency-select {
+    background: var(--white);
+    border: 2px solid var(--pastel-blue);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    color: var(--text-dark);
+  }
+  
+  .currency-select:focus {
+    border-color: var(--dark-blue);
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  }
+  
+  .create-account-btn {
+    width: 100%;
+    background: var(--dark-blue);
+    color: var(--white);
+    padding: var(--spacing-md);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-md);
+  }
+  
+  .create-account-btn:hover {
+    background: #1A365D;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Empty state for accounts */
+  .empty-accounts {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-light);
+  }
+  
+  .empty-accounts-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .empty-accounts h3 {
+    font-size: var(--font-size-xl);
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .empty-accounts p {
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+  }
+  
+  /* Transaction History */
+  .transaction-history {
+    margin-top: var(--spacing-lg);
+  }
+  
+  .history-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-md);
+    padding: 0 var(--spacing-md);
+  }
+  
+  .transaction-item {
+    background: var(--white);
+    border-left: 4px solid var(--pastel-blue);
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .transaction-item.income {
+    border-left-color: var(--pastel-green);
+  }
+  
+  .transaction-item.expense {
+    border-left-color: var(--pastel-pink);
+  }
+  
+  .transaction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .transaction-type {
+    font-weight: 600;
+    color: var(--dark-blue);
+  }
+  
+  .transaction-amount {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+  }
+  
+  .transaction-amount.positive {
+    color: #059669;
+  }
+  
+  .transaction-amount.negative {
+    color: #DC2626;
+  }
+  
+  .transaction-description {
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .transaction-date {
+    color: var(--text-light);
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .account-actions {
+      flex-direction: column;
+    }
+    
+    .form-row {
+      flex-direction: column;
+    }
+    
+    .transaction-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xs);
+    }
+    
+    .transaction-amount {
+      align-self: flex-end;
+    }
+  }
+  

@@ -1,0 +1,294 @@
+/* Base CSS - Variables and Global Styles */
+:root {
+  /* Pastel Color Palette */
+  --pastel-green: #B8E6B8;
+  --pastel-blue: #B8E0FF;
+  --dark-blue: #2C5282;
+  --pastel-pink: #FFB8E6;
+  
+  /* Additional colors for better design */
+  --light-green: #E8F5E8;
+  --soft-gray: #F5F7FA;
+  --text-dark: #2D3748;
+  --text-light: #718096;
+  --white: #FFFFFF;
+  --shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-dark);
+  background: linear-gradient(135deg, var(--light-green) 0%, var(--soft-gray) 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Layout */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.app-main {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+.app-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  padding: var(--spacing-md);
+  position: relative;
+  min-height: calc(100vh - 160px); /* 80px header + 80px nav */
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+}
+
+.empty-state p {
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-lg);
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+button:focus {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.btn-primary {
+  background: var(--dark-blue);
+  color: var(--white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #1A365D;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--pastel-blue);
+  color: var(--dark-blue);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background: #9ECAFF;
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: var(--pastel-green);
+  color: var(--dark-blue);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 500;
+}
+
+.btn-success:hover {
+  background: #A3E0A3;
+  transform: translateY(-1px);
+}
+
+.add-category-btn,
+.add-account-btn {
+  background: var(--pastel-pink);
+  color: var(--dark-blue);
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-category-btn:hover,
+.add-account-btn:hover {
+  background: #FF9EDB;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Form Elements */
+input, select, textarea {
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--pastel-blue);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--text-dark);
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--dark-blue);
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.hidden { display: none !important; }
+.visible { display: block !important; }
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  html {
+    font-size: 15px; /* Base font size */
+  }
+  
+  .app-main {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* FAB Button */
+.fab {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--dark-blue);
+    color: white;
+    font-size: 28px;
+    line-height: 56px;
+    text-align: center;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.fab:hover {
+    background-color: #3b6fa3; /* Lighter shade for hover */
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 12px 20px -4px var(--shadow);
+    opacity: 1;
+}

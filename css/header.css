@@ -1,0 +1,172 @@
+/* Header Styles */
+.app-header {
+    background: linear-gradient(135deg, var(--pastel-green) 0%, var(--pastel-blue) 100%);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    max-width: 100%;
+  }
+  
+  .app-name {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--dark-blue);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+  
+  .balance-selector {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  
+  .balance-selector:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .balance-amount {
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-right: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+  }
+  
+  .balance-arrow {
+    color: var(--dark-blue);
+    font-size: var(--font-size-sm);
+    transition: transform 0.2s ease;
+  }
+  
+  .balance-selector.open .balance-arrow {
+    transform: rotate(180deg);
+  }
+  
+  /* Balance Dropdown */
+  .balance-dropdown {
+    position: absolute;
+    top: 100%;
+    right: var(--spacing-lg);
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    min-width: 280px;
+    max-width: 90vw;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+  
+  .balance-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  .accounts-list {
+    padding: var(--spacing-md);
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .account-item:hover {
+    background: var(--light-green);
+  }
+  
+  .account-item.selected {
+    background: var(--pastel-green);
+    font-weight: 600;
+  }
+  
+  .account-name {
+    font-weight: 500;
+    color: var(--text-dark);
+  }
+  
+  .account-balance {
+    font-weight: 600;
+    color: var(--dark-blue);
+  }
+  
+  .account-currency {
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    margin-left: var(--spacing-xs);
+  }
+  
+  .config-accounts-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--pastel-pink);
+    color: var(--dark-blue);
+    font-weight: 600;
+    border-top: 1px solid rgba(44, 82, 130, 0.1);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    transition: background-color 0.2s ease;
+  }
+  
+  .config-accounts-btn:hover {
+    background: #FF9EDB;
+  }
+  
+  .pig-icon {
+    margin-right: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+  }
+  
+  .empty-accounts-message {
+    text-align: center;
+    padding: var(--spacing-lg);
+    color: var(--text-light);
+    font-style: italic;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .header-content {
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .app-name {
+      font-size: var(--font-size-xl);
+    }
+    
+    .balance-amount {
+      font-size: var(--font-size-base);
+    }
+    
+    .balance-dropdown {
+      right: var(--spacing-sm);
+      left: var(--spacing-sm);
+      min-width: auto;
+    }
+  }
+  

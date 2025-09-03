@@ -1,0 +1,267 @@
+/* Gastos Tab Styles */
+.categories-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .category-wrapper {
+    position: relative;
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+  }
+
+  .category-wrapper:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+    
+  .category-content {
+    position: relative;
+    z-index: 2;
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    border-radius: var(--radius-xl);
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+  }
+  
+  
+  .category-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .category-arrow {
+    font-size: var(--font-size-lg);
+    margin-right: var(--spacing-md);
+    transition: transform 0.3s ease;
+    color: var(--dark-blue);
+  }
+  
+  .category-wrapper.expanded .category-arrow {
+    transform: rotate(90deg);
+  }
+  
+  .category-name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--dark-blue);
+  }
+  
+  .category-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  .category-budget {
+    text-align: right;
+  }
+  
+  .budget-amount {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--dark-blue);
+  }
+  
+  .budget-percentage {
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    transition: color 0.3s ease;
+  }
+  
+  .add-subcategory-btn {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--dark-blue);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    border: none;
+    transition: all 0.2s ease;
+  }
+  
+  .add-subcategory-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+  }
+  
+  /* Subcategories */
+  .subcategories-container {
+    padding: 0 var(--spacing-sm) var(--spacing-sm);
+    background: var(--soft-gray);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .subcategory-wrapper {
+    position: relative;
+    margin-top: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+  }
+
+  .subcategory-wrapper:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+  }
+  
+    
+  .subcategory-content {
+    position: relative;
+    z-index: 2;
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    border: 2px solid transparent;
+  }
+  
+  
+  .subcategory-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .subcategory-arrow {
+    font-size: var(--font-size-base);
+    margin-right: var(--spacing-sm);
+    transition: transform 0.3s ease;
+    color: var(--dark-blue);
+  }
+  
+  .subcategory-wrapper.expanded .subcategory-arrow {
+    transform: rotate(90deg);
+  }
+  
+  .subcategory-name {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--dark-blue);
+  }
+  
+  .subcategory-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .subcategory-budget {
+    text-align: right;
+  }
+  
+  .subcategory-budget .budget-amount {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+  }
+  
+  .subcategory-budget .budget-percentage {
+    font-size: var(--font-size-xs);
+  }
+  
+  .add-expense-btn {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--dark-blue);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: none;
+    transition: all 0.2s ease;
+  }
+  
+  .add-expense-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  /* Expenses List */
+  .expenses-container {
+    padding: var(--spacing-sm);
+    background: rgba(0,0,0,0.05);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+  
+  .expense-item {
+    background: var(--white);
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+  }
+  
+  .expense-info {
+    flex: 1;
+  }
+  
+  .expense-name {
+    font-weight: 500;
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .expense-date {
+    font-size: var(--font-size-xs);
+    color: var(--text-light);
+  }
+  
+  .expense-amount {
+    font-weight: 600;
+    color: var(--dark-blue);
+  }
+  
+  .expense-account {
+    font-size: var(--font-size-xs);
+    color: var(--text-light);
+    margin-top: var(--spacing-xs);
+  }
+  
+    
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .category-content {
+      padding: var(--spacing-sm);
+    }
+    
+    .category-name {
+      font-size: var(--font-size-base);
+    }
+    
+    .budget-amount {
+      font-size: var(--font-size-base);
+    }
+    
+    .subcategory-content {
+      padding: var(--spacing-xs) var(--spacing-sm);
+    }
+    
+    .expense-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-xs);
+    }
+    
+    .expense-amount {
+      align-self: flex-end;
+    }
+  }
+  
