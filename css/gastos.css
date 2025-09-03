@@ -27,7 +27,7 @@
     cursor: pointer;
     border-radius: var(--radius-xl);
     transition: all 0.3s ease;
-    border: 3px solid transparent;
+    border: 1px solid transparent;
   }
   
   
@@ -79,16 +79,26 @@
   .add-subcategory-btn {
     background: rgba(0, 0, 0, 0.05);
     color: var(--dark-blue);
-    width: 32px;
-    height: 32px;
+
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-lg);
     font-weight: 700;
     border: none;
     transition: all 0.2s ease;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--dark-blue);
+    padding: var(--spacing-sm) var(--spacing-sm);
+    font-size: var(--font-size-lg);
+    border: none;
+    transition: all 0.2s ease;
+    min-height: 34px;
+    min-width: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
   }
   
   .add-subcategory-btn:hover {
@@ -177,12 +187,25 @@
   .add-expense-btn {
     background: rgba(0, 0, 0, 0.05);
     color: var(--dark-blue);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-xs);
-    font-weight: 600;
+    padding: var(--spacing-sm) var(--spacing-sm);
+    font-size: var(--font-size-sm);
     border-radius: var(--radius-sm);
     border: none;
     transition: all 0.2s ease;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+  .add-expense-btn.icon-minus-dollar {
+    padding: 6px 10px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: .2px;
+  }
+  .add-expense-btn.icon-minus-dollar [aria-hidden="true"] {
+    font-size: 16px; /* ajusta a tu UI */
   }
   
   .add-expense-btn:hover {
@@ -254,14 +277,17 @@
       padding: var(--spacing-xs) var(--spacing-sm);
     }
     
-    .expense-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--spacing-xs);
-    }
-    
-    .expense-amount {
-      align-self: flex-end;
-    }
+
+  }
+  .expense-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
   }
   
+  .expense-right .expense-account {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    color: var(--text-light);
+  }

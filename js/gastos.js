@@ -131,10 +131,14 @@ class GastosManager {
                     <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
                     <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
                   </div>
-                  <button class="add-expense-btn" 
-                          data-subcategory-id="${subcategory.id}" 
-                          data-subcategory-name="${subcategory.name}"
-                          data-remaining-budget="${remaining}">+Gasto</button>
+<button class="add-expense-btn icon-minus-dollar"
+        data-subcategory-id="${subcategory.id}"
+        data-subcategory-name="${subcategory.name}"
+        data-remaining-budget="${remaining}"
+        aria-label="Gastar" title="Gastar">
+  <span aria-hidden="true">−$</span><span class="sr-only"></span>
+</button>
+
                 </div>
               </div>
               ${subcategory.expanded ? this.renderExpenses(subcategoryExpenses) : ''}
@@ -155,7 +159,7 @@ class GastosManager {
         </div>
       `;
     }
-
+  
     return `
       <div class="expenses-container">
         ${expenses.map(expense => {
@@ -165,10 +169,12 @@ class GastosManager {
               <div class="expense-info">
                 <div class="expense-name">${expense.name}</div>
                 <div class="expense-date">${Utils.formatDate(expense.date)}</div>
-                ${account ? `<div class="expense-account">Pagado con: ${account.name}</div>` : ''}
               </div>
-              <div class="expense-amount">
-                -${Utils.formatCurrency(expense.amount, account ? account.currency : 'BOB')}
+              <div class="expense-right">
+                <div class="expense-amount">
+                  -${Utils.formatCurrency(expense.amount, account ? account.currency : 'BOB')}
+                </div>
+                ${account ? `<div class="expense-account">${account.name}</div>` : ''}
               </div>
             </div>
           `;

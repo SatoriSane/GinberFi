@@ -5,6 +5,7 @@ class HuchasManager {
     this.emptyAccountsState = document.getElementById('emptyAccountsState');
     this.addAccountBtn = document.getElementById('addAccountBtn');
     this.addNewAccountFab = document.getElementById('addNewAccountFab');
+    this.expandedAccounts = new Set(); // Track which accounts have expanded transactions
     
     this.init();
   }
@@ -66,68 +67,50 @@ class HuchasManager {
   }
 
   renderAccounts(accounts) {
-    this.accountsContainer.innerHTML = accounts.map(account => `
-      <div class="account-card" data-account-id="${account.id}">
-        <div class="account-header">
-          <div class="account-name-header">${account.name}</div>
-          ${account.purpose ? `<div class="account-purpose">${account.purpose}</div>` : ''}
+    this.accountsContainer.innerHTML = accounts.map(account => {
+      const transactionCount = this.getTransactionCount(account.id);
+      
+      return `
+        <div class="account-card" data-account-id="${account.id}">
+          <div class="account-header" data-tap-target="account">
+            <div class="account-name-header">${account.name}</div>
+            ${account.purpose ? `<div class="account-purpose">${account.purpose}</div>` : ''}
+          </div>
+          <div class="account-balance-display" data-tap-target="account">
+            <div class="balance-amount-large">${Utils.formatCurrency(account.balance, account.currency)}</div>
+            <div class="balance-currency">${this.getCurrencyName(account.currency)}</div>
+          </div>
+          <div class="account-actions">
+            <button class="action-btn move-money-btn" data-account-id="${account.id}">
+              <span class="action-icon">💸</span>
+              Enviar
+            </button>
+            <button class="action-btn add-income-btn" data-account-id="${account.id}">
+              <span class="action-icon">💰</span>
+              Ingresar
+            </button>
+          </div>
         </div>
-        <div class="account-balance-display">
-          <div class="balance-amount-large">${Utils.formatCurrency(account.balance, account.currency)}</div>
-          <div class="balance-currency">${this.getCurrencyName(account.currency)}</div>
-        </div>
-        <div class="account-actions">
-          <button class="action-btn move-money-btn" data-account-id="${account.id}">
-            <span class="action-icon">💸</span>
-            Mover dinero
-          </button>
-          <button class="action-btn add-income-btn" data-account-id="${account.id}">
-            <span class="action-icon">💰</span>
-            Ingresar
-          </button>
-        </div>
-        ${this.renderTransactionHistory(account.id)}
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     this.attachAccountEventListeners();
   }
 
-  renderTransactionHistory(accountId) {
+  // Removed - no longer needed as we use modal for transactions
+
+  // Removed - transactions now shown in modal
+
+  getTransactionCount(accountId) {
     const transactions = Storage.get('ginberfi_transactions') || [];
-    const accountTransactions = transactions
-      .filter(t => t.accountId === accountId)
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5); // Show last 5 transactions
-
-    if (accountTransactions.length === 0) {
-      return '';
-    }
-
-    return `
-      <div class="transaction-history">
-        <div class="history-title">Últimas transacciones</div>
-        ${accountTransactions.map(transaction => `
-          <div class="transaction-item ${transaction.type}">
-            <div class="transaction-header">
-              <div class="transaction-type">${this.getTransactionTypeLabel(transaction.type)}</div>
-              <div class="transaction-amount ${transaction.amount > 0 ? 'positive' : 'negative'}">
-                ${transaction.amount > 0 ? '+' : ''}${Utils.formatCurrency(Math.abs(transaction.amount))}
-              </div>
-            </div>
-            ${transaction.description ? `<div class="transaction-description">${transaction.description}</div>` : ''}
-            ${transaction.source ? `<div class="transaction-description">Fuente: ${transaction.source}</div>` : ''}
-            <div class="transaction-date">${Utils.formatDate(transaction.date)}</div>
-          </div>
-        `).join('')}
-      </div>
-    `;
+    return transactions.filter(t => t.accountId === accountId).length;
   }
 
   attachAccountEventListeners() {
     // Move money buttons
     this.accountsContainer.querySelectorAll('.move-money-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const accountId = btn.dataset.accountId;
         this.openTransferModal(accountId);
       });
@@ -135,11 +118,28 @@ class HuchasManager {
 
     // Add income buttons
     this.accountsContainer.querySelectorAll('.add-income-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const accountId = btn.dataset.accountId;
         this.openIncomeModal(accountId);
       });
     });
+
+    // Account tap to view transactions
+    this.accountsContainer.querySelectorAll('[data-tap-target="account"]').forEach(element => {
+      element.addEventListener('click', () => {
+        const accountCard = element.closest('.account-card');
+        const accountId = accountCard.dataset.accountId;
+        this.openTransactionsModal(accountId);
+      });
+    });
+  }
+
+  openTransactionsModal(accountId) {
+    const modalData = ModalManager.createTransactionsModal(accountId);
+    if (modalData) {
+      window.appEvents.emit('openModal', modalData);
+    }
   }
 
   // Modal handlers

@@ -314,6 +314,53 @@ class ModalManager {
       };
     }
   
+    static createTransactionsModal(accountId) {
+      const account = AppState.accounts.find(acc => acc.id === accountId);
+      if (!account) return null;
+
+      const transactions = Storage.get('ginberfi_transactions') || [];
+      const accountTransactions = transactions
+        .filter(t => t.accountId === accountId)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      return {
+        title: `Transacciones - ${account.name}`,
+        className: 'transactions-modal',
+        body: `
+          <div class="account-summary">
+            <div class="account-balance">
+              <span class="balance-label">Saldo actual:</span>
+              <span class="balance-value">${Utils.formatCurrency(account.balance, account.currency)}</span>
+            </div>
+          </div>
+          <div class="transactions-list">
+            ${accountTransactions.length === 0 ? `
+              <div class="empty-transactions">
+                <p>No hay transacciones registradas</p>
+              </div>
+            ` : accountTransactions.map(transaction => `
+              <div class="transaction-item-modal ${transaction.type}">
+                <div class="transaction-main">
+                  <div class="transaction-info">
+                    <div class="transaction-type">${this.getTransactionTypeLabel(transaction.type)}</div>
+                    ${transaction.description ? `<div class="transaction-description">${transaction.description}</div>` : ''}
+                    ${transaction.source ? `<div class="transaction-source">Fuente: ${transaction.source}</div>` : ''}
+                  </div>
+                  <div class="transaction-amount ${transaction.amount > 0 ? 'positive' : 'negative'}">
+                    ${transaction.amount > 0 ? '+' : ''}${Utils.formatCurrency(Math.abs(transaction.amount), account.currency)}
+                  </div>
+                </div>
+                <div class="transaction-date">${Utils.formatDate(transaction.date)}</div>
+              </div>
+            `).join('')}
+          </div>
+        `,
+        footer: `
+          <button type="button" class="btn-primary" onclick="window.appEvents.emit('closeModal')">Cerrar</button>
+        `
+      };
+    }
+
     static createCategoryModal() {
       return {
         title: 'Nueva Categoría',
@@ -337,6 +384,16 @@ class ModalManager {
           <button type="submit" class="btn-primary" form="categoryForm">Crear Categoría</button>
         `
       };
+    }
+
+    static getTransactionTypeLabel(type) {
+      const labels = {
+        'income': 'Ingreso',
+        'expense': 'Gasto',
+        'transfer_in': 'Transferencia recibida',
+        'transfer_out': 'Transferencia enviada'
+      };
+      return labels[type] || type;
     }
   }
   

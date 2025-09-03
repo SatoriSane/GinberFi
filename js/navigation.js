@@ -3,7 +3,7 @@ class Navigation {
     constructor() {
       this.navTabs = document.querySelectorAll('.nav-tab');
       this.tabContents = document.querySelectorAll('.tab-content');
-      this.currentTab = 'gastos';
+      this.currentTab = this.getLastActiveTab();
       
       this.init();
     }
@@ -16,6 +16,16 @@ class Navigation {
       window.appEvents.on('switchTab', (tabName) => {
         this.switchTab(tabName);
       });
+    }
+
+    getLastActiveTab() {
+      // Get the last active tab from localStorage, default to 'gastos'
+      const savedTab = localStorage.getItem('ginberfi_active_tab');
+      return savedTab || 'gastos';
+    }
+
+    saveActiveTab(tabName) {
+      localStorage.setItem('ginberfi_active_tab', tabName);
     }
   
     setupEventListeners() {
@@ -31,7 +41,10 @@ class Navigation {
       // Update current tab
       this.currentTab = tabName;
       AppState.currentTab = tabName;
-  
+      
+      // Save the active tab for persistence
+      this.saveActiveTab(tabName);
+
       // Update nav buttons
       this.navTabs.forEach(tab => {
         if (tab.dataset.tab === tabName) {
@@ -40,7 +53,7 @@ class Navigation {
           tab.classList.remove('active');
         }
       });
-  
+
       // Update tab content
       this.tabContents.forEach(content => {
         if (content.id === `${tabName}Tab`) {
@@ -49,7 +62,7 @@ class Navigation {
           content.classList.remove('active');
         }
       });
-  
+
       // Emit tab change event
       window.appEvents.emit('tabChanged', tabName);
     }
