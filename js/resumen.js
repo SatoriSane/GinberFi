@@ -47,7 +47,7 @@ class ResumenManager {
     }
   
     calculateTotalIncome() {
-      const transactions = Storage.get('ginberfi_transactions') || [];
+      const transactions = Storage.get('ginbertfi_transactions') || [];
       return transactions
         .filter(t => t.type === 'income')
         .reduce((total, transaction) => total + transaction.amount, 0);
@@ -73,7 +73,7 @@ class ResumenManager {
     }
   
     getIncomeBySource() {
-      const transactions = Storage.get('ginberfi_transactions') || [];
+      const transactions = Storage.get('ginbertfi_transactions') || [];
       const incomes = transactions.filter(t => t.type === 'income');
       
       const sourceMap = {};

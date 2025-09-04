@@ -4,8 +4,8 @@ class Header {
       this.balanceSelector = document.getElementById('balanceSelector');
       this.balanceAmount = document.getElementById('balanceAmount');
       this.balanceDropdown = document.getElementById('balanceDropdown');
-      this.accountsList = document.getElementById('accountsList');
-      this.configAccountsBtn = document.getElementById('configAccountsBtn');
+      this.walletsList = document.getElementById('walletsList');
+      this.configwalletsBtn = document.getElementById('configwalletsBtn');
       
       this.init();
     }
@@ -17,12 +17,12 @@ class Header {
       // Listen for data updates
       window.appEvents.on('dataUpdated', () => {
         this.updateBalance();
-        this.renderAccountsList();
+        this.renderwalletsList();
       });
       
-      // Listen for account selection
-      window.appEvents.on('accountSelected', (accountId) => {
-        Storage.setSelectedAccount(accountId);
+      // Listen for wallet selection
+      window.appEvents.on('walletselected', (walletId) => {
+        Storage.setSelectedWallet(walletId);
         AppState.refreshData();
         this.closeDropdown();
       });
@@ -42,8 +42,8 @@ class Header {
         }
       });
   
-      // Config accounts button
-      this.configAccountsBtn.addEventListener('click', () => {
+      // Config wallets button
+      this.configwalletsBtn.addEventListener('click', () => {
         window.appEvents.emit('switchTab', 'huchas');
         this.closeDropdown();
       });
@@ -59,7 +59,7 @@ class Header {
     }
   
     openDropdown() {
-      this.renderAccountsList();
+      this.renderwalletsList();
       this.balanceDropdown.classList.add('show');
       this.balanceSelector.classList.add('open');
     }
@@ -70,45 +70,45 @@ class Header {
     }
   
     updateBalance() {
-      const selectedAccount = AppState.selectedAccount;
-      if (selectedAccount) {
-        this.balanceAmount.textContent = Utils.formatCurrency(selectedAccount.balance, selectedAccount.currency);
+      const selectedWallet = AppState.selectedWallet;
+      if (selectedWallet) {
+        this.balanceAmount.textContent = Utils.formatCurrency(selectedWallet.balance, selectedWallet.currency);
       } else {
         this.balanceAmount.textContent = '0.00 BOB';
       }
     }
   
-    renderAccountsList() {
-      const accounts = AppState.accounts;
-      const selectedAccount = AppState.selectedAccount;
+    renderwalletsList() {
+      const wallets = AppState.wallets;
+      const selectedWallet = AppState.selectedWallet;
   
-      if (accounts.length === 0) {
-        this.accountsList.innerHTML = `
-          <div class="empty-accounts-message">
-            No hay cuentas creadas
+      if (wallets.length === 0) {
+        this.walletsList.innerHTML = `
+          <div class="empty-wallets-message">
+            No hay wallets creadas
           </div>
         `;
         return;
       }
   
-      this.accountsList.innerHTML = accounts.map(account => `
-        <div class="account-item ${selectedAccount && selectedAccount.id === account.id ? 'selected' : ''}" 
-             data-account-id="${account.id}">
+      this.walletsList.innerHTML = wallets.map(wallet => `
+        <div class="wallet-item ${selectedWallet && selectedWallet.id === wallet.id ? 'selected' : ''}" 
+             data-wallet-id="${wallet.id}">
           <div>
-            <div class="account-name">${account.name}</div>
-            ${account.purpose ? `<div class="account-purpose">${account.purpose}</div>` : ''}
+            <div class="wallet-name">${wallet.name}</div>
+            ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
           </div>
-          <div class="account-balance">
-            ${Utils.formatCurrency(account.balance, account.currency)}
+          <div class="wallet-balance">
+            ${Utils.formatCurrency(wallet.balance, wallet.currency)}
           </div>
         </div>
       `).join('');
   
-      // Add click listeners to account items
-      this.accountsList.querySelectorAll('.account-item').forEach(item => {
+      // Add click listeners to wallet items
+      this.walletsList.querySelectorAll('.wallet-item').forEach(item => {
         item.addEventListener('click', () => {
-          const accountId = item.dataset.accountId;
-          window.appEvents.emit('accountSelected', accountId);
+          const walletId = item.dataset.walletId;
+          window.appEvents.emit('walletselected', walletId);
         });
       });
     }

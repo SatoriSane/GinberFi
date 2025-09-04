@@ -77,13 +77,13 @@
     transform: translateY(0);
   }
   
-  .accounts-list {
+  .wallets-list {
     padding: var(--spacing-md);
     max-height: 300px;
     overflow-y: auto;
   }
   
-  .account-item {
+  .wallet-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -94,32 +94,32 @@
     margin-bottom: var(--spacing-sm);
   }
   
-  .account-item:hover {
+  .wallet-item:hover {
     background: var(--light-green);
   }
   
-  .account-item.selected {
+  .wallet-item.selected {
     background: var(--pastel-green);
     font-weight: 600;
   }
   
-  .account-name {
+  .wallet-name {
     font-weight: 500;
     color: var(--text-dark);
   }
   
-  .account-balance {
+  .wallet-balance {
     font-weight: 600;
     color: var(--dark-blue);
   }
   
-  .account-currency {
+  .wallet-currency {
     font-size: var(--font-size-sm);
     color: var(--text-light);
     margin-left: var(--spacing-xs);
   }
   
-  .config-accounts-btn {
+  .config-wallets-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -133,7 +133,7 @@
     transition: background-color 0.2s ease;
   }
   
-  .config-accounts-btn:hover {
+  .config-wallets-btn:hover {
     background: #FF9EDB;
   }
   
@@ -142,7 +142,7 @@
     font-size: var(--font-size-lg);
   }
   
-  .empty-accounts-message {
+  .empty-wallets-message {
     text-align: center;
     padding: var(--spacing-lg);
     color: var(--text-light);

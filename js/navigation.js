@@ -20,12 +20,12 @@ class Navigation {
 
     getLastActiveTab() {
       // Get the last active tab from localStorage, default to 'gastos'
-      const savedTab = localStorage.getItem('ginberfi_active_tab');
+      const savedTab = localStorage.getItem('ginbertfi_active_tab');
       return savedTab || 'gastos';
     }
 
     saveActiveTab(tabName) {
-      localStorage.setItem('ginberfi_active_tab', tabName);
+      localStorage.setItem('ginbertfi_active_tab', tabName);
     }
   
     setupEventListeners() {

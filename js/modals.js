@@ -125,8 +125,8 @@ class ModalManager {
     }
   
     static createExpenseModal(subcategoryId, subcategoryName, remainingBudget, currency = 'BOB') {
-      const selectedAccount = AppState.selectedAccount;
-      const accounts = AppState.accounts;
+      const selectedWallet = AppState.selectedWallet;
+      const wallets = AppState.wallets;
       
       return {
         title: 'Nuevo Gasto',
@@ -143,11 +143,11 @@ class ModalManager {
                      value="${new Date().toISOString().split('T')[0]}">
             </div>
             <div class="form-group">
-              <label for="expenseAccount">Cuenta/Cartera</label>
-              <select id="expenseAccount" name="accountId" required>
-                ${accounts.map(account => `
-                  <option value="${account.id}" ${selectedAccount && selectedAccount.id === account.id ? 'selected' : ''}>
-                    ${account.name} (${Utils.formatCurrency(account.balance, account.currency)})
+              <label for="expenseWallet">Wallet/Wallet</label>
+              <select id="expenseWallet" name="walletId" required>
+                ${wallets.map(wallet => `
+                  <option value="${wallet.id}" ${selectedWallet && selectedWallet.id === wallet.id ? 'selected' : ''}>
+                    ${wallet.name} (${Utils.formatCurrency(wallet.balance, wallet.currency)})
                   </option>
                 `).join('')}
               </select>
@@ -172,7 +172,7 @@ class ModalManager {
       };
     }
   
-    static createAccountModal() {
+    static createWalletModal() {
       const currencies = [
         { code: 'BOB', name: 'Boliviano' },
         { code: 'USD', name: 'Dólar' },
@@ -181,17 +181,17 @@ class ModalManager {
       ];
   
       return {
-        title: 'Nueva Cuenta/Cartera',
-        className: 'account-modal',
+        title: 'Nueva Wallet',
+        className: 'wallet-modal',
         body: `
-          <form class="modal-form" id="accountForm">
+          <form class="modal-form" id="walletForm">
             <div class="form-group">
-              <label for="accountName">Nombre de la cuenta/cartera</label>
-              <input type="text" id="accountName" name="name" required 
-                     placeholder="ej: Cuenta Corriente">
+              <label for="walletName">Nombre de la wallet/wallet</label>
+              <input type="text" id="walletName" name="name" required 
+                     placeholder="ej: Wallet Corriente">
             </div>
             <div class="form-group">
-              <label for="accountCurrency">Moneda</label>
+              <label for="walletCurrency">Moneda</label>
               <div class="currency-grid">
                 ${currencies.map((currency, index) => `
                   <div class="currency-option ${index === 0 ? 'selected' : ''}" data-currency="${currency.code}">
@@ -200,29 +200,29 @@ class ModalManager {
                   </div>
                 `).join('')}
               </div>
-              <input type="hidden" id="accountCurrency" name="currency" value="BOB">
+              <input type="hidden" id="walletCurrency" name="currency" value="BOB">
             </div>
             <div class="form-group">
-              <label for="accountBalance">Cantidad inicial</label>
-              <input type="number" id="accountBalance" name="balance" required 
+              <label for="walletBalance">Cantidad inicial</label>
+              <input type="number" id="walletBalance" name="balance" required 
                      placeholder="0.00" step="0.01" min="0">
             </div>
             <div class="form-group">
-              <label for="accountPurpose">Propósito (opcional)</label>
-              <input type="text" id="accountPurpose" name="purpose" 
+              <label for="walletPurpose">Propósito (opcional)</label>
+              <input type="text" id="walletPurpose" name="purpose" 
                      placeholder="ej: Gastos diarios">
             </div>
           </form>
         `,
         footer: `
           <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-          <button type="submit" class="btn-primary" form="accountForm">Crear Cuenta</button>
+          <button type="submit" class="btn-primary" form="walletForm">Crear Wallet</button>
         `
       };
     }
   
-    static createIncomeModal(accountId) {
-      const account = AppState.accounts.find(acc => acc.id === accountId);
+    static createIncomeModal(walletId) {
+      const wallet = AppState.wallets.find(acc => acc.id === walletId);
       const incomeSources = Storage.getIncomeSources();
   
       return {
@@ -234,7 +234,7 @@ class ModalManager {
               <label for="incomeAmount">Cantidad</label>
               <input type="number" id="incomeAmount" name="amount" required 
                      placeholder="0.00" step="0.01" min="0.01">
-              <span class="currency-display">${account ? account.currency : 'BOB'}</span>
+              <span class="currency-display">${wallet ? wallet.currency : 'BOB'}</span>
             </div>
             <div class="form-group">
               <label>Fuente del dinero</label>
@@ -256,7 +256,7 @@ class ModalManager {
               <input type="text" id="incomeDescription" name="description" 
                      placeholder="ej: Sueldo de enero">
             </div>
-            <input type="hidden" name="accountId" value="${accountId}">
+            <input type="hidden" name="walletId" value="${walletId}">
           </form>
         `,
         footer: `
@@ -266,9 +266,9 @@ class ModalManager {
       };
     }
   
-    static createTransferModal(fromAccountId) {
-      const accounts = AppState.accounts.filter(acc => acc.id !== fromAccountId);
-      const fromAccount = AppState.accounts.find(acc => acc.id === fromAccountId);
+    static createTransferModal(fromWalletId) {
+      const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
+      const fromWallet = AppState.wallets.find(acc => acc.id === fromWalletId);
   
       return {
         title: 'Transferir Dinero',
@@ -276,18 +276,18 @@ class ModalManager {
         body: `
           <form class="modal-form" id="transferForm">
             <div class="form-group">
-              <label>Desde: ${fromAccount ? fromAccount.name : ''}</label>
-              <div class="account-balance">
-                Disponible: ${fromAccount ? Utils.formatCurrency(fromAccount.balance, fromAccount.currency) : '0.00'}
+              <label>Desde: ${fromWallet ? fromWallet.name : ''}</label>
+              <div class="wallet-balance">
+                Disponible: ${fromWallet ? Utils.formatCurrency(fromWallet.balance, fromWallet.currency) : '0.00'}
               </div>
             </div>
             <div class="form-group">
               <label for="transferTo">Transferir a</label>
-              <select id="transferTo" name="toAccountId" required>
-                <option value="">Seleccionar cuenta destino</option>
-                ${accounts.map(account => `
-                  <option value="${account.id}">
-                    ${account.name} (${Utils.formatCurrency(account.balance, account.currency)})
+              <select id="transferTo" name="toWalletId" required>
+                <option value="">Seleccionar wallet destino</option>
+                ${wallets.map(wallet => `
+                  <option value="${wallet.id}">
+                    ${wallet.name} (${Utils.formatCurrency(wallet.balance, wallet.currency)})
                   </option>
                 `).join('')}
               </select>
@@ -296,15 +296,15 @@ class ModalManager {
               <label for="transferAmount">Cantidad</label>
               <input type="number" id="transferAmount" name="amount" required 
                      placeholder="0.00" step="0.01" min="0.01" 
-                     max="${fromAccount ? fromAccount.balance : 0}">
-              <span class="currency-display">${fromAccount ? fromAccount.currency : 'BOB'}</span>
+                     max="${fromWallet ? fromWallet.balance : 0}">
+              <span class="currency-display">${fromWallet ? fromWallet.currency : 'BOB'}</span>
             </div>
             <div class="form-group">
               <label for="transferDescription">Descripción (opcional)</label>
               <input type="text" id="transferDescription" name="description" 
                      placeholder="ej: Pago de deuda">
             </div>
-            <input type="hidden" name="fromAccountId" value="${fromAccountId}">
+            <input type="hidden" name="fromWalletId" value="${fromWalletId}">
           </form>
         `,
         footer: `
@@ -314,31 +314,31 @@ class ModalManager {
       };
     }
   
-    static createTransactionsModal(accountId) {
-      const account = AppState.accounts.find(acc => acc.id === accountId);
-      if (!account) return null;
+    static createTransactionsModal(walletId) {
+      const wallet = AppState.wallets.find(acc => acc.id === walletId);
+      if (!wallet) return null;
 
-      const transactions = Storage.get('ginberfi_transactions') || [];
-      const accountTransactions = transactions
-        .filter(t => t.accountId === accountId)
+      const transactions = Storage.get('ginbertfi_transactions') || [];
+      const walletTransactions = transactions
+        .filter(t => t.walletId === walletId)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
 
       return {
-        title: `Transacciones - ${account.name}`,
+        title: `Transacciones - ${wallet.name}`,
         className: 'transactions-modal',
         body: `
-          <div class="account-summary">
-            <div class="account-balance">
+          <div class="wallet-summary">
+            <div class="wallet-balance">
               <span class="balance-label">Saldo actual:</span>
-              <span class="balance-value">${Utils.formatCurrency(account.balance, account.currency)}</span>
+              <span class="balance-value">${Utils.formatCurrency(wallet.balance, wallet.currency)}</span>
             </div>
           </div>
           <div class="transactions-list">
-            ${accountTransactions.length === 0 ? `
+            ${walletTransactions.length === 0 ? `
               <div class="empty-transactions">
                 <p>No hay transacciones registradas</p>
               </div>
-            ` : accountTransactions.map(transaction => `
+            ` : walletTransactions.map(transaction => `
               <div class="transaction-item-modal ${transaction.type}">
                 <div class="transaction-main">
                   <div class="transaction-info">
@@ -347,7 +347,7 @@ class ModalManager {
                     ${transaction.source ? `<div class="transaction-source">Fuente: ${transaction.source}</div>` : ''}
                   </div>
                   <div class="transaction-amount ${transaction.amount > 0 ? 'positive' : 'negative'}">
-                    ${transaction.amount > 0 ? '+' : ''}${Utils.formatCurrency(Math.abs(transaction.amount), account.currency)}
+                    ${transaction.amount > 0 ? '+' : ''}${Utils.formatCurrency(Math.abs(transaction.amount), wallet.currency)}
                   </div>
                 </div>
                 <div class="transaction-date">${Utils.formatDate(transaction.date)}</div>

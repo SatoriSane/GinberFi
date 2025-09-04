@@ -1,11 +1,11 @@
 // Local Storage Management
 class Storage {
     static keys = {
-      ACCOUNTS: 'ginberfi_accounts',
-      CATEGORIES: 'ginberfi_categories',
-      EXPENSES: 'ginberfi_expenses',
-      INCOME_SOURCES: 'ginberfi_income_sources',
-      SELECTED_ACCOUNT: 'ginberfi_selected_account'
+      wallets: 'ginbertfi_wallets',
+      CATEGORIES: 'ginbertfi_categories',
+      EXPENSES: 'ginbertfi_expenses',
+      INCOME_SOURCES: 'ginbertfi_income_sources',
+      SELECTED_WALLET: 'ginbertfi_selected_wallet'
     };
   
     static get(key) {
@@ -38,45 +38,45 @@ class Storage {
       }
     }
   
-    // Account methods
-    static getAccounts() {
-      return this.get(this.keys.ACCOUNTS) || [];
+    // Wallet methods
+    static getWallets() {
+      return this.get(this.keys.wallets) || [];
     }
   
-    static saveAccounts(accounts) {
-      return this.set(this.keys.ACCOUNTS, accounts);
+    static saveWallets(wallets) {
+      return this.set(this.keys.wallets, wallets);
     }
   
-    static addAccount(account) {
-      const accounts = this.getAccounts();
-      account.id = Date.now().toString();
-      account.createdAt = new Date().toISOString();
-      accounts.push(account);
-      return this.saveAccounts(accounts);
+    static addWallet(wallet) {
+      const wallets = this.getWallets();
+      wallet.id = Date.now().toString();
+      wallet.createdAt = new Date().toISOString();
+      wallets.push(wallet);
+      return this.saveWallets(wallets);
     }
   
-    static updateAccount(accountId, updates) {
-      const accounts = this.getAccounts();
-      const index = accounts.findIndex(acc => acc.id === accountId);
+    static updateWallet(walletId, updates) {
+      const wallets = this.getWallets();
+      const index = wallets.findIndex(acc => acc.id === walletId);
       if (index !== -1) {
-        accounts[index] = { ...accounts[index], ...updates };
-        return this.saveAccounts(accounts);
+        wallets[index] = { ...wallets[index], ...updates };
+        return this.saveWallets(wallets);
       }
       return false;
     }
   
-    static getSelectedAccount() {
-      const selectedId = this.get(this.keys.SELECTED_ACCOUNT);
+    static getSelectedWallet() {
+      const selectedId = this.get(this.keys.SELECTED_WALLET);
       if (selectedId) {
-        const accounts = this.getAccounts();
-        return accounts.find(acc => acc.id === selectedId);
+        const wallets = this.getWallets();
+        return wallets.find(acc => acc.id === selectedId);
       }
-      const accounts = this.getAccounts();
-      return accounts.length > 0 ? accounts[0] : null;
+      const wallets = this.getWallets();
+      return wallets.length > 0 ? wallets[0] : null;
     }
   
-    static setSelectedAccount(accountId) {
-      return this.set(this.keys.SELECTED_ACCOUNT, accountId);
+    static setSelectedWallet(walletId) {
+      return this.set(this.keys.SELECTED_WALLET, walletId);
     }
   
     // Category methods
@@ -125,12 +125,12 @@ class Storage {
       expense.createdAt = new Date().toISOString();
       expenses.push(expense);
       
-      // Update account balance
-      const accounts = this.getAccounts();
-      const account = accounts.find(acc => acc.id === expense.accountId);
-      if (account) {
-        account.balance -= parseFloat(expense.amount);
-        this.saveAccounts(accounts);
+      // Update wallet balance
+      const wallets = this.getWallets();
+      const wallet = wallets.find(acc => acc.id === expense.walletId);
+      if (wallet) {
+        wallet.balance -= parseFloat(expense.amount);
+        this.saveWallets(wallets);
       }
       
       return this.saveExpenses(expenses);
@@ -155,17 +155,17 @@ class Storage {
     }
   
     // Transaction methods
-    static addIncome(accountId, amount, source, description = '') {
-      const accounts = this.getAccounts();
-      const account = accounts.find(acc => acc.id === accountId);
-      if (account) {
-        account.balance += parseFloat(amount);
-        this.saveAccounts(accounts);
+    static addIncome(walletId, amount, source, description = '') {
+      const wallets = this.getWallets();
+      const wallet = wallets.find(acc => acc.id === walletId);
+      if (wallet) {
+        wallet.balance += parseFloat(amount);
+        this.saveWallets(wallets);
         
         // Add transaction record
         const transaction = {
           id: Date.now().toString(),
-          accountId,
+          walletId,
           type: 'income',
           amount: parseFloat(amount),
           source,
@@ -173,48 +173,48 @@ class Storage {
           date: new Date().toISOString()
         };
         
-        const transactions = this.get('ginberfi_transactions') || [];
+        const transactions = this.get('ginbertfi_transactions') || [];
         transactions.push(transaction);
-        this.set('ginberfi_transactions', transactions);
+        this.set('ginbertfi_transactions', transactions);
         
         return true;
       }
       return false;
     }
   
-    static transferMoney(fromAccountId, toAccountId, amount, description = '') {
-      const accounts = this.getAccounts();
-      const fromAccount = accounts.find(acc => acc.id === fromAccountId);
-      const toAccount = accounts.find(acc => acc.id === toAccountId);
+    static transferMoney(fromWalletId, toWalletId, amount, description = '') {
+      const wallets = this.getWallets();
+      const fromWallet = wallets.find(acc => acc.id === fromWalletId);
+      const toWallet = wallets.find(acc => acc.id === toWalletId);
       
-      if (fromAccount && toAccount && fromAccount.balance >= parseFloat(amount)) {
-        fromAccount.balance -= parseFloat(amount);
-        toAccount.balance += parseFloat(amount);
-        this.saveAccounts(accounts);
+      if (fromWallet && toWallet && fromWallet.balance >= parseFloat(amount)) {
+        fromWallet.balance -= parseFloat(amount);
+        toWallet.balance += parseFloat(amount);
+        this.saveWallets(wallets);
         
         // Add transaction records
-        const transactions = this.get('ginberfi_transactions') || [];
+        const transactions = this.get('ginbertfi_transactions') || [];
         const timestamp = new Date().toISOString();
         
         transactions.push({
           id: Date.now().toString(),
-          accountId: fromAccountId,
+          walletId: fromWalletId,
           type: 'transfer_out',
           amount: -parseFloat(amount),
-          description: `Transferencia a ${toAccount.name}: ${description}`,
+          description: `Transferencia a ${toWallet.name}: ${description}`,
           date: timestamp
         });
         
         transactions.push({
           id: (Date.now() + 1).toString(),
-          accountId: toAccountId,
+          walletId: toWalletId,
           type: 'transfer_in',
           amount: parseFloat(amount),
-          description: `Transferencia de ${fromAccount.name}: ${description}`,
+          description: `Transferencia de ${fromWallet.name}: ${description}`,
           date: timestamp
         });
         
-        this.set('ginberfi_transactions', transactions);
+        this.set('ginbertfi_transactions', transactions);
         return true;
       }
       return false;

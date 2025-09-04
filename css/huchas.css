@@ -1,9 +1,9 @@
 /* Huchas Tab Styles */
-.accounts-container {
+.wallets-container {
   padding: var(--spacing-sm);
 }
 
-.account-card {
+.wallet-card {
   background: var(--white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
@@ -12,34 +12,34 @@
   transition: transform 0.2s ease;
 }
 
-.account-card:hover {
+.wallet-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
-.account-card [data-tap-target="account"] {
+.wallet-card [data-tap-target="wallet"] {
   cursor: pointer;
 }
 
-.account-header {
+.wallet-header {
   background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-green));
   padding: var(--spacing-lg);
   color: var(--dark-blue);
 }
 
-.account-name-header {
+.wallet-name-header {
   font-size: var(--font-size-xl);
   font-weight: 700;
   margin-bottom: var(--spacing-xs);
 }
 
-.account-purpose {
+.wallet-purpose {
   font-size: var(--font-size-sm);
   opacity: 0.8;
   font-style: italic;
 }
 
-.account-balance-display {
+.wallet-balance-display {
   text-align: center;
   padding: var(--spacing-lg);
   background: var(--light-green);
@@ -58,7 +58,7 @@
   font-weight: 500;
 }
 
-.account-actions {
+.wallet-actions {
   display: flex;
   padding: var(--spacing-md);
   gap: var(--spacing-sm);
@@ -135,8 +135,8 @@
   opacity: 0.7;
 }
 
-/* Account Creation Form */
-.create-account-section {
+/* Wallet Creation Form */
+.create-wallet-section {
   background: var(--white);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
@@ -179,7 +179,7 @@
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
-.create-account-btn {
+.create-wallet-btn {
   width: 100%;
   background: var(--dark-blue);
   color: var(--white);
@@ -190,31 +190,31 @@
   margin-top: var(--spacing-md);
 }
 
-.create-account-btn:hover {
+.create-wallet-btn:hover {
   background: #1A365D;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
-/* Empty state for accounts */
-.empty-accounts {
+/* Empty state for wallets */
+.empty-wallets {
   text-align: center;
   padding: var(--spacing-xl);
   color: var(--text-light);
 }
 
-.empty-accounts-icon {
+.empty-wallets-icon {
   font-size: 4rem;
   margin-bottom: var(--spacing-lg);
 }
 
-.empty-accounts h3 {
+.empty-wallets h3 {
   font-size: var(--font-size-xl);
   color: var(--dark-blue);
   margin-bottom: var(--spacing-md);
 }
 
-.empty-accounts p {
+.empty-wallets p {
   margin-bottom: var(--spacing-lg);
   line-height: 1.6;
 }
@@ -225,7 +225,7 @@
   max-height: 80vh;
 }
 
-.account-summary {
+.wallet-summary {
   background: var(--light-green);
   padding: var(--spacing-md);
   border-radius: var(--radius-md);
@@ -233,7 +233,7 @@
   text-align: center;
 }
 
-.account-balance {
+.wallet-balance {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -345,7 +345,7 @@
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
-  .account-actions {
+  .wallet-actions {
     gap: var(--spacing-xs);
   }
   

@@ -163,8 +163,8 @@
     margin-left: var(--spacing-sm);
   }
   
-  /* Account creation modal */
-  .account-modal .currency-grid {
+  /* Wallet creation modal */
+  .wallet-modal .currency-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: var(--spacing-sm);

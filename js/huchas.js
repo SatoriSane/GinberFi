@@ -1,11 +1,11 @@
 // Huchas tab functionality
 class HuchasManager {
   constructor() {
-    this.accountsContainer = document.getElementById('accountsContainer');
-    this.emptyAccountsState = document.getElementById('emptyAccountsState');
-    this.addAccountBtn = document.getElementById('addAccountBtn');
-    this.addNewAccountFab = document.getElementById('addNewAccountFab');
-    this.expandedAccounts = new Set(); // Track which accounts have expanded transactions
+    this.walletsContainer = document.getElementById('walletsContainer');
+    this.emptywalletsState = document.getElementById('emptywalletsState');
+    this.addWalletBtn = document.getElementById('addWalletBtn');
+    this.addNewWalletFab = document.getElementById('addNewWalletFab');
+    this.expandedwallets = new Set(); // Track which wallets have expanded transactions
     
     this.init();
   }
@@ -28,19 +28,19 @@ class HuchasManager {
   }
 
   setupEventListeners() {
-    this.addAccountBtn.addEventListener('click', () => {
-      this.openCreateAccountModal();
+    this.addWalletBtn.addEventListener('click', () => {
+      this.openCreateWalletModal();
     });
 
-    this.addNewAccountFab.addEventListener('click', () => {
-      this.openCreateAccountModal();
+    this.addNewWalletFab.addEventListener('click', () => {
+      this.openCreateWalletModal();
     });
 
     // Handle form submissions
     document.addEventListener('submit', (e) => {
-      if (e.target.id === 'accountForm') {
+      if (e.target.id === 'walletForm') {
         e.preventDefault();
-        this.handleCreateAccount(e.target);
+        this.handleCreateWallet(e.target);
       } else if (e.target.id === 'incomeForm') {
         e.preventDefault();
         this.handleAddIncome(e.target);
@@ -52,40 +52,40 @@ class HuchasManager {
   }
 
   render() {
-    const accounts = AppState.accounts;
+    const wallets = AppState.wallets;
     
-    if (accounts.length === 0) {
-      this.emptyAccountsState.style.display = 'block';
-      this.addNewAccountFab.style.display = 'none';
-      // Clear any existing account elements except the empty state
-      this.accountsContainer.querySelectorAll('.account-card').forEach(el => el.remove());
+    if (wallets.length === 0) {
+      this.emptywalletsState.style.display = 'block';
+      this.addNewWalletFab.style.display = 'none';
+      // Clear any existing wallet elements except the empty state
+      this.walletsContainer.querySelectorAll('.wallet-card').forEach(el => el.remove());
     } else {
-      this.emptyAccountsState.style.display = 'none';
-      this.addNewAccountFab.style.display = 'flex';
-      this.renderAccounts(accounts);
+      this.emptywalletsState.style.display = 'none';
+      this.addNewWalletFab.style.display = 'flex';
+      this.renderwallets(wallets);
     }
   }
 
-  renderAccounts(accounts) {
-    this.accountsContainer.innerHTML = accounts.map(account => {
-      const transactionCount = this.getTransactionCount(account.id);
+  renderwallets(wallets) {
+    this.walletsContainer.innerHTML = wallets.map(wallet => {
+      const transactionCount = this.getTransactionCount(wallet.id);
       
       return `
-        <div class="account-card" data-account-id="${account.id}">
-          <div class="account-header" data-tap-target="account">
-            <div class="account-name-header">${account.name}</div>
-            ${account.purpose ? `<div class="account-purpose">${account.purpose}</div>` : ''}
+        <div class="wallet-card" data-wallet-id="${wallet.id}">
+          <div class="wallet-header" data-tap-target="wallet">
+            <div class="wallet-name-header">${wallet.name}</div>
+            ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
           </div>
-          <div class="account-balance-display" data-tap-target="account">
-            <div class="balance-amount-large">${Utils.formatCurrency(account.balance, account.currency)}</div>
-            <div class="balance-currency">${this.getCurrencyName(account.currency)}</div>
+          <div class="wallet-balance-display" data-tap-target="wallet">
+            <div class="balance-amount-large">${Utils.formatCurrency(wallet.balance, wallet.currency)}</div>
+            <div class="balance-currency">${this.getCurrencyName(wallet.currency)}</div>
           </div>
-          <div class="account-actions">
-            <button class="action-btn move-money-btn" data-account-id="${account.id}">
-              <span class="action-icon">💸</span>
-              Enviar
+          <div class="wallet-actions">
+            <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">
+              <span class="action-icon">🔁</span>
+              Transferir
             </button>
-            <button class="action-btn add-income-btn" data-account-id="${account.id}">
+            <button class="action-btn add-income-btn" data-wallet-id="${wallet.id}">
               <span class="action-icon">💰</span>
               Ingresar
             </button>
@@ -94,57 +94,57 @@ class HuchasManager {
       `;
     }).join('');
 
-    this.attachAccountEventListeners();
+    this.attachWalletEventListeners();
   }
 
   // Removed - no longer needed as we use modal for transactions
 
   // Removed - transactions now shown in modal
 
-  getTransactionCount(accountId) {
-    const transactions = Storage.get('ginberfi_transactions') || [];
-    return transactions.filter(t => t.accountId === accountId).length;
+  getTransactionCount(walletId) {
+    const transactions = Storage.get('ginbertfi_transactions') || [];
+    return transactions.filter(t => t.walletId === walletId).length;
   }
 
-  attachAccountEventListeners() {
+  attachWalletEventListeners() {
     // Move money buttons
-    this.accountsContainer.querySelectorAll('.move-money-btn').forEach(btn => {
+    this.walletsContainer.querySelectorAll('.move-money-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const accountId = btn.dataset.accountId;
-        this.openTransferModal(accountId);
+        const walletId = btn.dataset.walletId;
+        this.openTransferModal(walletId);
       });
     });
 
     // Add income buttons
-    this.accountsContainer.querySelectorAll('.add-income-btn').forEach(btn => {
+    this.walletsContainer.querySelectorAll('.add-income-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const accountId = btn.dataset.accountId;
-        this.openIncomeModal(accountId);
+        const walletId = btn.dataset.walletId;
+        this.openIncomeModal(walletId);
       });
     });
 
-    // Account tap to view transactions
-    this.accountsContainer.querySelectorAll('[data-tap-target="account"]').forEach(element => {
+    // Wallet tap to view transactions
+    this.walletsContainer.querySelectorAll('[data-tap-target="wallet"]').forEach(element => {
       element.addEventListener('click', () => {
-        const accountCard = element.closest('.account-card');
-        const accountId = accountCard.dataset.accountId;
-        this.openTransactionsModal(accountId);
+        const walletCard = element.closest('.wallet-card');
+        const walletId = walletCard.dataset.walletId;
+        this.openTransactionsModal(walletId);
       });
     });
   }
 
-  openTransactionsModal(accountId) {
-    const modalData = ModalManager.createTransactionsModal(accountId);
+  openTransactionsModal(walletId) {
+    const modalData = ModalManager.createTransactionsModal(walletId);
     if (modalData) {
       window.appEvents.emit('openModal', modalData);
     }
   }
 
   // Modal handlers
-  openCreateAccountModal() {
-    const modalData = ModalManager.createAccountModal();
+  openCreateWalletModal() {
+    const modalData = ModalManager.createWalletModal();
     window.appEvents.emit('openModal', modalData);
     
     // Setup currency selection after modal is created
@@ -153,8 +153,8 @@ class HuchasManager {
     }, 100);
   }
 
-  openIncomeModal(accountId) {
-    const modalData = ModalManager.createIncomeModal(accountId);
+  openIncomeModal(walletId) {
+    const modalData = ModalManager.createIncomeModal(walletId);
     window.appEvents.emit('openModal', modalData);
     
     // Setup income source selection after modal is created
@@ -163,20 +163,20 @@ class HuchasManager {
     }, 100);
   }
 
-  openTransferModal(fromAccountId) {
-    const accounts = AppState.accounts.filter(acc => acc.id !== fromAccountId);
-    if (accounts.length === 0) {
-      Utils.showToast('Necesitas al menos 2 cuentas para hacer transferencias', 'warning');
+  openTransferModal(fromWalletId) {
+    const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
+    if (wallets.length === 0) {
+      Utils.showToast('Necesitas al menos 2 wallets para hacer transferencias', 'warning');
       return;
     }
     
-    const modalData = ModalManager.createTransferModal(fromAccountId);
+    const modalData = ModalManager.createTransferModal(fromWalletId);
     window.appEvents.emit('openModal', modalData);
   }
 
   setupCurrencySelection() {
     const currencyOptions = document.querySelectorAll('.currency-option');
-    const currencyInput = document.getElementById('accountCurrency');
+    const currencyInput = document.getElementById('walletCurrency');
     
     currencyOptions.forEach(option => {
       option.addEventListener('click', () => {
@@ -238,32 +238,32 @@ class HuchasManager {
   }
 
   // Form handlers
-  handleCreateAccount(form) {
+  handleCreateWallet(form) {
     const formData = new FormData(form);
-    const accountData = {
+    const walletData = {
       name: Utils.sanitizeInput(formData.get('name')),
       currency: formData.get('currency'),
       balance: parseFloat(formData.get('balance')),
       purpose: Utils.sanitizeInput(formData.get('purpose') || '')
     };
 
-    if (!Utils.validateNumber(accountData.balance)) {
+    if (!Utils.validateNumber(walletData.balance)) {
       Utils.showToast('El saldo inicial debe ser un número válido', 'error');
       return;
     }
 
-    if (Storage.addAccount(accountData)) {
+    if (Storage.addWallet(walletData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Cuenta creada exitosamente', 'success');
+      Utils.showToast('Wallet creada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al crear la cuenta', 'error');
+      Utils.showToast('Error al crear la wallet', 'error');
     }
   }
 
   handleAddIncome(form) {
     const formData = new FormData(form);
-    const accountId = formData.get('accountId');
+    const walletId = formData.get('walletId');
     const amount = parseFloat(formData.get('amount'));
     const source = formData.get('source');
     const description = Utils.sanitizeInput(formData.get('description') || '');
@@ -278,7 +278,7 @@ class HuchasManager {
       return;
     }
 
-    if (Storage.addIncome(accountId, amount, source, description)) {
+    if (Storage.addIncome(walletId, amount, source, description)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
       Utils.showToast('Ingreso agregado exitosamente', 'success');
@@ -289,8 +289,8 @@ class HuchasManager {
 
   handleTransferMoney(form) {
     const formData = new FormData(form);
-    const fromAccountId = formData.get('fromAccountId');
-    const toAccountId = formData.get('toAccountId');
+    const fromWalletId = formData.get('fromWalletId');
+    const toWalletId = formData.get('toWalletId');
     const amount = parseFloat(formData.get('amount'));
     const description = Utils.sanitizeInput(formData.get('description') || '');
 
@@ -299,12 +299,12 @@ class HuchasManager {
       return;
     }
 
-    if (!toAccountId) {
-      Utils.showToast('Debes seleccionar una cuenta destino', 'error');
+    if (!toWalletId) {
+      Utils.showToast('Debes seleccionar una wallet destino', 'error');
       return;
     }
 
-    if (Storage.transferMoney(fromAccountId, toAccountId, amount, description)) {
+    if (Storage.transferMoney(fromWalletId, toWalletId, amount, description)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
       Utils.showToast('Transferencia realizada exitosamente', 'success');

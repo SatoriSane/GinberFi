@@ -200,9 +200,9 @@ class EventEmitter {
 // Global app state
 const AppState = {
   currentTab: 'gastos',
-  selectedAccount: null,
+  selectedWallet: null,
   categories: [],
-  accounts: [],
+  wallets: [],
   expenses: [],
   
   init() {
@@ -210,8 +210,8 @@ const AppState = {
   },
   
   loadData() {
-    this.accounts = Storage.getAccounts();
-    this.selectedAccount = Storage.getSelectedAccount();
+    this.wallets = Storage.getWallets();
+    this.selectedWallet = Storage.getSelectedWallet();
     this.categories = Storage.getCategories();
     this.expenses = Storage.getExpenses();
   },

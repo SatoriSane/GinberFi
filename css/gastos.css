@@ -27,9 +27,17 @@
     cursor: pointer;
     border-radius: var(--radius-xl);
     transition: all 0.3s ease;
-    border: 1px solid transparent;
+    border: none;
   }
-  
+  .category-content::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid currentColor; /* currentColor = el color de border-color inline */
+    border-radius: var(--radius-xl);
+    opacity: 0.3; /* aquí controlas la intensidad */
+    pointer-events: none; /* para que no bloquee clics */
+  }
   
   .category-left {
     display: flex;
@@ -138,9 +146,17 @@
     justify-content: space-between;
     cursor: pointer;
     border-radius: var(--radius-lg);
-    border: 2px solid transparent;
+    border: none;
   }
-  
+  .subcategory-content::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid currentColor; /* currentColor = el color de border-color inline */
+    border-radius: var(--radius-xl);
+    opacity: 0.3; /* aquí controlas la intensidad */
+    pointer-events: none; /* para que no bloquee clics */
+  }
   
   .subcategory-left {
     display: flex;
@@ -252,7 +268,7 @@
     color: var(--dark-blue);
   }
   
-  .expense-account {
+  .expense-wallet {
     font-size: var(--font-size-xs);
     color: var(--text-light);
     margin-top: var(--spacing-xs);
@@ -286,7 +302,7 @@
     text-align: right;
   }
   
-  .expense-right .expense-account {
+  .expense-right .expense-wallet {
     margin-top: var(--spacing-xs);
     font-size: var(--font-size-xs);
     color: var(--text-light);

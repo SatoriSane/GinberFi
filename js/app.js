@@ -1,5 +1,5 @@
 // Main app initialization and coordination
-class GinberFiApp {
+class GinbertFiApp {
   constructor() {
     this.isInitialized = false;
     this.init();
@@ -31,10 +31,10 @@ class GinberFiApp {
       // Mark as initialized
       this.isInitialized = true;
       
-      console.log('GinberFi app initialized successfully');
+      console.log('GinbertFi app initialized successfully');
       
     } catch (error) {
-      console.error('Error initializing GinberFi app:', error);
+      console.error('Error initializing GinbertFi app:', error);
       Utils.showToast('Error al inicializar la aplicación', 'error');
     }
   }
@@ -103,4 +103,4 @@ class GinberFiApp {
 }
 
 // Initialize the app
-const app = new GinberFiApp();
+const app = new GinbertFiApp();

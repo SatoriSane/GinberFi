@@ -165,7 +165,7 @@ button:focus {
 }
 
 .add-category-btn,
-.add-account-btn {
+.add-wallet-btn {
   background: var(--pastel-pink);
   color: var(--dark-blue);
   padding: var(--spacing-md) var(--spacing-xl);
@@ -176,7 +176,7 @@ button:focus {
 }
 
 .add-category-btn:hover,
-.add-account-btn:hover {
+.add-wallet-btn:hover {
   background: #FF9EDB;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);

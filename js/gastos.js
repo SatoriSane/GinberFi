@@ -163,7 +163,7 @@ class GastosManager {
     return `
       <div class="expenses-container">
         ${expenses.map(expense => {
-          const account = AppState.accounts.find(acc => acc.id === expense.accountId);
+          const wallet = AppState.wallets.find(acc => acc.id === expense.walletId);
           return `
             <div class="expense-item">
               <div class="expense-info">
@@ -172,9 +172,9 @@ class GastosManager {
               </div>
               <div class="expense-right">
                 <div class="expense-amount">
-                  -${Utils.formatCurrency(expense.amount, account ? account.currency : 'BOB')}
+                  -${Utils.formatCurrency(expense.amount, wallet ? wallet.currency : 'BOB')}
                 </div>
-                ${account ? `<div class="expense-account">${account.name}</div>` : ''}
+                ${wallet ? `<div class="expense-wallet">${wallet.name}</div>` : ''}
               </div>
             </div>
           `;
@@ -264,8 +264,8 @@ class GastosManager {
   }
 
   openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget) {
-    if (AppState.accounts.length === 0) {
-      Utils.showToast('Primero debes crear una cuenta en la pestaña Huchas', 'warning');
+    if (AppState.wallets.length === 0) {
+      Utils.showToast('Primero debes crear una wallet en la pestaña Wallets', 'warning');
       return;
     }
     
@@ -274,19 +274,19 @@ class GastosManager {
     
     // Setup dynamic currency display
     setTimeout(() => {
-      const accountSelect = document.getElementById('expenseAccount');
+      const walletselect = document.getElementById('expenseWallet');
       const currencyDisplay = document.getElementById('currencyDisplay');
       
-      if (accountSelect && currencyDisplay) {
+      if (walletselect && currencyDisplay) {
         const updateCurrency = () => {
-          const selectedAccountId = accountSelect.value;
-          const account = AppState.accounts.find(acc => acc.id === selectedAccountId);
-          if (account) {
-            currencyDisplay.textContent = account.currency;
+          const selectedWalletId = walletselect.value;
+          const wallet = AppState.wallets.find(acc => acc.id === selectedWalletId);
+          if (wallet) {
+            currencyDisplay.textContent = wallet.currency;
           }
         };
         
-        accountSelect.addEventListener('change', updateCurrency);
+        walletselect.addEventListener('change', updateCurrency);
         updateCurrency(); // Initial update
       }
     }, 100);
@@ -349,7 +349,7 @@ class GastosManager {
       name: Utils.sanitizeInput(formData.get('name')),
       amount: parseFloat(formData.get('amount')),
       date: formData.get('date'),
-      accountId: formData.get('accountId'),
+      walletId: formData.get('walletId'),
       subcategoryId: formData.get('subcategoryId')
     };
 
@@ -358,10 +358,10 @@ class GastosManager {
       return;
     }
 
-    // Check if account has sufficient balance
-    const account = AppState.accounts.find(acc => acc.id === expenseData.accountId);
-    if (!account || account.balance < expenseData.amount) {
-      Utils.showToast('Saldo insuficiente en la cuenta seleccionada', 'error');
+    // Check if wallet has sufficient balance
+    const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
+    if (!wallet || wallet.balance < expenseData.amount) {
+      Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
       return;
     }
 

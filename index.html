@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GinberFi</title>
+    <title>GinbertFi</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4A90E2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="GinberFi">
+    <meta name="apple-mobile-web-app-title" content="GinbertFi">
     <link rel="manifest" href="manifest.json">
     
     <!-- CSS Files -->
@@ -25,7 +25,7 @@
     <!-- Header -->
     <header role="banner" class="app-header">
         <div class="header-content">
-            <h1 class="app-name">GinberFi</h1>
+            <h1 class="app-name">GinbertFi</h1>
             <div class="balance-selector" id="balanceSelector">
                 <span class="balance-amount" id="balanceAmount">0.00 BOB</span>
                 <span class="balance-arrow">▼</span>
@@ -34,12 +34,12 @@
         
         <!-- Balance Dropdown -->
         <div class="balance-dropdown" id="balanceDropdown">
-            <div class="accounts-list" id="accountsList">
-                <!-- Accounts will be populated by JavaScript -->
+            <div class="wallets-list" id="walletsList">
+                <!-- wallets will be populated by JavaScript -->
             </div>
-            <button class="config-accounts-btn" id="configAccountsBtn">
-                <span class="pig-icon">💳</span>
-                Configurar Cuentas
+            <button class="config-wallets-btn" id="configwalletsBtn">
+                <span class="pig-icon">🐷</span>
+                Configurar Wallets
             </button>
         </div>
     </header>
@@ -59,13 +59,13 @@
 
         <!-- Huchas Tab Content -->
         <div class="tab-content" id="huchasTab">
-            <div class="accounts-container" id="accountsContainer">
-                <div class="empty-state" id="emptyAccountsState">
-                    <p>No hay cuentas creadas</p>
-                    <button class="add-account-btn" id="addAccountBtn">Crear Primera Cuenta</button>
+            <div class="wallets-container" id="walletsContainer">
+                <div class="empty-state" id="emptywalletsState">
+                    <p>No hay wallets creadas</p>
+                    <button class="add-wallet-btn" id="addWalletBtn">Crear Primera Wallet</button>
                 </div>
             </div>
-            <button class="fab" id="addNewAccountFab">+</button>
+            <button class="fab" id="addNewWalletFab">+</button>
         </div>
 
         <!-- Resumen Tab Content -->
@@ -79,11 +79,11 @@
     <!-- Navigation -->
     <nav role="tablist" class="app-navigation">
         <button role="tab" class="nav-tab" data-tab="huchas" id="huchasNavBtn">
-            <span class="nav-icon">💼</span>
-            <span class="nav-label">Cuentas</span>
+            <span class="nav-icon">🐷</span>
+            <span class="nav-label">Wallets</span>
         </button>
         <button role="tab" class="nav-tab active" data-tab="gastos" id="gastosNavBtn">
-            <span class="nav-icon">💸</span>
+            <span class="nav-icon">💳</span>
             <span class="nav-label">Gastos</span>
         </button>
         <button role="tab" class="nav-tab" data-tab="resumen" id="resumenNavBtn">
