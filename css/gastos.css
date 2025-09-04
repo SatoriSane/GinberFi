@@ -203,26 +203,17 @@
   .add-expense-btn {
     background: rgba(0, 0, 0, 0.05);
     color: var(--dark-blue);
-    padding: var(--spacing-sm) var(--spacing-sm);
-    font-size: var(--font-size-sm);
-    border-radius: var(--radius-sm);
+    border-radius: 50%;
     border: none;
     transition: all 0.2s ease;
-    min-height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
     touch-action: manipulation;
+    padding: 3px;
   }
-  .add-expense-btn.icon-minus-dollar {
-    padding: 6px 10px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: .2px;
-  }
-  .add-expense-btn.icon-minus-dollar [aria-hidden="true"] {
-    font-size: 16px; /* ajusta a tu UI */
-  }
+
+
   
   .add-expense-btn:hover {
     background: rgba(0, 0, 0, 0.1);

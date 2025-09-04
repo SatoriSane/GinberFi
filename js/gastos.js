@@ -131,12 +131,14 @@ class GastosManager {
                     <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
                     <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
                   </div>
-<button class="add-expense-btn icon-minus-dollar"
+<button class="add-expense-btn"
         data-subcategory-id="${subcategory.id}"
         data-subcategory-name="${subcategory.name}"
         data-remaining-budget="${remaining}"
         aria-label="Gastar" title="Gastar">
-  <span aria-hidden="true">−$</span><span class="sr-only"></span>
+              <span class="nav-icon">
+              <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
+            </span></span>
 </button>
 
                 </div>
