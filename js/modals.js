@@ -123,7 +123,69 @@ class ModalManager {
         `
       };
     }
-  
+    static editCategoryModal(category) {
+      return {
+        title: 'Editar Categoría',
+        className: 'category-modal',
+        body: `
+          <form class="modal-form" id="editCategoryForm">
+            <div class="form-group">
+              <label for="editCategoryName">Nombre de la categoría</label>
+              <input type="text" id="editCategoryName" name="name" required 
+                     value="${category.name || ''}">
+            </div>
+            <div class="form-group">
+              <label for="editCategoryDescription">Descripción (opcional)</label>
+              <input type="text" id="editCategoryDescription" name="description" 
+                     value="${category.description || ''}">
+            </div>
+            <input type="hidden" name="categoryId" value="${category.id}">
+          </form>
+        `,
+        footer: `
+          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+          <button type="submit" class="btn-primary" form="editCategoryForm">Guardar Cambios</button>
+        `
+      };
+    }
+    
+    static editSubcategoryModal(subcategory) {
+      return {
+        title: 'Editar Subcategoría',
+        className: 'subcategory-modal',
+        body: `
+          <form class="modal-form" id="editSubcategoryForm">
+            <div class="form-group">
+              <label for="editSubcategoryName">Nombre de la subcategoría</label>
+              <input type="text" id="editSubcategoryName" name="name" required 
+                     value="${subcategory.name || ''}">
+            </div>
+            <div class="form-group">
+              <label for="editSubcategoryBudget">Presupuesto</label>
+              <input type="number" id="editSubcategoryBudget" name="budget" required 
+                     value="${subcategory.budget}" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+              <label for="editSubcategoryFrequency">Frecuencia</label>
+              <select id="editSubcategoryFrequency" name="frequency" required>
+                <option value="semanal" ${subcategory.frequency === 'semanal' ? 'selected' : ''}>Semanal</option>
+                <option value="mensual" ${subcategory.frequency === 'mensual' ? 'selected' : ''}>Mensual</option>
+                <option value="trimestral" ${subcategory.frequency === 'trimestral' ? 'selected' : ''}>Trimestral</option>
+                <option value="anual" ${subcategory.frequency === 'anual' ? 'selected' : ''}>Anual</option>
+              </select>
+            </div>
+            <input type="hidden" name="subcategoryId" value="${subcategory.id}">
+            <input type="hidden" name="categoryId" value="${subcategory.categoryId}">
+          </form>
+        `,
+        footer: `
+          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+          <button type="submit" class="btn-primary" form="editSubcategoryForm">Guardar Cambios</button>
+        `
+      };
+    }
+    
+    
     static createExpenseModal(subcategoryId, subcategoryName, remainingBudget, currency = 'BOB') {
       const selectedWallet = AppState.selectedWallet;
       const wallets = AppState.wallets;

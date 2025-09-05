@@ -37,17 +37,46 @@ class GastosManager {
 
     // Handle form submissions
     document.addEventListener('submit', (e) => {
-      if (e.target.id === 'categoryForm') {
-        e.preventDefault();
-        this.handleCreateCategory(e.target);
-      } else if (e.target.id === 'subcategoryForm') {
-        e.preventDefault();
-        this.handleCreateSubcategory(e.target);
-      } else if (e.target.id === 'expenseForm') {
-        e.preventDefault();
-        this.handleCreateExpense(e.target);
+      e.preventDefault(); // prevenimos submit por defecto para todos los formularios
+
+      const form = e.target;
+
+      switch (form.id) {
+        case 'categoryForm':
+          this.handleCreateCategory(form);
+          break;
+
+        case 'subcategoryForm':
+          this.handleCreateSubcategory(form);
+          break;
+
+        case 'editCategoryForm': {
+          const formData = new FormData(form);
+          const categoryId = formData.get('categoryId'); // asegurarse de que exista un input hidden con este nombre
+          this.handleEditCategory(form, categoryId);
+          break;
+        }
+
+        case 'editSubcategoryForm': {
+          const formData = new FormData(form);
+          const categoryId = formData.get('categoryId');        // hidden input
+          const subcategoryId = formData.get('subcategoryId');  // hidden input
+          this.handleEditSubcategory(form, categoryId, subcategoryId);
+          break;
+        }
+
+        case 'expenseForm':
+          this.handleCreateExpense(form);
+          break;
+
+        default:
+          console.warn('Formulario no manejado:', form.id);
       }
     });
+
+
+
+    
   }
 
   render() {
@@ -83,13 +112,23 @@ class GastosManager {
               <span class="category-arrow">▶</span>
               <span class="category-name">${category.name}</span>
             </div>
-            <div class="category-right">
-              <div class="category-budget">
-                <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
-                <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
-              </div>
-              <button class="add-subcategory-btn" data-category-id="${category.id}" data-category-name="${category.name}">+</button>
-            </div>
+<div class="category-right">
+  <div class="category-budget">
+    <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
+    <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
+  </div>
+  <button class="add-subcategory-btn"
+          data-category-id="${category.id}"
+          data-category-name="${category.name}"
+          aria-label="Añadir subcategoría"
+          title="Añadir subcategoría">+</button>
+  <button class="edit-category-btn"
+          data-category-id="${category.id}"
+          aria-label="Opciones"
+          title="Opciones">⋮</button>
+
+</div>
+
           </div>
           ${category.expanded ? this.renderSubcategories(category, expenses) : ''}
         </div>
@@ -135,11 +174,17 @@ class GastosManager {
         data-subcategory-id="${subcategory.id}"
         data-subcategory-name="${subcategory.name}"
         data-remaining-budget="${remaining}"
-        aria-label="Gastar" title="Gastar">
-              <span class="nav-icon">
-              <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
-            </span></span>
+        aria-label="Gastar"
+        title="Gastar">
+  <span class="nav-icon">
+    <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
+  </span>
 </button>
+<button class="edit-subcategory-btn"
+        data-subcategory-id="${subcategory.id}"
+        aria-label="Opciones"
+        title="Opciones">⋮</button>
+
 
                 </div>
               </div>
@@ -184,28 +229,33 @@ class GastosManager {
       </div>
     `;
   }
-
   attachCategoryEventListeners() {
     // Category toggle
     this.categoriesContainer.querySelectorAll('[data-toggle="category"]').forEach(element => {
       element.addEventListener('click', (e) => {
-        if (e.target.classList.contains('add-subcategory-btn')) return;
+        if (
+          e.target.classList.contains('add-subcategory-btn') ||
+          e.target.classList.contains('edit-category-btn')
+        ) return;
         
         const categoryId = element.closest('.category-wrapper').dataset.categoryId;
         this.toggleCategory(categoryId);
       });
     });
-
+  
     // Subcategory toggle
     this.categoriesContainer.querySelectorAll('[data-toggle="subcategory"]').forEach(element => {
       element.addEventListener('click', (e) => {
-        if (e.target.classList.contains('add-expense-btn')) return;
+        if (
+          e.target.classList.contains('add-expense-btn') ||
+          e.target.classList.contains('edit-subcategory-btn')
+        ) return;
         
         const subcategoryId = element.closest('.subcategory-wrapper').dataset.subcategoryId;
         this.toggleSubcategory(subcategoryId);
       });
     });
-
+  
     // Add subcategory buttons
     this.categoriesContainer.querySelectorAll('.add-subcategory-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -215,7 +265,16 @@ class GastosManager {
         this.openCreateSubcategoryModal(categoryId, categoryName);
       });
     });
-
+  
+    // Edit category buttons
+    this.categoriesContainer.querySelectorAll('.edit-category-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const categoryId = btn.dataset.categoryId;
+        this.openEditCategoryModal(categoryId);
+      });
+    });
+  
     // Add expense buttons
     this.categoriesContainer.querySelectorAll('.add-expense-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -226,7 +285,17 @@ class GastosManager {
         this.openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget);
       });
     });
+  
+    // Edit subcategory buttons
+    this.categoriesContainer.querySelectorAll('.edit-subcategory-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const subcategoryId = btn.dataset.subcategoryId;
+        this.openEditSubcategoryModal(subcategoryId);
+      });
+    });
   }
+  
 
   toggleCategory(categoryId) {
     const categories = AppState.categories;
@@ -264,7 +333,26 @@ class GastosManager {
     const modalData = ModalManager.createSubcategoryModal(categoryId, categoryName);
     window.appEvents.emit('openModal', modalData);
   }
-
+  openEditCategoryModal(categoryId) {
+    const category = AppState.categories.find(cat => cat.id === categoryId);
+    if (!category) return;
+  
+    const modalData = ModalManager.editCategoryModal(category);
+    window.appEvents.emit('openModal', modalData);
+  }
+  
+  openEditSubcategoryModal(subcategoryId) {
+    let subcategory = null;
+    AppState.categories.forEach(cat => {
+      const found = cat.subcategories.find(sub => sub.id === subcategoryId);
+      if (found) subcategory = found;
+    });
+    if (!subcategory) return;
+  
+    const modalData = ModalManager.editSubcategoryModal(subcategory);
+    window.appEvents.emit('openModal', modalData);
+  }
+  
   openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget) {
     if (AppState.wallets.length === 0) {
       Utils.showToast('Primero debes crear una wallet en la pestaña Wallets', 'warning');
@@ -342,6 +430,66 @@ class GastosManager {
       Utils.showToast('Subcategoría creada exitosamente', 'success');
     } else {
       Utils.showToast('Error al crear la subcategoría', 'error');
+    }
+  }
+  handleEditCategory(form, categoryId) {
+    const formData = new FormData(form);
+    const updatedData = {
+      name: Utils.sanitizeInput(formData.get('name')),
+      description: Utils.sanitizeInput(formData.get('description') || '')
+    };
+
+    if (Storage.updateCategory(categoryId, updatedData)) {
+      AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Utils.showToast('Categoría actualizada exitosamente', 'success');
+    } else {
+      Utils.showToast('Error al actualizar la categoría', 'error');
+    }
+  }
+
+  handleDeleteCategory(categoryId) {
+    if (confirm('¿Seguro que quieres eliminar esta categoría y todas sus subcategorías?')) {
+      if (Storage.deleteCategory(categoryId)) {
+        AppState.refreshData();
+        Utils.showToast('Categoría eliminada', 'success');
+      } else {
+        Utils.showToast('Error al eliminar la categoría', 'error');
+      }
+    }
+  }
+
+  handleEditSubcategory(form, categoryId, subcategoryId) {
+    const formData = new FormData(form);
+    const updatedData = {
+      name: Utils.sanitizeInput(formData.get('name')),
+      budget: parseFloat(formData.get('budget')),
+      frequency: formData.get('frequency')
+    };
+  
+    if (!Utils.validateNumber(updatedData.budget)) {
+      Utils.showToast('El presupuesto debe ser un número válido', 'error');
+      return;
+    }
+  
+    if (Storage.updateSubcategory(categoryId, subcategoryId, updatedData)) {
+      AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Utils.showToast('Subcategoría actualizada exitosamente', 'success');
+    } else {
+      Utils.showToast('Error al actualizar la subcategoría', 'error');
+    }
+  }
+  
+
+  handleDeleteSubcategory(categoryId, subcategoryId) {
+    if (confirm('¿Seguro que quieres eliminar esta subcategoría?')) {
+      if (Storage.deleteSubcategory(categoryId, subcategoryId)) {
+        AppState.refreshData();
+        Utils.showToast('Subcategoría eliminada', 'success');
+      } else {
+        Utils.showToast('Error al eliminar la subcategoría', 'error');
+      }
     }
   }
 

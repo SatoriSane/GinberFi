@@ -232,5 +232,31 @@ class Storage {
       }
       return false;
     }
+        // Edit category
+        static updateCategory(categoryId, updates) {
+          const categories = this.getCategories();
+          const index = categories.findIndex(cat => cat.id === categoryId);
+          if (index !== -1) {
+            categories[index] = { ...categories[index], ...updates };
+            return this.saveCategories(categories);
+          }
+          return false;
+        }
+    
+        // Edit subcategory
+        static updateSubcategory(categoryId, subcategoryId, updates) {
+          const categories = this.getCategories();
+          const category = categories.find(cat => cat.id === categoryId);
+          if (category) {
+            const subIndex = category.subcategories.findIndex(sub => sub.id === subcategoryId);
+            if (subIndex !== -1) {
+              category.subcategories[subIndex] = { ...category.subcategories[subIndex], ...updates };
+              return this.saveCategories(categories);
+            }
+          }
+          return false;
+        }
+    
+
   }
   

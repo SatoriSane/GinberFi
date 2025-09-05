@@ -78,7 +78,6 @@ class HuchasManager {
           </div>
           <div class="wallet-balance-display" data-tap-target="wallet">
             <div class="balance-amount-large">${Utils.formatCurrency(wallet.balance, wallet.currency)}</div>
-            <div class="balance-currency">${this.getCurrencyName(wallet.currency)}</div>
           </div>
           <div class="wallet-actions">
             <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">
