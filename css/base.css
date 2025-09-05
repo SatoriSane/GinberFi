@@ -16,15 +16,15 @@
   
   /* Typography */
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
+  --font-size-xs: 0.85rem;
+  --font-size-sm: 1rem;
+  --font-size-base: 1.2rem;
+  --font-size-lg: 1.3rem;
+  --font-size-xl: 1.4rem;
   --font-size-2xl: 1.5rem;
   
   /* Spacing */
-  --spacing-xs: 0.25rem;
+  --spacing-xs: 0.35rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
@@ -75,9 +75,10 @@ body {
 }
 
 .app-main {
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: 60px;
+  padding-bottom: 60px;
   min-height: 100vh;
+
 }
 
 .app-navigation {
@@ -91,11 +92,13 @@ body {
 /* Tab Content */
 .tab-content {
   display: none;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   position: relative;
   min-height: calc(100vh - 160px); /* 80px header + 80px nav */
 }
-
+#gastosTab {
+  padding: var(--spacing-xs);
+}
 .tab-content.active {
   display: block;
 }
@@ -307,5 +310,5 @@ label {
 
 }
 .dollar-svg {
-  scale: 1.4;
+  scale: 1.25;
 }

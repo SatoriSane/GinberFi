@@ -47,7 +47,7 @@
   
   .category-arrow {
     font-size: var(--font-size-lg);
-    margin-right: var(--spacing-md);
+    margin-right: var(--spacing-xs);
     transition: transform 0.3s ease;
     color: var(--dark-blue);
   }
@@ -166,7 +166,7 @@
   
   .subcategory-arrow {
     font-size: var(--font-size-base);
-    margin-right: var(--spacing-sm);
+    margin-right: var(--spacing-xs);
     transition: transform 0.3s ease;
     color: var(--dark-blue);
   }
