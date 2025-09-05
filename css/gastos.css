@@ -1,6 +1,8 @@
 /* Gastos Tab Styles */
 .categories-container {
-    padding: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    padding-left: 0px;
+    padding-right: 0px;
   }
   
   .category-wrapper {
@@ -222,8 +224,7 @@
   
   /* Expenses List */
   .expenses-container {
-    padding: var(--spacing-sm);
-    background: rgba(0,0,0,0.05);
+    padding: var(--spacing-xs);
     border-radius: 0 0 var(--radius-md) var(--radius-md);
   }
   
