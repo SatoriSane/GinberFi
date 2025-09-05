@@ -124,15 +124,28 @@ class Storage {
       expense.id = Date.now().toString();
       expense.createdAt = new Date().toISOString();
       expenses.push(expense);
-      
-      // Update wallet balance
+
+      // Update wallet balance and add transaction record
       const wallets = this.getWallets();
       const wallet = wallets.find(acc => acc.id === expense.walletId);
       if (wallet) {
         wallet.balance -= parseFloat(expense.amount);
         this.saveWallets(wallets);
+
+        const transaction = {
+          id: 'exp-' + expense.id,
+          walletId: expense.walletId,
+          type: 'expense',
+          amount: -parseFloat(expense.amount),
+          description: expense.name,
+          date: expense.date
+        };
+
+        const transactions = this.get('ginbertfi_transactions') || [];
+        transactions.push(transaction);
+        this.set('ginbertfi_transactions', transactions);
       }
-      
+
       return this.saveExpenses(expenses);
     }
   
