@@ -55,7 +55,10 @@ function getEndDate(startDate, frequency) {
   return end.toISOString().split('T')[0];
 }
 
-
+function formatLocalDate(isoDate) {
+  const d = new Date(isoDate);
+  return d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
 // Modal functionality
 class ModalManager {
     constructor() {
@@ -199,8 +202,7 @@ static createSubcategoryModal(categoryId) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `El presupuesto se reiniciará el ${endDate}`;
-      }
+        info.textContent = `El presupuesto se reiniciará el ${formatLocalDate(endDate)}`;      }
     }
 
     if (freqSelect && startInput) {
