@@ -74,7 +74,14 @@ class GastosManager {
       }
     });
 
-
+    document.getElementById('subcategoryFrequency')?.addEventListener('change', (e) => {
+      const freq = e.target.value;
+      const startDateInput = document.getElementById('subcategoryStartDate');
+      if (startDateInput) {
+        startDateInput.value = getDefaultStartDate(freq);
+      }
+    });
+    
 
     
   }
@@ -410,7 +417,9 @@ class GastosManager {
     };
 
     const categoryId = formData.get('categoryId');
-
+    const startDate = formData.get('startDate');
+    subcategoryData.startDate = startDate; // o updatedData.startDate
+    
     if (!Utils.validateNumber(subcategoryData.budget)) {
       Utils.showToast('El presupuesto debe ser un número válido', 'error');
       return;
@@ -551,6 +560,36 @@ class GastosManager {
     const subcategoryExpenses = this.getSubcategoryExpenses(subcategoryId, expenses);
     return subcategoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
+
+  getDefaultStartDate(frequency) {
+    const today = new Date();
+    let startDate;
+  
+    switch (frequency) {
+      case 'semanal': {
+        // Obtener el lunes de la semana actual
+        const day = today.getDay(); // 0=domingo, 1=lunes...
+        const diff = (day === 0 ? -6 : 1 - day); // ajustar si hoy es domingo
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() + diff);
+        break;
+      }
+      case 'mensual':
+      case 'trimestral': {
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        break;
+      }
+      case 'anual':
+        startDate = new Date(today.getFullYear(), 0, 1);
+        break;
+      default:
+        startDate = today;
+    }
+  
+    // Formatear a yyyy-mm-dd para el input date
+    return startDate.toISOString().split('T')[0];
+  }
+  
 }
 
 // Initialize gastos manager when DOM is loaded

@@ -312,3 +312,10 @@ label {
 .dollar-svg {
   scale: 1.25;
 }
+
+.info-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #555;
+}
