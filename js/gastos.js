@@ -155,7 +155,7 @@ class GastosManager {
         </div>
       `;
     }
-
+  
     return `
       <div class="subcategories-container">
         ${category.subcategories.map(subcategory => {
@@ -164,7 +164,13 @@ class GastosManager {
           const remaining = subcategory.budget - spent;
           const percentage = Utils.calculateProgress(spent, subcategory.budget);
           const budgetColors = Utils.getProgressBarColor(100 - percentage);
-
+  
+          // Calcular días restantes hasta el reinicio
+          const endDate = getEndDate(subcategory.startDate, subcategory.frequency);
+          const today = new Date();
+          const diffMs = new Date(endDate) - today;
+          const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  
           return `
             <div class="subcategory-wrapper ${subcategory.expanded ? 'expanded' : ''}" data-subcategory-id="${subcategory.id}">
               <div class="subcategory-content" data-toggle="subcategory" style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
@@ -174,25 +180,27 @@ class GastosManager {
                 </div>
                 <div class="subcategory-right">
                   <div class="subcategory-budget">
-                    <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
-                    <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
+                    <div class="budget-top">
+                      <div class="budget-reset"><span class="reset-icon">⟳</span>${daysRemaining}d</div>
+                      <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
+                    </div>
                   </div>
-<button class="add-expense-btn"
-        data-subcategory-id="${subcategory.id}"
-        data-subcategory-name="${subcategory.name}"
-        data-remaining-budget="${remaining}"
-        aria-label="Gastar"
-        title="Gastar">
-  <span class="nav-icon">
-    <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
-  </span>
-</button>
-<button class="edit-subcategory-btn"
-        data-subcategory-id="${subcategory.id}"
-        aria-label="Opciones"
-        title="Opciones">⋮</button>
 
 
+                  <button class="add-expense-btn"
+                          data-subcategory-id="${subcategory.id}"
+                          data-subcategory-name="${subcategory.name}"
+                          data-remaining-budget="${remaining}"
+                          aria-label="Gastar"
+                          title="Gastar">
+                    <span class="nav-icon">
+                      <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
+                    </span>
+                  </button>
+                  <button class="edit-subcategory-btn"
+                          data-subcategory-id="${subcategory.id}"
+                          aria-label="Opciones"
+                          title="Opciones">⋮</button>
                 </div>
               </div>
               ${subcategory.expanded ? this.renderExpenses(subcategoryExpenses) : ''}
@@ -202,6 +210,7 @@ class GastosManager {
       </div>
     `;
   }
+  
 
   renderExpenses(expenses) {
     if (expenses.length === 0) {
@@ -413,20 +422,19 @@ class GastosManager {
       name: Utils.sanitizeInput(formData.get('name')),
       budget: parseFloat(formData.get('budget')),
       frequency: formData.get('frequency'),
+      startDate: formData.get('startDate'), // guardar fecha de inicio
       expanded: false
     };
-
+  
     const categoryId = formData.get('categoryId');
-    const startDate = formData.get('startDate');
-    subcategoryData.startDate = startDate; // o updatedData.startDate
-    
+  
     if (!Utils.validateNumber(subcategoryData.budget)) {
       Utils.showToast('El presupuesto debe ser un número válido', 'error');
       return;
     }
-
+  
     if (Storage.addSubcategory(categoryId, subcategoryData)) {
-      // Expand the category to show the new subcategory
+      // Expandir la categoría para mostrar la nueva subcategoría
       const categories = Storage.getCategories();
       const category = categories.find(cat => cat.id === categoryId);
       if (category) {
@@ -441,6 +449,30 @@ class GastosManager {
       Utils.showToast('Error al crear la subcategoría', 'error');
     }
   }
+  
+  handleEditSubcategory(form, categoryId, subcategoryId) {
+    const formData = new FormData(form);
+    const updatedData = {
+      name: Utils.sanitizeInput(formData.get('name')),
+      budget: parseFloat(formData.get('budget')),
+      frequency: formData.get('frequency'),
+      startDate: formData.get('startDate') // <-- agregar startDate aquí también
+    };
+  
+    if (!Utils.validateNumber(updatedData.budget)) {
+      Utils.showToast('El presupuesto debe ser un número válido', 'error');
+      return;
+    }
+  
+    if (Storage.updateSubcategory(categoryId, subcategoryId, updatedData)) {
+      AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Utils.showToast('Subcategoría actualizada exitosamente', 'success');
+    } else {
+      Utils.showToast('Error al actualizar la subcategoría', 'error');
+    }
+  }
+  
   handleEditCategory(form, categoryId) {
     const formData = new FormData(form);
     const updatedData = {
@@ -468,27 +500,7 @@ class GastosManager {
     }
   }
 
-  handleEditSubcategory(form, categoryId, subcategoryId) {
-    const formData = new FormData(form);
-    const updatedData = {
-      name: Utils.sanitizeInput(formData.get('name')),
-      budget: parseFloat(formData.get('budget')),
-      frequency: formData.get('frequency')
-    };
-  
-    if (!Utils.validateNumber(updatedData.budget)) {
-      Utils.showToast('El presupuesto debe ser un número válido', 'error');
-      return;
-    }
-  
-    if (Storage.updateSubcategory(categoryId, subcategoryId, updatedData)) {
-      AppState.refreshData();
-      window.appEvents.emit('closeModal');
-      Utils.showToast('Subcategoría actualizada exitosamente', 'success');
-    } else {
-      Utils.showToast('Error al actualizar la subcategoría', 'error');
-    }
-  }
+
   
 
   handleDeleteSubcategory(categoryId, subcategoryId) {

@@ -1,4 +1,18 @@
 // --- Helpers internos para calcular fecha por defecto ---
+// Formatea siempre en YYYY-MM-DD en hora local
+// -----------------------------
+// Helpers (colocar AL PRINCIPIO de modals.js)
+// -----------------------------
+
+// Formatea una Date local como YYYY-MM-DD (sin usar toISOString)
+function formatDateLocalYYYYMMDD(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Devuelve la fecha de inicio por defecto (YYYY-MM-DD) en hora local
 function getDefaultStartDate(frequency) {
   const today = new Date();
   switch (frequency) {
@@ -7,58 +21,70 @@ function getDefaultStartDate(frequency) {
       const diff = (day === 0 ? -6 : 1 - day); // mover al lunes
       const monday = new Date(today);
       monday.setDate(today.getDate() + diff);
-      // Asegurar medianoche local
       monday.setHours(0, 0, 0, 0);
-      return monday.toISOString().split('T')[0];
+      return formatDateLocalYYYYMMDD(monday);
     }
-    case 'mensual':
-      return new Date(today.getFullYear(), today.getMonth(), 1)
-        .toISOString().split('T')[0];
-    case 'trimestral':
-      return new Date(today.getFullYear(), today.getMonth(), 1)
-        .toISOString().split('T')[0];
-    case 'anual':
-      return new Date(today.getFullYear(), 0, 1)
-        .toISOString().split('T')[0];
-    default:
-      return today.toISOString().split('T')[0];
+    case 'mensual': {
+      const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      startMonth.setHours(0, 0, 0, 0);
+      return formatDateLocalYYYYMMDD(startMonth);
+    }
+    case 'trimestral': {
+      const startQuarter = new Date(today.getFullYear(), today.getMonth(), 1);
+      startQuarter.setHours(0, 0, 0, 0);
+      return formatDateLocalYYYYMMDD(startQuarter);
+    }
+    case 'anual': {
+      const startYear = new Date(today.getFullYear(), 0, 1);
+      startYear.setHours(0, 0, 0, 0);
+      return formatDateLocalYYYYMMDD(startYear);
+    }
+    default: {
+      today.setHours(0, 0, 0, 0);
+      return formatDateLocalYYYYMMDD(today);
+    }
   }
 }
+
+// Calcula la fecha de reinicio (primer día siguiente ciclo) en YYYY-MM-DD (hora local)
+// startDate debe ser 'YYYY-MM-DD'
 function getEndDate(startDate, frequency) {
-  const start = new Date(startDate);
-  let end;
+  // Forzamos hora local a medianoche creando Date con T00:00:00
+  const start = new Date(startDate + 'T00:00:00');
+  let end = new Date(start);
 
   switch (frequency) {
     case 'semanal':
-      end = new Date(start);
       end.setDate(start.getDate() + 7);
       break;
     case 'mensual':
-      end = new Date(start);
       end.setMonth(start.getMonth() + 1);
       break;
     case 'trimestral':
-      end = new Date(start);
       end.setMonth(start.getMonth() + 3);
       break;
     case 'anual':
-      end = new Date(start);
       end.setFullYear(start.getFullYear() + 1);
       break;
     default:
       end = new Date(start);
   }
 
-  // Ajustar a medianoche local
   end.setHours(0, 0, 0, 0);
-
-  return end.toISOString().split('T')[0];
+  return formatDateLocalYYYYMMDD(end);
 }
 
-function formatLocalDate(isoDate) {
-  const d = new Date(isoDate);
-  return d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+// Convierte 'YYYY-MM-DD' a texto legible local (ej: "1 de enero de 2026")
+function formatLocalDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00'); // forzar medianoche local
+  return d.toLocaleDateString(undefined, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
 }
+
 // Modal functionality
 class ModalManager {
     constructor() {
@@ -180,7 +206,9 @@ static createSubcategoryModal(categoryId) {
         <div class="form-group">
           <label for="subcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="subcategoryStartDate" name="startDate" required value="${defaultStartDate}">
-          <small id="subcategoryInfo" class="info-text">El presupuesto se reiniciará el ${defaultEndDate}</small>
+          <small id="subcategoryInfo" class="info-text">
+            El presupuesto se reiniciará el ${formatLocalDate(defaultEndDate)}
+          </small>
         </div>
         <input type="hidden" name="categoryId" value="${categoryId}">
       </form>
@@ -202,7 +230,8 @@ static createSubcategoryModal(categoryId) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `El presupuesto se reiniciará el ${formatLocalDate(endDate)}`;      }
+        info.textContent = `El presupuesto se reiniciará el ${formatLocalDate(endDate)}`;
+      }
     }
 
     if (freqSelect && startInput) {
@@ -249,7 +278,9 @@ static editSubcategoryModal(subcategory) {
         <div class="form-group">
           <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
-          <small id="editSubcategoryInfo" class="info-text">El presupuesto se reiniciará el ${defaultEndDate}</small>
+          <small id="editSubcategoryInfo" class="info-text">
+            El presupuesto se reiniciará el ${formatLocalDate(defaultEndDate)}
+          </small>
         </div>
         <input type="hidden" name="subcategoryId" value="${subcategory.id}">
         <input type="hidden" name="categoryId" value="${subcategory.categoryId}">
@@ -261,6 +292,7 @@ static editSubcategoryModal(subcategory) {
     `
   };
 
+  // ⚡ Después de renderizar, conectar los eventos
   setTimeout(() => {
     const freqSelect = document.getElementById('editSubcategoryFrequency');
     const startInput = document.getElementById('editSubcategoryStartDate');
@@ -271,7 +303,7 @@ static editSubcategoryModal(subcategory) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `El presupuesto se reiniciará el ${endDate}`;
+        info.textContent = `El presupuesto se reiniciará el ${formatLocalDate(endDate)}`;
       }
     }
 
@@ -287,6 +319,7 @@ static editSubcategoryModal(subcategory) {
 
   return modalConfig;
 }
+
 
 
     static editCategoryModal(category) {
