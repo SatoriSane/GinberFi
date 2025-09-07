@@ -234,17 +234,7 @@ label {
 .hidden { display: none !important; }
 .visible { display: block !important; }
 
-/* Responsive Design */
-@media (max-width: 480px) {
-  html {
-    font-size: 15px; /* Base font size */
-  }
-  
-  .app-main {
-    padding-left: var(--spacing-sm);
-    padding-right: var(--spacing-sm);
-  }
-}
+
 
 /* Animations */
 @keyframes fadeIn {

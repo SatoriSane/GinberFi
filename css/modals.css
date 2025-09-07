@@ -162,7 +162,15 @@
     font-size: var(--font-size-sm);
     margin-left: var(--spacing-sm);
   }
+  .input-with-currency {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
   
+  .input-with-currency input {
+    flex: 1; /* Esto hace que el input ocupe el espacio disponible */
+  }
   /* Wallet creation modal */
   .wallet-modal .currency-grid {
     display: grid;
@@ -268,11 +276,17 @@
     }
     
     .modal-footer {
-      flex-direction: column;
-    }
+      padding: var(--spacing-lg);
+      border-top: 1px solid rgba(44, 82, 130, 0.1);
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: flex-end; /* Alinea los botones a la derecha */
+  }
     
     .modal-footer button {
       width: 100%;
+      padding: 1rem ;
+      margin:0;
     }
     
     .currency-grid {

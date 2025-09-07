@@ -288,7 +288,7 @@ static editSubcategoryModal(subcategory) {
     `,
     footer: `
       <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-      <button type="submit" class="btn-primary" form="editSubcategoryForm">Guardar Cambios</button>
+      <button type="submit" class="btn-primary" form="editSubcategoryForm">Guardar</button>
     `
   };
 
@@ -343,7 +343,7 @@ static editSubcategoryModal(subcategory) {
         `,
         footer: `
           <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-          <button type="submit" class="btn-primary" form="editCategoryForm">Guardar Cambios</button>
+          <button type="submit" class="btn-primary" form="editCategoryForm">Guardar</button>
         `
       };
     }
@@ -459,9 +459,11 @@ static editSubcategoryModal(subcategory) {
           <form class="modal-form" id="incomeForm">
             <div class="form-group">
               <label for="incomeAmount">Cantidad</label>
-              <input type="number" id="incomeAmount" name="amount" required 
-                     placeholder="0.00" step="0.01" min="0.01">
-              <span class="currency-display">${wallet ? wallet.currency : 'BOB'}</span>
+              <div class="input-with-currency">
+                <input type="number" id="incomeAmount" name="amount" required 
+                      placeholder="0.00" step="0.01" min="0.01">
+                <span class="currency-display">${wallet ? wallet.currency : 'BOB'}</span>
+              </div>
             </div>
             <div class="form-group">
               <label>Fuente del dinero</label>
@@ -520,12 +522,14 @@ static editSubcategoryModal(subcategory) {
               </select>
             </div>
             <div class="form-group">
-              <label for="transferAmount">Cantidad</label>
-              <input type="number" id="transferAmount" name="amount" required 
-                     placeholder="0.00" step="0.01" min="0.01" 
-                     max="${fromWallet ? fromWallet.balance : 0}">
-              <span class="currency-display">${fromWallet ? fromWallet.currency : 'BOB'}</span>
-            </div>
+        <label for="transferAmount">Cantidad</label>
+        <div class="input-with-currency">
+          <input type="number" id="transferAmount" name="amount" required 
+                placeholder="0.00" step="0.01" min="0.01" 
+                max="${fromWallet ? fromWallet.balance : 0}">
+          <span class="currency-display">${fromWallet ? fromWallet.currency : 'BOB'}</span>
+        </div>
+      </div>
             <div class="form-group">
               <label for="transferDescription">Descripción (opcional)</label>
               <input type="text" id="transferDescription" name="description" 
