@@ -170,6 +170,7 @@ class GastosManager {
           const today = new Date();
           const diffMs = new Date(endDate) - today;
           const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+          const formattedDate = Utils.formatDate(endDate); // reutilizamos tu formateador
   
           return `
             <div class="subcategory-wrapper ${subcategory.expanded ? 'expanded' : ''}" data-subcategory-id="${subcategory.id}">
@@ -181,12 +182,10 @@ class GastosManager {
                 <div class="subcategory-right">
                   <div class="subcategory-budget">
                     <div class="budget-top">
-                      <div class="budget-reset"><span class="reset-icon">⟳</span>${daysRemaining}d</div>
                       <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
                     </div>
                   </div>
-
-
+  
                   <button class="add-expense-btn"
                           data-subcategory-id="${subcategory.id}"
                           data-subcategory-name="${subcategory.name}"
@@ -203,13 +202,23 @@ class GastosManager {
                           title="Opciones">⋮</button>
                 </div>
               </div>
-              ${subcategory.expanded ? this.renderExpenses(subcategoryExpenses) : ''}
+  
+              ${subcategory.expanded ? `
+                <div class="subcategory-info">
+                  <div class="budget-reset-detail">
+                    Se reinicia en ${daysRemaining} días (${formattedDate})
+                  </div>
+                </div>
+                ${this.renderExpenses(subcategoryExpenses)}
+              ` : ''}
             </div>
           `;
         }).join('')}
       </div>
     `;
   }
+  
+  
   
 
   renderExpenses(expenses) {

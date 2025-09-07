@@ -536,17 +536,13 @@
     align-items: center;
     gap: 6px; /* espacio entre monto y icono */
   }
-  .budget-reset {
-    font-size: 0.85em;
-    color: #666;
-    display: flex;
-    align-items: center;
-    gap: 2px; /* espacio entre icono y número */
+  .budget-reset-detail {
+    font-size: var(--font-size-xs);
+    color: var(--text-light);
+    margin: 6px 12px;
   }
   
-  .reset-icon {
-    font-size: 1.2em;
-  }
+  
   
   
   .subcategory-budget {
