@@ -207,6 +207,7 @@ const AppState = {
   
   init() {
     this.loadData();
+    this.resetExpansionState(); // 👈 Llama a esta función al iniciar
   },
   
   loadData() {
@@ -215,9 +216,21 @@ const AppState = {
     this.categories = Storage.getCategories();
     this.expenses = Storage.getExpenses();
   },
+  resetExpansionState() {
+    // Solo resetea el estado de las subcategorías
+    this.categories.forEach(category => {
+      if (category.subcategories) {
+        category.subcategories.forEach(sub => {
+          sub.expanded = false;
+        });
+      }
+    });
+  },
   
   refreshData() {
     this.loadData();
+    // Llama a resetExpansionState aquí para plegar las subcategorías
+    this.resetExpansionState(); 
     window.appEvents.emit('dataUpdated');
   }
 };

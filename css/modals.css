@@ -133,22 +133,32 @@
   }
   
   .expense-modal .expense-info {
-    background: var(--pastel-pink);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-lg);
-    text-align: center;
+    /* Elimina el background y el padding para reducir el espacio */
+    background: none;
+    padding: 0;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    
+    /* Ajusta los bordes para una apariencia más sutil, si lo deseas */
+    border-bottom: 1px solid var(--border-color); /* Agrega un borde inferior sutil */
+    padding-bottom: var(--spacing-sm);
   }
   
   .expense-info-text {
-    color: var(--dark-blue);
-    font-weight: 600;
-    margin-bottom: var(--spacing-xs);
+    /* Reduce el tamaño del texto para que no sea tan llamativo */
+    font-size: var(--font-size-sm);
+    font-weight: 500; /* Hace el texto menos "pesado" */
+    color: var(--text-color); /* Usa un color más neutro */
+    margin: 0;
   }
   
   .remaining-budget {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
+    /* Reduce el tamaño de la fuente para el monto */
+    font-size: var(--font-size-base);
+    font-weight: 600;
     color: var(--dark-blue);
   }
   

@@ -27,7 +27,7 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-sm);
     transition: all 0.3s ease;
     border: none;
   }
@@ -36,7 +36,7 @@
     position: absolute;
     inset: 0;
     border: 1px solid currentColor; /* currentColor = el color de border-color inline */
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-sm);
     opacity: 0.3; /* aquí controlas la intensidad */
     pointer-events: none; /* para que no bloquee clics */
   }
@@ -48,7 +48,7 @@
   }
   
 .category-arrow {
-  font-size: var(--font-size-base); /* antes estaba var(--font-size-lg) */
+  font-size: var(--font-size-sm); /* antes estaba var(--font-size-lg) */
   margin-right: var(--spacing-xs);
   transition: transform 0.3s ease;
   color: var(--dark-blue);
@@ -168,7 +168,7 @@
   }
   
   .subcategory-arrow {
-    font-size: var(--font-size-sm); /* un paso más pequeño */
+    font-size: var(--font-size-xs); /* un paso más pequeño */
     margin-right: var(--spacing-xs);
     transition: transform 0.3s ease;
     color: var(--dark-blue);
@@ -223,7 +223,6 @@
         position: absolute;
         inset: 0;
         border: 1px solid currentColor; /* currentColor = el color de border-color inline */
-        border-radius: var(--radius-xl);
         opacity: 0.3; /* aquí controlas la intensidad */
         pointer-events: none; /* para que no bloquee clics */
       }

@@ -356,11 +356,11 @@ static editSubcategoryModal(subcategory) {
       const wallets = AppState.wallets;
       
       return {
-        title: 'Nuevo Gasto',
+        title: 'Gasto en '+ subcategoryName,
         className: 'expense-modal',
         body: `
           <div class="expense-info">
-            <div class="expense-info-text">Presupuesto disponible en "${subcategoryName}":</div>
+            <div class="expense-info-text">Presupuesto disponible:</div>
             <div class="remaining-budget">${Utils.formatCurrency(remainingBudget, currency)}</div>
           </div>
           <form class="modal-form" id="expenseForm">
@@ -394,7 +394,7 @@ static editSubcategoryModal(subcategory) {
         `,
         footer: `
           <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-          <button type="submit" class="btn-primary" form="expenseForm">Agregar Gasto</button>
+          <button type="submit" class="btn-primary" form="expenseForm">Agregar</button>
         `
       };
     }
