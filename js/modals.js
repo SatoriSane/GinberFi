@@ -242,22 +242,6 @@ static createSubcategoryModal(categoryId) {
       updateInfo();
     }
 
-    // ⚡ Guardar subcategoría con endDate al enviar el formulario
-    const form = document.getElementById('subcategoryForm');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = form.name.value.trim();
-      const budget = parseFloat(form.budget.value);
-      const frequency = form.frequency.value;
-      const startDate = form.startDate.value;
-      const endDate = getEndDate(startDate, frequency);
-
-      const subcategory = { name, budget, frequency, startDate, endDate };
-
-      Storage.addSubcategory(categoryId, subcategory);
-      window.appEvents.emit('closeModal');
-      window.appEvents.emit('refreshCategories'); // Para re-renderizar
-    });
 
   }, 0);
 
@@ -342,20 +326,7 @@ static editSubcategoryModal(subcategory) {
 
     // ⚡ Guardar cambios al enviar el formulario
     const form = document.getElementById('editSubcategoryForm');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = form.name.value.trim();
-      const budget = parseFloat(form.budget.value);
-      const frequency = form.frequency.value;
-      const startDate = form.startDate.value;
-      const endDate = getEndDate(startDate, frequency);
 
-      const updates = { name, budget, frequency, startDate, endDate };
-
-      Storage.updateSubcategory(subcategory.categoryId, subcategory.id, updates);
-      window.appEvents.emit('closeModal');
-      window.appEvents.emit('refreshCategories'); // Para re-renderizar
-    });
 
   }, 0);
 
