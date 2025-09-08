@@ -176,6 +176,97 @@ class ModalManager {
   
     // Specific modal creators
 // --- Crear subcategoría ---
+static createSubcategoryModal(categoryId) {
+  const defaultFrequency = 'mensual';
+  const defaultStartDate = getDefaultStartDate(defaultFrequency);
+  const defaultEndDate = getEndDate(defaultStartDate, defaultFrequency);
+
+  const modalConfig = {
+    title: 'Crear Subcategoría',
+    className: 'subcategory-modal',
+    body: `
+      <form class="modal-form" id="subcategoryForm">
+        <div class="form-group">
+          <label for="subcategoryName">Nombre de la subcategoría</label>
+          <input type="text" id="subcategoryName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="subcategoryBudget">Presupuesto</label>
+          <input type="number" id="subcategoryBudget" name="budget" required step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label for="subcategoryFrequency">Frecuencia</label>
+          <select id="subcategoryFrequency" name="frequency" required>
+            <option value="semanal">Semanal</option>
+            <option value="mensual" selected>Mensual</option>
+            <option value="trimestral">Trimestral</option>
+            <option value="anual">Anual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="subcategoryStartDate">Fecha de inicio del presupuesto</label>
+          <input type="date" id="subcategoryStartDate" name="startDate" required value="${defaultStartDate}">
+          <small id="subcategoryInfo" class="info-text">
+            Se reiniciará el ${formatLocalDate(defaultEndDate)}
+          </small>
+        </div>
+        <input type="hidden" name="categoryId" value="${categoryId}">
+      </form>
+    `,
+    footer: `
+      <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+      <button type="submit" class="btn-primary" form="subcategoryForm">Crear Subcategoría</button>
+    `
+  };
+
+  setTimeout(() => {
+    const freqSelect = document.getElementById('subcategoryFrequency');
+    const startInput = document.getElementById('subcategoryStartDate');
+    const info = document.getElementById('subcategoryInfo');
+
+    function updateInfo() {
+      const frequency = freqSelect.value;
+      const startDate = startInput.value;
+      if (startDate) {
+        const endDate = getEndDate(startDate, frequency);
+        info.textContent = `Se reiniciará el ${formatLocalDate(endDate)}`;
+      }
+    }
+
+    if (freqSelect && startInput) {
+      freqSelect.addEventListener('change', () => {
+        startInput.value = getDefaultStartDate(freqSelect.value);
+        updateInfo();
+      });
+      startInput.addEventListener('change', updateInfo);
+      updateInfo();
+    }
+
+    // ⚡ Guardar subcategoría con endDate al enviar el formulario
+    const form = document.getElementById('subcategoryForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const budget = parseFloat(form.budget.value);
+      const frequency = form.frequency.value;
+      const startDate = form.startDate.value;
+      const endDate = getEndDate(startDate, frequency);
+
+      const subcategory = { name, budget, frequency, startDate, endDate };
+
+      Storage.addSubcategory(categoryId, subcategory);
+      window.appEvents.emit('closeModal');
+      window.appEvents.emit('refreshCategories'); // Para re-renderizar
+    });
+
+  }, 0);
+
+  return modalConfig;
+}
+
+
+
+// --- Editar subcategoría ---
 static editSubcategoryModal(subcategory) {
   const defaultStartDate = subcategory.startDate || getDefaultStartDate(subcategory.frequency);
   const defaultEndDate = subcategory.endDate || getEndDate(defaultStartDate, subcategory.frequency);
@@ -266,88 +357,6 @@ static editSubcategoryModal(subcategory) {
       window.appEvents.emit('refreshCategories'); // Para re-renderizar
     });
 
-  }, 0);
-
-  return modalConfig;
-}
-
-
-
-
-// --- Editar subcategoría ---
-static editSubcategoryModal(subcategory) {
-  const defaultStartDate = subcategory.startDate || getDefaultStartDate(subcategory.frequency);
-  const defaultEndDate = getEndDate(defaultStartDate, subcategory.frequency);
-
-  const modalConfig = {
-    title: 'Editar Subcategoría',
-    className: 'subcategory-modal',
-    body: `
-      <form class="modal-form" id="editSubcategoryForm">
-        <div class="form-group">
-          <label for="editSubcategoryName">Nombre de la subcategoría</label>
-          <input type="text" id="editSubcategoryName" name="name" required value="${subcategory.name || ''}">
-        </div>
-        <div class="form-group">
-          <label for="editSubcategoryBudget">Presupuesto</label>
-          <input type="number" id="editSubcategoryBudget" name="budget" required value="${subcategory.budget}" step="0.01" min="0">
-        </div>
-        <div class="form-group">
-          <label for="editSubcategoryFrequency">Frecuencia</label>
-          <select id="editSubcategoryFrequency" name="frequency" required>
-            <option value="semanal" ${subcategory.frequency === 'semanal' ? 'selected' : ''}>Semanal</option>
-            <option value="mensual" ${subcategory.frequency === 'mensual' ? 'selected' : ''}>Mensual</option>
-            <option value="trimestral" ${subcategory.frequency === 'trimestral' ? 'selected' : ''}>Trimestral</option>
-            <option value="anual" ${subcategory.frequency === 'anual' ? 'selected' : ''}>Anual</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
-          <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
-          <small id="editSubcategoryInfo" class="info-text">
-            Se reiniciará el ${formatLocalDate(defaultEndDate)}
-          </small>
-        </div>
-        <div class="form-group delete-subcategory">
-  <button type="button" class="btn-text-danger"
-          onclick="if(confirm('¿Seguro que quieres eliminar esta subcategoría?')) deleteSubcategory(${subcategory.id})">
-    🗑️ Eliminar subcategoría
-  </button>
-</div>
-
-        <input type="hidden" name="subcategoryId" value="${subcategory.id}">
-        <input type="hidden" name="categoryId" value="${subcategory.categoryId}">
-      </form>
-    `,
-    footer: `
-      <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-      <button type="submit" class="btn-primary" form="editSubcategoryForm">Guardar</button>
-    `
-  };
-
-  // ⚡ Después de renderizar, conectar los eventos
-  setTimeout(() => {
-    const freqSelect = document.getElementById('editSubcategoryFrequency');
-    const startInput = document.getElementById('editSubcategoryStartDate');
-    const info = document.getElementById('editSubcategoryInfo');
-
-    function updateInfo() {
-      const frequency = freqSelect.value;
-      const startDate = startInput.value;
-      if (startDate) {
-        const endDate = getEndDate(startDate, frequency);
-        info.textContent = `Se reiniciará el ${formatLocalDate(endDate)}`;
-      }
-    }
-
-    if (freqSelect && startInput) {
-      freqSelect.addEventListener('change', () => {
-        startInput.value = getDefaultStartDate(freqSelect.value);
-        updateInfo();
-      });
-      startInput.addEventListener('change', updateInfo);
-      updateInfo();
-    }
   }, 0);
 
   return modalConfig;
