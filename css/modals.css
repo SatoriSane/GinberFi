@@ -303,4 +303,22 @@
       grid-template-columns: repeat(3, 1fr);
     }
   }
+
+  .btn-text-danger {
+    background: none;
+    border: none;
+    color: var(--danger-color, #d9534f); /* rojo suave para alertar */
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem; /* espacio entre emoji y texto */
+    transition: color 0.2s ease;
+  }
+  
+  .btn-text-danger:hover {
+    color: #b52b30; /* un rojo un poco más oscuro al pasar el mouse */
+  }
   

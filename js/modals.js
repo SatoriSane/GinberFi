@@ -80,7 +80,7 @@ function formatLocalDate(dateStr) {
   return d.toLocaleDateString(undefined, {
     weekday: 'long',
     day: 'numeric',
-    month: 'long',
+    month: 'short',
     year: 'numeric'
   });
 }
@@ -207,7 +207,7 @@ static createSubcategoryModal(categoryId) {
           <label for="subcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="subcategoryStartDate" name="startDate" required value="${defaultStartDate}">
           <small id="subcategoryInfo" class="info-text">
-            El presupuesto se reiniciará el ${formatLocalDate(defaultEndDate)}
+            Se reiniciará el ${formatLocalDate(defaultEndDate)}
           </small>
         </div>
         <input type="hidden" name="categoryId" value="${categoryId}">
@@ -230,7 +230,7 @@ static createSubcategoryModal(categoryId) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `El presupuesto se reiniciará el ${formatLocalDate(endDate)}`;
+        info.textContent = `Se reiniciará el ${formatLocalDate(endDate)}`;
       }
     }
 
@@ -279,9 +279,16 @@ static editSubcategoryModal(subcategory) {
           <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
           <small id="editSubcategoryInfo" class="info-text">
-            El presupuesto se reiniciará el ${formatLocalDate(defaultEndDate)}
+            Se reiniciará el ${formatLocalDate(defaultEndDate)}
           </small>
         </div>
+        <div class="form-group delete-subcategory">
+  <button type="button" class="btn-text-danger"
+          onclick="if(confirm('¿Seguro que quieres eliminar esta subcategoría?')) deleteSubcategory(${subcategory.id})">
+    🗑️ Eliminar subcategoría
+  </button>
+</div>
+
         <input type="hidden" name="subcategoryId" value="${subcategory.id}">
         <input type="hidden" name="categoryId" value="${subcategory.categoryId}">
       </form>
@@ -303,7 +310,7 @@ static editSubcategoryModal(subcategory) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `El presupuesto se reiniciará el ${formatLocalDate(endDate)}`;
+        info.textContent = `Se reiniciará el ${formatLocalDate(endDate)}`;
       }
     }
 

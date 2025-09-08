@@ -218,8 +218,6 @@ class GastosManager {
     `;
   }
   
-  
-  
 
   renderExpenses(expenses) {
     if (expenses.length === 0) {
