@@ -5,7 +5,7 @@
 
 .category-wrapper {
   position: relative;
-  border-radius: var(--radius-xl); /* más redondeado que subcategorías */
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
   margin-bottom: var(--spacing-sm);
@@ -26,11 +26,11 @@
 
 .subcategory-wrapper {
   position: relative;
-  border-radius: var(--radius-lg); /* menos redondeado que la categoría */
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
-  margin: var(--spacing-xs) 0; /* margen arriba y abajo */
-  margin-left: var(--spacing-xs); /* mantiene indentación */
+  margin: var(--spacing-xs) 0;
+  margin-left: var(--spacing-xs);
   margin-right: 0;
 }
 
@@ -52,9 +52,10 @@
   border-radius: var(--radius-sm);
   width: 100%;
   box-sizing: border-box;
+  padding: var(--spacing-sm); /* versión móvil aplicada */
 }
 
-.category-content::after{
+.category-content::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -63,6 +64,7 @@
   opacity: 0.3;
   pointer-events: none;
 }
+
 .subcategory-content::after {
   content: "";
   position: absolute;
@@ -102,13 +104,13 @@
 }
 
 .category-name {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-base); /* versión móvil aplicada */
   font-weight: 700;
   color: var(--dark-blue);
 }
 
 .subcategory-name {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-base); /* versión móvil aplicada */
   font-weight: 500;
   color: var(--dark-blue);
 }
@@ -119,11 +121,12 @@
   align-items: center;
   gap: var(--spacing-sm);
 }
+
 .expense-right {
   display: flex;
-  flex-direction: column; /* columna en lugar de fila */
-  align-items: flex-end;  /* derecha alineado */
-  gap: 0px; /* pequeño espacio entre amount y wallet */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0px;
 }
 
 .category-budget,
@@ -135,7 +138,7 @@
 }
 
 .budget-amount {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-base); /* versión móvil aplicada */
   font-weight: 700;
   color: var(--dark-blue);
 }
@@ -257,20 +260,4 @@
 .edit-category-btn:hover,
 .edit-subcategory-btn:hover {
   background: rgba(0, 0, 0, 0.05);
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .category-content {
-    padding: var(--spacing-sm);
-  }
-
-  .category-name,
-  .budget-amount {
-    font-size: var(--font-size-base);
-  }
-
-  .subcategory-content {
-    padding: var(--spacing-xs) var(--spacing-sm);
-  }
 }

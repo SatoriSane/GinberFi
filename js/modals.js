@@ -377,7 +377,7 @@ static editSubcategoryModal(subcategory) {
                      value="${new Date().toISOString().split('T')[0]}">
             </div>
             <div class="form-group">
-              <label for="expenseWallet">Wallet/Wallet</label>
+              <label for="expenseWallet">Wallet</label>
               <select id="expenseWallet" name="walletId" required>
                 ${wallets.map(wallet => `
                   <option value="${wallet.id}" ${selectedWallet && selectedWallet.id === wallet.id ? 'selected' : ''}>

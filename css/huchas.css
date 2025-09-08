@@ -61,15 +61,15 @@
 .wallet-actions {
   display: flex;
   padding: var(--spacing-md);
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs); /* versión móvil aplicada */
 }
 
 .action-btn {
   flex: 1;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm); /* versión móvil aplicada */
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm); /* versión móvil aplicada */
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -158,6 +158,7 @@
 
 .form-row {
   display: flex;
+  flex-direction: column; /* versión móvil aplicada */
   gap: var(--spacing-md);
 }
 
@@ -222,7 +223,7 @@
 /* Transactions Modal Styles */
 .transactions-modal .modal {
   max-width: 500px;
-  max-height: 80vh;
+  max-height: 90vh; /* versión móvil aplicada */
 }
 
 .wallet-summary {
@@ -252,7 +253,7 @@
 }
 
 .transactions-list {
-  max-height: 400px;
+  max-height: 300px; /* versión móvil aplicada */
   overflow-y: auto;
   padding-right: var(--spacing-xs);
 }
@@ -291,8 +292,9 @@
 
 .transaction-main {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column; /* versión móvil aplicada */
+  align-items: flex-start; /* versión móvil aplicada */
+  gap: var(--spacing-xs); /* versión móvil aplicada */
   margin-bottom: var(--spacing-xs);
 }
 
@@ -318,7 +320,8 @@
   font-weight: 700;
   font-size: var(--font-size-base);
   white-space: nowrap;
-  margin-left: var(--spacing-sm);
+  margin-left: 0; /* versión móvil aplicada */
+  align-self: flex-end; /* versión móvil aplicada */
 }
 
 .transaction-amount.positive {
@@ -341,39 +344,4 @@
   padding: var(--spacing-lg);
   color: var(--text-light);
   font-style: italic;
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .wallet-actions {
-    gap: var(--spacing-xs);
-  }
-  
-  .action-btn {
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-sm);
-  }
-  
-  .form-row {
-    flex-direction: column;
-  }
-  
-  .transaction-main {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xs);
-  }
-  
-  .transaction-amount {
-    align-self: flex-end;
-    margin-left: 0;
-  }
-
-  .transactions-modal .modal {
-    max-height: 90vh;
-  }
-
-  .transactions-list {
-    max-height: 300px;
-  }
 }
