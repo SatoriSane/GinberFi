@@ -101,14 +101,21 @@ class Storage {
       const categories = this.getCategories();
       const category = categories.find(cat => cat.id === categoryId);
       if (category) {
+        const now = new Date();
         subcategory.id = Date.now().toString();
-        subcategory.createdAt = new Date().toISOString();
+        subcategory.createdAt = now.toISOString();
         subcategory.categoryId = categoryId;
+    
+        // 🔹 Calcular fechas desde la frecuencia
+        subcategory.startDate = subcategory.startDate || getDefaultStartDate(subcategory.frequency);
+        subcategory.endDate = getEndDate(subcategory.startDate, subcategory.frequency);
+    
         category.subcategories.push(subcategory);
         return this.saveCategories(categories);
       }
       return false;
     }
+    
   
     // Expense methods
     static getExpenses() {
@@ -250,13 +257,80 @@ class Storage {
           if (category) {
             const subIndex = category.subcategories.findIndex(sub => sub.id === subcategoryId);
             if (subIndex !== -1) {
-              category.subcategories[subIndex] = { ...category.subcategories[subIndex], ...updates };
+              const updatedSub = { ...category.subcategories[subIndex], ...updates };
+        
+              // 🔹 Recalcular endDate si cambia startDate o frequency
+              if (updates.startDate || updates.frequency) {
+                updatedSub.startDate = updates.startDate || updatedSub.startDate;
+                updatedSub.frequency = updates.frequency || updatedSub.frequency;
+                updatedSub.endDate = getEndDate(updatedSub.startDate, updatedSub.frequency);
+              }
+        
+              category.subcategories[subIndex] = updatedSub;
               return this.saveCategories(categories);
             }
           }
           return false;
         }
-    
+        
+        // Storage.js
+      static updateExpense(expenseId, updatedData) {
+        const expenses = this.getExpenses();
+        const expenseIndex = expenses.findIndex(exp => exp.id === expenseId);
+        if (expenseIndex === -1) return false;
 
+        const oldExpense = expenses[expenseIndex];
+
+        // Restaurar el balance de la wallet anterior
+        const wallets = this.getWallets();
+        const oldWallet = wallets.find(w => w.id === oldExpense.walletId);
+        if (oldWallet) {
+          oldWallet.balance += parseFloat(oldExpense.amount); // revertir gasto
+        }
+
+        // Aplicar el gasto a la nueva wallet
+        const newWallet = wallets.find(w => w.id === updatedData.walletId);
+        if (newWallet) {
+          if (newWallet.balance < parseFloat(updatedData.amount)) {
+            console.warn('Saldo insuficiente en la nueva wallet');
+            return false;
+          }
+          newWallet.balance -= parseFloat(updatedData.amount);
+        }
+
+        this.saveWallets(wallets);
+
+        // Actualizar el gasto
+        expenses[expenseIndex] = { ...oldExpense, ...updatedData };
+        this.saveExpenses(expenses);
+
+        // Actualizar transacciones: opcional, depende si quieres mantener histórico separado
+        const transactions = this.get('ginbertfi_transactions') || [];
+
+        // Eliminar transacción antigua del gasto
+        const oldTransactionIndex = transactions.findIndex(tx => tx.id === 'exp-' + expenseId);
+        if (oldTransactionIndex !== -1) transactions.splice(oldTransactionIndex, 1);
+
+        // Agregar nueva transacción
+        const transaction = {
+          id: 'exp-' + expenseId,
+          walletId: updatedData.walletId,
+          type: 'expense',
+          amount: -parseFloat(updatedData.amount),
+          description: updatedData.name,
+          date: updatedData.date
+        };
+        transactions.push(transaction);
+        this.set('ginbertfi_transactions', transactions);
+
+        return true;
+      }
+
+        static archiveExpenses(expenses) {
+          const archived = this.get('ginbertfi_historical_expenses') || [];
+          archived.push(...expenses);
+          this.set('ginbertfi_historical_expenses', archived);
+        }
+                  
   }
   

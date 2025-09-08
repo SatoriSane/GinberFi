@@ -9,22 +9,30 @@ class GastosManager {
     this.init();
   }
 
+
   init() {
     this.setupEventListeners();
+    
+    // 👇 Antes de renderizar, revisar si hay subcategorías que deben reiniciarse
+    this.checkAndResetBudgets();
+  
     this.render();
     
     // Listen for data updates
     window.appEvents.on('dataUpdated', () => {
+      this.checkAndResetBudgets(); // 👈 también aquí
       this.render();
     });
     
     // Listen for tab changes
     window.appEvents.on('tabChanged', (tabName) => {
       if (tabName === 'gastos') {
+        this.checkAndResetBudgets(); // 👈 también aquí
         this.render();
       }
     });
   }
+  
 
   setupEventListeners() {
     this.addCategoryBtn.addEventListener('click', () => {
@@ -34,12 +42,12 @@ class GastosManager {
     this.addNewCategoryFab.addEventListener('click', () => {
       this.openCreateCategoryModal();
     });
-
     // Handle form submissions
     document.addEventListener('submit', (e) => {
       e.preventDefault(); // prevenimos submit por defecto para todos los formularios
 
       const form = e.target;
+
 
       switch (form.id) {
         case 'categoryForm':
@@ -52,18 +60,21 @@ class GastosManager {
 
         case 'editCategoryForm': {
           const formData = new FormData(form);
-          const categoryId = formData.get('categoryId'); // asegurarse de que exista un input hidden con este nombre
+          const categoryId = formData.get('categoryId'); 
           this.handleEditCategory(form, categoryId);
           break;
         }
 
         case 'editSubcategoryForm': {
           const formData = new FormData(form);
-          const categoryId = formData.get('categoryId');        // hidden input
-          const subcategoryId = formData.get('subcategoryId');  // hidden input
+          const categoryId = formData.get('categoryId');        
+          const subcategoryId = formData.get('subcategoryId');  
           this.handleEditSubcategory(form, categoryId, subcategoryId);
           break;
         }
+        case 'editExpenseForm':
+          this.handleEditExpense(form);
+          break;
 
         case 'expenseForm':
           this.handleCreateExpense(form);
@@ -73,18 +84,17 @@ class GastosManager {
           console.warn('Formulario no manejado:', form.id);
       }
     });
-
     document.getElementById('subcategoryFrequency')?.addEventListener('change', (e) => {
       const freq = e.target.value;
       const startDateInput = document.getElementById('subcategoryStartDate');
       if (startDateInput) {
-        startDateInput.value = getDefaultStartDate(freq);
+        startDateInput.value = this.getDefaultStartDate(freq);
       }
     });
-    
-
-    
   }
+  // ---------------------------------------
+  // --- Renderizado de categorías/subcategorías---
+  // ---------------------------------------
 
   render() {
     const categories = AppState.categories;
@@ -92,7 +102,6 @@ class GastosManager {
     if (categories.length === 0) {
       this.emptyCategoriesState.style.display = 'block';
       this.addNewCategoryFab.style.display = 'none';
-      // Clear any existing category elements except the empty state
       this.categoriesContainer.querySelectorAll('.category-wrapper').forEach(el => el.remove());
     } else {
       this.emptyCategoriesState.style.display = 'none';
@@ -119,23 +128,21 @@ class GastosManager {
               <span class="category-arrow">▶</span>
               <span class="category-name">${category.name}</span>
             </div>
-<div class="category-right">
-  <div class="category-budget">
-    <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
-    <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
-  </div>
-  <button class="add-subcategory-btn"
-          data-category-id="${category.id}"
-          data-category-name="${category.name}"
-          aria-label="Añadir subcategoría"
-          title="Añadir subcategoría">+</button>
-  <button class="edit-category-btn"
-          data-category-id="${category.id}"
-          aria-label="Opciones"
-          title="Opciones">⋮</button>
-
-</div>
-
+            <div class="category-right">
+              <div class="category-budget">
+                <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
+                <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
+              </div>
+              <button class="add-subcategory-btn"
+                      data-category-id="${category.id}"
+                      data-category-name="${category.name}"
+                      aria-label="Añadir subcategoría"
+                      title="Añadir subcategoría">+</button>
+              <button class="edit-category-btn"
+                      data-category-id="${category.id}"
+                      aria-label="Opciones"
+                      title="Opciones">⋮</button>
+            </div>
           </div>
           ${category.expanded ? this.renderSubcategories(category, expenses) : ''}
         </div>
@@ -158,26 +165,40 @@ class GastosManager {
   
     return `
       <div class="subcategories-container">
-        ${category.subcategories.map(subcategory => {
-          const subcategoryExpenses = this.getSubcategoryExpenses(subcategory.id, expenses);
-          const spent = this.getSubcategorySpent(subcategory.id, expenses);
-          const remaining = subcategory.budget - spent;
-          const percentage = Utils.calculateProgress(spent, subcategory.budget);
+        ${category.subcategories.map(sub => {
+          const subExpenses = this.getSubcategoryExpenses(sub.id, expenses);
+          const spent = this.getSubcategorySpent(sub.id, expenses);
+          const remaining = sub.budget - spent;
+          const percentage = Utils.calculateProgress(spent, sub.budget);
           const budgetColors = Utils.getProgressBarColor(100 - percentage);
   
-          // Calcular días restantes hasta el reinicio
-          const endDate = getEndDate(subcategory.startDate, subcategory.frequency);
+          // ✅ Formatear fecha de inicio
+          const formattedStart = sub.startDate ? Utils.formatDate(sub.startDate) : '---';
+  
+          // 🔹 Determinar fecha final segura
+          let endDate = sub.endDate;
+          if (!endDate || isNaN(new Date(endDate))) {
+            // Si no hay endDate válido, calcular a partir del startDate y la frecuencia
+            endDate = getEndDate(sub.startDate, sub.frequency);
+          }
+  
+          // 🔹 Restar un día para mostrar al usuario
+          const endDateForDisplay = new Date(endDate);
+          endDateForDisplay.setDate(endDateForDisplay.getDate() - 1);
+          const formattedEnd = Utils.formatDate(endDateForDisplay.toISOString());
+  
+          // ✅ Calcular días restantes
           const today = new Date();
-          const diffMs = new Date(endDate) - today;
-          const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-          const formattedDate = Utils.formatDate(endDate); // reutilizamos tu formateador
+          const end = new Date(endDate + 'T23:59:59');
+          const daysRemaining = Math.max(0, Math.ceil((end - today) / (1000 * 60 * 60 * 24)));
   
           return `
-            <div class="subcategory-wrapper ${subcategory.expanded ? 'expanded' : ''}" data-subcategory-id="${subcategory.id}">
-              <div class="subcategory-content" data-toggle="subcategory" style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
+            <div class="subcategory-wrapper ${sub.expanded ? 'expanded' : ''}" data-subcategory-id="${sub.id}">
+              <div class="subcategory-content" data-toggle="subcategory"
+                   style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
                 <div class="subcategory-left">
                   <span class="subcategory-arrow">▶</span>
-                  <span class="subcategory-name">${subcategory.name}</span>
+                  <span class="subcategory-name">${sub.name}</span>
                 </div>
                 <div class="subcategory-right">
                   <div class="subcategory-budget">
@@ -187,8 +208,8 @@ class GastosManager {
                   </div>
   
                   <button class="add-expense-btn"
-                          data-subcategory-id="${subcategory.id}"
-                          data-subcategory-name="${subcategory.name}"
+                          data-subcategory-id="${sub.id}"
+                          data-subcategory-name="${sub.name}"
                           data-remaining-budget="${remaining}"
                           aria-label="Gastar"
                           title="Gastar">
@@ -196,20 +217,21 @@ class GastosManager {
                       <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
                     </span>
                   </button>
+  
                   <button class="edit-subcategory-btn"
-                          data-subcategory-id="${subcategory.id}"
+                          data-subcategory-id="${sub.id}"
                           aria-label="Opciones"
                           title="Opciones">⋮</button>
                 </div>
               </div>
   
-              ${subcategory.expanded ? `
+              ${sub.expanded ? `
                 <div class="subcategory-info">
                   <div class="budget-reset-detail">
-                    Se reinicia en ${daysRemaining} días (${formattedDate})
+                    Gastos entre ${formattedStart} y ${formattedEnd} (↻ ${daysRemaining} días)
                   </div>
                 </div>
-                ${this.renderExpenses(subcategoryExpenses)}
+                ${this.renderExpenses(subExpenses)}
               ` : ''}
             </div>
           `;
@@ -217,6 +239,10 @@ class GastosManager {
       </div>
     `;
   }
+  
+  
+  
+  
   
 
   renderExpenses(expenses) {
@@ -230,12 +256,15 @@ class GastosManager {
       `;
     }
   
+    // 🔹 Ordenar de más reciente a más antiguo
+    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+  
     return `
       <div class="expenses-container">
-        ${expenses.map(expense => {
+        ${sortedExpenses.map(expense => {
           const wallet = AppState.wallets.find(acc => acc.id === expense.walletId);
           return `
-            <div class="expense-item">
+            <div class="expense-item" data-expense-id="${expense.id}">
               <div class="expense-info">
                 <div class="expense-name">${expense.name}</div>
                 <div class="expense-date">${Utils.formatDate(expense.date)}</div>
@@ -252,6 +281,8 @@ class GastosManager {
       </div>
     `;
   }
+  
+  
   attachCategoryEventListeners() {
     // Category toggle
     this.categoriesContainer.querySelectorAll('[data-toggle="category"]').forEach(element => {
@@ -317,6 +348,15 @@ class GastosManager {
         this.openEditSubcategoryModal(subcategoryId);
       });
     });
+        // Editar gasto al hacer click
+    this.categoriesContainer.querySelectorAll('.expense-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const expenseId = item.dataset.expenseId;
+        this.openEditExpenseModal(expenseId);
+      });
+    });
+
   }
   
 
@@ -373,6 +413,14 @@ class GastosManager {
     if (!subcategory) return;
   
     const modalData = ModalManager.editSubcategoryModal(subcategory);
+    window.appEvents.emit('openModal', modalData);
+  }
+  openEditExpenseModal(expenseId) {
+    const expense = AppState.expenses.find(e => e.id === expenseId);
+    if (!expense) return;
+  
+    const wallet = AppState.wallets.find(acc => acc.id === expense.walletId);
+    const modalData = ModalManager.editExpenseModal(expense, wallet ? wallet.currency : 'BOB');
     window.appEvents.emit('openModal', modalData);
   }
   
@@ -495,7 +543,38 @@ class GastosManager {
       Utils.showToast('Error al actualizar la categoría', 'error');
     }
   }
-
+  handleEditExpense(form) {
+    const formData = new FormData(form);
+    const expenseId = formData.get('expenseId'); // asegurarse de que el input hidden exista
+    const updatedData = {
+      name: Utils.sanitizeInput(formData.get('name')),
+      amount: parseFloat(formData.get('amount')),
+      date: formData.get('date'),
+      walletId: formData.get('walletId'),
+      subcategoryId: formData.get('subcategoryId')
+    };
+  
+    if (!Utils.validateNumber(updatedData.amount)) {
+      Utils.showToast('El monto debe ser un número válido', 'error');
+      return;
+    }
+  
+    // Validar saldo de wallet si es necesario
+    const wallet = AppState.wallets.find(acc => acc.id === updatedData.walletId);
+    if (!wallet || wallet.balance < updatedData.amount) {
+      Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
+      return;
+    }
+  
+    if (Storage.updateExpense(expenseId, updatedData)) {
+      AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Utils.showToast('Gasto actualizado exitosamente', 'success');
+    } else {
+      Utils.showToast('Error al actualizar el gasto', 'error');
+    }
+  }
+  
   handleDeleteCategory(categoryId) {
     if (confirm('¿Seguro que quieres eliminar esta categoría y todas sus subcategorías?')) {
       if (Storage.deleteCategory(categoryId)) {
@@ -507,9 +586,6 @@ class GastosManager {
     }
   }
 
-
-  
-
   handleDeleteSubcategory(categoryId, subcategoryId) {
     if (confirm('¿Seguro que quieres eliminar esta subcategoría?')) {
       if (Storage.deleteSubcategory(categoryId, subcategoryId)) {
@@ -520,7 +596,6 @@ class GastosManager {
       }
     }
   }
-
   handleCreateExpense(form) {
     const formData = new FormData(form);
     const expenseData = {
@@ -530,27 +605,43 @@ class GastosManager {
       walletId: formData.get('walletId'),
       subcategoryId: formData.get('subcategoryId')
     };
-
+  
     if (!Utils.validateNumber(expenseData.amount)) {
       Utils.showToast('El monto debe ser un número válido', 'error');
       return;
     }
-
+  
     // Check if wallet has sufficient balance
     const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
     if (!wallet || wallet.balance < expenseData.amount) {
       Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
       return;
     }
-
+  
     if (Storage.addExpense(expenseData)) {
       AppState.refreshData();
+  
+      // 🔹 Desplegar automáticamente la subcategoría a la que pertenece el gasto
+      const category = AppState.categories.find(cat =>
+        cat.subcategories.some(sub => sub.id === expenseData.subcategoryId)
+      );
+      if (category) {
+        const sub = category.subcategories.find(s => s.id === expenseData.subcategoryId);
+        if (sub) {
+          sub.expanded = true; // aseguramos que se muestre expandida
+        }
+      }
+  
       window.appEvents.emit('closeModal');
       Utils.showToast('Gasto agregado exitosamente', 'success');
+  
+      // 🔹 Forzar render después de marcar expandida
+      this.render();
     } else {
       Utils.showToast('Error al agregar el gasto', 'error');
     }
   }
+  
 
   // Helper methods
   getCategoryExpenses(categoryId, expenses) {
@@ -607,6 +698,70 @@ class GastosManager {
   
     // Formatear a yyyy-mm-dd para el input date
     return startDate.toISOString().split('T')[0];
+  }
+  resetSubcategoryBudget(categoryId, subcategoryId, allExpenses) {
+    // 1. Filtrar gastos de la subcategoría
+    const expensesToArchive = allExpenses.filter(e => e.subcategoryId === subcategoryId);
+  
+    if (expensesToArchive.length > 0) {
+      // 2. Guardar en histórico con contexto de ciclo
+      const sub = AppState.categories
+        .flatMap(cat => cat.subcategories)
+        .find(s => s.id === subcategoryId);
+  
+      if (sub) {
+        const periodStart = new Date(sub.startDate); // asegurar Date
+        const periodEnd = new Date(getEndDate(sub.startDate, sub.frequency)); // asegurar Date
+  
+        const enrichedExpenses = expensesToArchive.map(e => ({
+          ...e,
+          archivedAt: new Date().toISOString(),
+          periodStart: periodStart.toISOString(),
+          periodEnd: periodEnd.toISOString()
+        }));
+  
+        Storage.archiveExpenses(enrichedExpenses);
+      }
+  
+      // 3. Eliminar de la lista activa
+      const remaining = allExpenses.filter(e => e.subcategoryId !== subcategoryId);
+      Storage.saveExpenses(remaining);
+    }
+  
+    // 4. Reiniciar subcategoría (nuevo ciclo)
+    const categories = Storage.getCategories();
+    const category = categories.find(cat => cat.id === categoryId);
+    if (category) {
+      const sub = category.subcategories.find(s => s.id === subcategoryId);
+      if (sub) {
+        const nextStart = new Date(getEndDate(sub.startDate, sub.frequency)); // asegurar Date
+        sub.startDate = nextStart.toISOString(); // guardar como string en formato ISO
+        Storage.saveCategories(categories);
+      }
+    }
+  }
+  
+  
+  checkAndResetBudgets() {
+    const categories = Storage.getCategories();
+    const allExpenses = Storage.getExpenses();
+  
+    let didReset = false;
+  
+    categories.forEach(category => {
+      category.subcategories.forEach(sub => {
+        const endDate = getEndDate(sub.startDate, sub.frequency);
+        if (new Date() >= new Date(endDate)) {
+          this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
+          didReset = true;
+        }
+      });
+    });
+  
+    if (didReset) {
+      AppState.refreshData();
+      Utils.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
+    }
   }
   
 }

@@ -12,7 +12,6 @@
 }
 
 .category-wrapper:hover {
-  transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -35,7 +34,6 @@
 }
 
 .subcategory-wrapper:hover {
-  transform: scale(1.02);
   box-shadow: var(--shadow-md);
 }
 
@@ -176,7 +174,6 @@
 
 .add-subcategory-btn:hover {
   background: rgba(0, 0, 0, 0.1);
-  transform: scale(1.1);
 }
 
 .add-expense-btn:hover {

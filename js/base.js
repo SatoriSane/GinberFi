@@ -12,15 +12,29 @@ class Utils {
     const formattedAmount = parseFloat(amount).toFixed(2);
     return `${formattedAmount} ${symbol}`;
   }
-
-  static formatDate(dateString) {
-    const date = new Date(dateString);
+  static formatDate(input) {
+    if (!input) return 'Invalid Date';
+  
+    let date;
+  
+    if (typeof input === 'string') {
+      // tomar solo los primeros 10 caracteres YYYY-MM-DD
+      const dateStr = input.slice(0,10);
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return 'Invalid Date';
+      date = new Date(parts[0], parts[1]-1, parts[2]);
+    } else if (input instanceof Date) {
+      date = input;
+    } else {
+      return 'Invalid Date';
+    }
+  
     return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
   }
+  
 
   static calculateProgress(spent, budget) {
     if (budget === 0) return 0;

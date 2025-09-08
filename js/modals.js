@@ -176,54 +176,60 @@ class ModalManager {
   
     // Specific modal creators
 // --- Crear subcategoría ---
-static createSubcategoryModal(categoryId) {
-  const defaultFrequency = 'mensual';
-  const defaultStartDate = getDefaultStartDate(defaultFrequency);
-  const defaultEndDate = getEndDate(defaultStartDate, defaultFrequency);
+static editSubcategoryModal(subcategory) {
+  const defaultStartDate = subcategory.startDate || getDefaultStartDate(subcategory.frequency);
+  const defaultEndDate = subcategory.endDate || getEndDate(defaultStartDate, subcategory.frequency);
 
   const modalConfig = {
-    title: 'Crear Subcategoría',
+    title: 'Editar Subcategoría',
     className: 'subcategory-modal',
     body: `
-      <form class="modal-form" id="subcategoryForm">
+      <form class="modal-form" id="editSubcategoryForm">
         <div class="form-group">
-          <label for="subcategoryName">Nombre de la subcategoría</label>
-          <input type="text" id="subcategoryName" name="name" required>
+          <label for="editSubcategoryName">Nombre de la subcategoría</label>
+          <input type="text" id="editSubcategoryName" name="name" required value="${subcategory.name || ''}">
         </div>
         <div class="form-group">
-          <label for="subcategoryBudget">Presupuesto</label>
-          <input type="number" id="subcategoryBudget" name="budget" required step="0.01" min="0">
+          <label for="editSubcategoryBudget">Presupuesto</label>
+          <input type="number" id="editSubcategoryBudget" name="budget" required value="${subcategory.budget}" step="0.01" min="0">
         </div>
         <div class="form-group">
-          <label for="subcategoryFrequency">Frecuencia</label>
-          <select id="subcategoryFrequency" name="frequency" required>
-            <option value="semanal">Semanal</option>
-            <option value="mensual" selected>Mensual</option>
-            <option value="trimestral">Trimestral</option>
-            <option value="anual">Anual</option>
+          <label for="editSubcategoryFrequency">Frecuencia</label>
+          <select id="editSubcategoryFrequency" name="frequency" required>
+            <option value="semanal" ${subcategory.frequency === 'semanal' ? 'selected' : ''}>Semanal</option>
+            <option value="mensual" ${subcategory.frequency === 'mensual' ? 'selected' : ''}>Mensual</option>
+            <option value="trimestral" ${subcategory.frequency === 'trimestral' ? 'selected' : ''}>Trimestral</option>
+            <option value="anual" ${subcategory.frequency === 'anual' ? 'selected' : ''}>Anual</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="subcategoryStartDate">Fecha de inicio del presupuesto</label>
-          <input type="date" id="subcategoryStartDate" name="startDate" required value="${defaultStartDate}">
-          <small id="subcategoryInfo" class="info-text">
+          <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
+          <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
+          <small id="editSubcategoryInfo" class="info-text">
             Se reiniciará el ${formatLocalDate(defaultEndDate)}
           </small>
         </div>
-        <input type="hidden" name="categoryId" value="${categoryId}">
+        <div class="form-group delete-subcategory">
+          <button type="button" class="btn-text-danger"
+                  onclick="if(confirm('¿Seguro que quieres eliminar esta subcategoría?')) deleteSubcategory(${subcategory.id})">
+            🗑️ Eliminar subcategoría
+          </button>
+        </div>
+
+        <input type="hidden" name="subcategoryId" value="${subcategory.id}">
+        <input type="hidden" name="categoryId" value="${subcategory.categoryId}">
       </form>
     `,
     footer: `
       <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-      <button type="submit" class="btn-primary" form="subcategoryForm">Crear Subcategoría</button>
+      <button type="submit" class="btn-primary" form="editSubcategoryForm">Guardar</button>
     `
   };
 
-  // ⚡ Vincular eventos después de renderizar
   setTimeout(() => {
-    const freqSelect = document.getElementById('subcategoryFrequency');
-    const startInput = document.getElementById('subcategoryStartDate');
-    const info = document.getElementById('subcategoryInfo');
+    const freqSelect = document.getElementById('editSubcategoryFrequency');
+    const startInput = document.getElementById('editSubcategoryStartDate');
+    const info = document.getElementById('editSubcategoryInfo');
 
     function updateInfo() {
       const frequency = freqSelect.value;
@@ -242,10 +248,30 @@ static createSubcategoryModal(categoryId) {
       startInput.addEventListener('change', updateInfo);
       updateInfo();
     }
+
+    // ⚡ Guardar cambios al enviar el formulario
+    const form = document.getElementById('editSubcategoryForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const budget = parseFloat(form.budget.value);
+      const frequency = form.frequency.value;
+      const startDate = form.startDate.value;
+      const endDate = getEndDate(startDate, frequency);
+
+      const updates = { name, budget, frequency, startDate, endDate };
+
+      Storage.updateSubcategory(subcategory.categoryId, subcategory.id, updates);
+      window.appEvents.emit('closeModal');
+      window.appEvents.emit('refreshCategories'); // Para re-renderizar
+    });
+
   }, 0);
 
   return modalConfig;
 }
+
+
 
 
 // --- Editar subcategoría ---
@@ -405,7 +431,49 @@ static editSubcategoryModal(subcategory) {
         `
       };
     }
-  
+    static editExpenseModal(expense, currency = 'BOB') {
+      return {
+        title: 'Editar Gasto',
+        className: 'expense-modal',
+        body: `
+          <form class="modal-form" id="editExpenseForm">
+            <div class="form-group">
+              <label for="editExpenseName">Producto/Servicio</label>
+              <input type="text" id="editExpenseName" name="name" required value="${expense.name}">
+            </div>
+            <div class="form-group">
+              <label for="editExpenseAmount">Valor <span class="currency-display">${currency}</span></label>
+              <input type="number" id="editExpenseAmount" name="amount" required value="${expense.amount}" step="0.01" min="0.01">
+            </div>
+            <div class="form-group">
+              <label for="editExpenseDate">Fecha</label>
+              <input type="date" id="editExpenseDate" name="date" required value="${expense.date}">
+            </div>
+            <div class="form-group">
+              <label for="editExpenseWallet">Wallet</label>
+              <select id="editExpenseWallet" name="walletId" required>
+                ${AppState.wallets.map(w => `
+                  <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
+                    ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+            <div class="form-group delete-expense">
+              <button type="button" class="btn-text-danger" onclick="if(confirm('¿Seguro que quieres eliminar este gasto?')) deleteExpense(${expense.id})">
+                🗑️ Eliminar gasto
+              </button>
+            </div>
+            <input type="hidden" name="expenseId" value="${expense.id}">
+          </form>
+        `,
+        footer: `
+          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+          <button type="submit" class="btn-primary" form="editExpenseForm">Guardar</button>
+        `
+      };
+    }
+    
     static createWalletModal() {
       const currencies = [
         { code: 'BOB', name: 'Boliviano' },
