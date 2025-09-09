@@ -15,63 +15,89 @@ function formatDateLocalYYYYMMDD(date) {
 // Devuelve la fecha de inicio por defecto (YYYY-MM-DD) en hora local
 function getDefaultStartDate(frequency) {
   const today = new Date();
+  today.setHours(0, 0, 0, 0); // normalizamos hora
+
   switch (frequency) {
     case 'semanal': {
       const day = today.getDay(); // domingo=0, lunes=1
-      const diff = (day === 0 ? -6 : 1 - day); // mover al lunes
+      const diff = (day === 0 ? -6 : 1 - day); // mover al lunes de esta semana
       const monday = new Date(today);
       monday.setDate(today.getDate() + diff);
-      monday.setHours(0, 0, 0, 0);
       return formatDateLocalYYYYMMDD(monday);
     }
     case 'mensual': {
       const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      startMonth.setHours(0, 0, 0, 0);
       return formatDateLocalYYYYMMDD(startMonth);
     }
     case 'trimestral': {
-      const startQuarter = new Date(today.getFullYear(), today.getMonth(), 1);
-      startQuarter.setHours(0, 0, 0, 0);
+      // Obtener el primer mes del trimestre actual
+      const quarterMonth = today.getMonth() - (today.getMonth() % 3);
+      const startQuarter = new Date(today.getFullYear(), quarterMonth, 1);
       return formatDateLocalYYYYMMDD(startQuarter);
     }
     case 'anual': {
       const startYear = new Date(today.getFullYear(), 0, 1);
-      startYear.setHours(0, 0, 0, 0);
       return formatDateLocalYYYYMMDD(startYear);
     }
-    default: {
-      today.setHours(0, 0, 0, 0);
+    default:
       return formatDateLocalYYYYMMDD(today);
-    }
   }
 }
 
+
 // Calcula la fecha de reinicio (primer día siguiente ciclo) en YYYY-MM-DD (hora local)
 // startDate debe ser 'YYYY-MM-DD'
+function getNextResetDate(startDate, frequency) {
+    // Devuelve el primer día del SIGUIENTE ciclo
+    const start = new Date(startDate + 'T00:00:00');
+    let nextDate = new Date(start);
+
+    switch (frequency) {
+        case 'semanal':
+            nextDate.setDate(start.getDate() + 7);
+            break;
+        case 'mensual':
+            nextDate.setMonth(start.getMonth() + 1);
+            break;
+        case 'trimestral':
+            nextDate.setMonth(start.getMonth() + 3);
+            break;
+        case 'anual':
+            nextDate.setFullYear(start.getFullYear() + 1);
+            break;
+        default:
+            nextDate = new Date(start);
+    }
+    nextDate.setHours(0, 0, 0, 0);
+    return nextDate; // Devuelve el objeto Date completo
+}
+
 function getEndDate(startDate, frequency) {
-  // Forzamos hora local a medianoche creando Date con T00:00:00
-  const start = new Date(startDate + 'T00:00:00');
-  let end = new Date(start);
+    // Forzamos hora local a medianoche creando Date con T00:00:00
+    const start = new Date(startDate + 'T00:00:00');
+    let end = new Date(start);
 
-  switch (frequency) {
-    case 'semanal':
-      end.setDate(start.getDate() + 7);
-      break;
-    case 'mensual':
-      end.setMonth(start.getMonth() + 1);
-      break;
-    case 'trimestral':
-      end.setMonth(start.getMonth() + 3);
-      break;
-    case 'anual':
-      end.setFullYear(start.getFullYear() + 1);
-      break;
-    default:
-      end = new Date(start);
-  }
+    switch (frequency) {
+        case 'semanal':
+            end.setDate(start.getDate() + 7);
+            break;
+        case 'mensual':
+            end.setMonth(start.getMonth() + 1);
+            break;
+        case 'trimestral':
+            end.setMonth(start.getMonth() + 3);
+            break;
+        case 'anual':
+            end.setFullYear(start.getFullYear() + 1);
+            break;
+        default:
+            end = new Date(start);
+    }
 
-  end.setHours(0, 0, 0, 0);
-  return formatDateLocalYYYYMMDD(end);
+    // Restamos un día para obtener el ÚLTIMO día del ciclo actual
+    end.setDate(end.getDate() - 1);
+    end.setHours(0, 0, 0, 0);
+    return formatDateLocalYYYYMMDD(end);
 }
 
 // Convierte 'YYYY-MM-DD' a texto legible local (ej: "1 de enero de 2026")
@@ -207,7 +233,7 @@ static createSubcategoryModal(categoryId) {
           <label for="subcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="subcategoryStartDate" name="startDate" required value="${defaultStartDate}">
           <small id="subcategoryInfo" class="info-text">
-            Se reiniciará el ${formatLocalDate(defaultEndDate)}
+            Último día: ${formatLocalDate(defaultEndDate)}
           </small>
         </div>
         <input type="hidden" name="categoryId" value="${categoryId}">
@@ -229,7 +255,7 @@ static createSubcategoryModal(categoryId) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `Se reiniciará el ${formatLocalDate(endDate)}`;
+        info.textContent = `Último día: ${formatLocalDate(endDate)}`;
       }
     }
 
@@ -281,7 +307,7 @@ static editSubcategoryModal(subcategory) {
           <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
           <small id="editSubcategoryInfo" class="info-text">
-            Se reiniciará el ${formatLocalDate(defaultEndDate)}
+            Último día: ${formatLocalDate(defaultEndDate)}
           </small>
         </div>
         <div class="form-group delete-subcategory">
@@ -311,7 +337,7 @@ static editSubcategoryModal(subcategory) {
       const startDate = startInput.value;
       if (startDate) {
         const endDate = getEndDate(startDate, frequency);
-        info.textContent = `Se reiniciará el ${formatLocalDate(endDate)}`;
+        info.textContent = `Último día: ${formatLocalDate(endDate)}`;
       }
     }
 
@@ -377,11 +403,12 @@ static editSubcategoryModal(subcategory) {
             <div class="remaining-budget">${Utils.formatCurrency(remainingBudget, currency)}</div>
           </div>
           <form class="modal-form" id="expenseForm">
-            <div class="form-group">
-              <label for="expenseDate">Fecha</label>
-              <input type="date" id="expenseDate" name="date" required 
-                     value="${new Date().toISOString().split('T')[0]}">
-            </div>
+<div class="form-group">
+  <label for="expenseDate">Fecha</label>
+  <input type="date" id="expenseDate" name="date" required 
+         value="${new Date().toLocaleDateString('en-CA')}">
+</div>
+
             <div class="form-group">
               <label for="expenseWallet">Wallet</label>
               <select id="expenseWallet" name="walletId" required>

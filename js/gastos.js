@@ -175,23 +175,16 @@ class GastosManager {
           // ✅ Formatear fecha de inicio
           const formattedStart = sub.startDate ? Utils.formatDate(sub.startDate) : '---';
   
-          // 🔹 Determinar fecha final segura
+          // Determinar fecha final segura
           let endDate = sub.endDate;
           if (!endDate || isNaN(new Date(endDate))) {
-            // Si no hay endDate válido, calcular a partir del startDate y la frecuencia
             endDate = getEndDate(sub.startDate, sub.frequency);
           }
-  
-          // 🔹 Restar un día para mostrar al usuario
-          const endDateForDisplay = new Date(endDate);
-          endDateForDisplay.setDate(endDateForDisplay.getDate() - 1);
-          const formattedEnd = Utils.formatDate(endDateForDisplay.toISOString());
-  
-          // ✅ Calcular días restantes
-          const today = new Date();
-          const end = new Date(endDate + 'T23:59:59');
-          const daysRemaining = Math.max(0, Math.ceil((end - today) / (1000 * 60 * 60 * 24)));
-  
+          const formattedEnd = Utils.formatDate(endDate);
+
+          // Calcular tiempo restante para el reinicio
+          const remainingTime = this.getRemainingTime(endDate);
+
           return `
             <div class="subcategory-wrapper ${sub.expanded ? 'expanded' : ''}" data-subcategory-id="${sub.id}">
               <div class="subcategory-content" data-toggle="subcategory"
@@ -228,13 +221,14 @@ class GastosManager {
               ${sub.expanded ? `
                 <div class="subcategory-info">
                   <div class="budget-reset-detail">
-                    Gastos entre ${formattedStart} y ${formattedEnd} (↻ ${daysRemaining} días)
+                    Gastos entre ${formattedStart} y ${formattedEnd} (↻ ${remainingTime})
                   </div>
                 </div>
                 ${this.renderExpenses(subExpenses)}
               ` : ''}
             </div>
           `;
+  
         }).join('')}
       </div>
     `;
@@ -511,7 +505,7 @@ class GastosManager {
       name: Utils.sanitizeInput(formData.get('name')),
       budget: parseFloat(formData.get('budget')),
       frequency: formData.get('frequency'),
-      startDate: formData.get('startDate') // <-- agregar startDate aquí también
+      startDate: formData.get('startDate') // usar la fecha manual del formulario
     };
   
     if (!Utils.validateNumber(updatedData.budget)) {
@@ -527,6 +521,7 @@ class GastosManager {
       Utils.showToast('Error al actualizar la subcategoría', 'error');
     }
   }
+  
   
   handleEditCategory(form, categoryId) {
     const formData = new FormData(form);
@@ -662,8 +657,62 @@ class GastosManager {
     return categoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
 
+  getRemainingTime(endDateStr) {
+    const now = new Date();
+    // El ciclo termina al FINAL del `endDateStr`, así que el reinicio es al día siguiente a las 00:00
+    const endDate = new Date(endDateStr + 'T23:59:59.999');
+
+    const diffMs = endDate - now;
+
+    if (diffMs <= 0) {
+        return "Reiniciado";
+    }
+
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    if (diffDays >= 1) {
+        return `${Math.ceil(diffDays)} días`;
+    }
+
+    const diffHours = diffMs / (1000 * 60 * 60);
+    if (diffHours >= 1) {
+        return `${Math.ceil(diffHours)} horas`;
+    }
+
+    const diffMinutes = diffMs / (1000 * 60);
+    return `${Math.ceil(diffMinutes)} minutos`;
+  }
+
   getSubcategoryExpenses(subcategoryId, expenses) {
-    return expenses.filter(expense => expense.subcategoryId === subcategoryId);
+    // Find the subcategory to get its date range
+    let subcategory = null;
+    for (const category of AppState.categories) {
+        const found = category.subcategories.find(sub => sub.id === subcategoryId);
+        if (found) {
+            subcategory = found;
+            break;
+        }
+    }
+
+    if (!subcategory) {
+        return [];
+    }
+
+    const { startDate, endDate } = subcategory;
+
+    if (!startDate || !endDate) {
+        // If no date range, return all expenses for that subcategory (old behavior)
+        return expenses.filter(expense => expense.subcategoryId === subcategoryId);
+    }
+
+    const periodStart = new Date(startDate + 'T00:00:00');
+    const periodEnd = new Date(endDate + 'T23:59:59');
+
+    return expenses.filter(expense => {
+        const expenseDate = new Date(expense.date + 'T00:00:00');
+        return expense.subcategoryId === subcategoryId &&
+               expenseDate >= periodStart &&
+               expenseDate <= periodEnd;
+    });
   }
 
   getSubcategorySpent(subcategoryId, expenses) {
@@ -700,44 +749,53 @@ class GastosManager {
     return startDate.toISOString().split('T')[0];
   }
   resetSubcategoryBudget(categoryId, subcategoryId, allExpenses) {
-    // 1. Filtrar gastos de la subcategoría
-    const expensesToArchive = allExpenses.filter(e => e.subcategoryId === subcategoryId);
-  
+    // 1. Filtrar gastos de la subcategoría que están dentro del ciclo que termina
+    const sub = AppState.categories
+      .flatMap(cat => cat.subcategories)
+      .find(s => s.id === subcategoryId);
+
+    if (!sub) return;
+
+    const periodStart = new Date(sub.startDate + 'T00:00:00');
+    const periodEnd = new Date(sub.endDate + 'T23:59:59');
+
+    const expensesToArchive = allExpenses.filter(e => {
+        const expenseDate = new Date(e.date + 'T00:00:00');
+        return e.subcategoryId === subcategoryId && expenseDate >= periodStart && expenseDate <= periodEnd;
+    });
+
     if (expensesToArchive.length > 0) {
-      // 2. Guardar en histórico con contexto de ciclo
-      const sub = AppState.categories
-        .flatMap(cat => cat.subcategories)
-        .find(s => s.id === subcategoryId);
-  
-      if (sub) {
-        const periodStart = new Date(sub.startDate); // asegurar Date
-        const periodEnd = new Date(getEndDate(sub.startDate, sub.frequency)); // asegurar Date
-  
+        // 2. Guardar en histórico
         const enrichedExpenses = expensesToArchive.map(e => ({
-          ...e,
-          archivedAt: new Date().toISOString(),
-          periodStart: periodStart.toISOString(),
-          periodEnd: periodEnd.toISOString()
+            ...e,
+            archivedAt: new Date().toISOString(),
+            periodStart: periodStart.toISOString(),
+            periodEnd: periodEnd.toISOString()
         }));
-  
         Storage.archiveExpenses(enrichedExpenses);
-      }
-  
-      // 3. Eliminar de la lista activa
-      const remaining = allExpenses.filter(e => e.subcategoryId !== subcategoryId);
-      Storage.saveExpenses(remaining);
+
+        // 3. Eliminar de la lista activa
+        const expenseIdsToArchive = new Set(expensesToArchive.map(e => e.id));
+        const remaining = allExpenses.filter(e => !expenseIdsToArchive.has(e.id));
+        Storage.saveExpenses(remaining);
     }
-  
-    // 4. Reiniciar subcategoría (nuevo ciclo)
+
+    // 4. Actualizar la subcategoría con la nueva fecha de inicio
     const categories = Storage.getCategories();
     const category = categories.find(cat => cat.id === categoryId);
     if (category) {
-      const sub = category.subcategories.find(s => s.id === subcategoryId);
-      if (sub) {
-        const nextStart = new Date(getEndDate(sub.startDate, sub.frequency)); // asegurar Date
-        sub.startDate = nextStart.toISOString(); // guardar como string en formato ISO
-        Storage.saveCategories(categories);
-      }
+        const subToUpdate = category.subcategories.find(s => s.id === subcategoryId);
+        if (subToUpdate) {
+            const nextStartDate = getNextResetDate(subToUpdate.startDate, subToUpdate.frequency);
+            // Formatear a YYYY-MM-DD
+            const year = nextStartDate.getFullYear();
+            const month = String(nextStartDate.getMonth() + 1).padStart(2, '0');
+            const day = String(nextStartDate.getDate()).padStart(2, '0');
+            
+            subToUpdate.startDate = `${year}-${month}-${day}`;
+            subToUpdate.endDate = getEndDate(subToUpdate.startDate, subToUpdate.frequency);
+            Storage.saveCategories(categories);
+        }
     }
   }
   
@@ -745,22 +803,24 @@ class GastosManager {
   checkAndResetBudgets() {
     const categories = Storage.getCategories();
     const allExpenses = Storage.getExpenses();
-  
     let didReset = false;
-  
+
     categories.forEach(category => {
-      category.subcategories.forEach(sub => {
-        const endDate = getEndDate(sub.startDate, sub.frequency);
-        if (new Date() >= new Date(endDate)) {
-          this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
-          didReset = true;
-        }
-      });
+        category.subcategories.forEach(sub => {
+            // La fecha de reinicio es el día DESPUÉS del `endDate`
+            const resetDate = getNextResetDate(sub.startDate, sub.frequency);
+
+            // Si la fecha actual es igual o posterior a la fecha de reinicio, se procede
+            if (new Date() >= resetDate) {
+                this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
+                didReset = true;
+            }
+        });
     });
-  
+
     if (didReset) {
-      AppState.refreshData();
-      Utils.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
+        AppState.refreshData();
+        Utils.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
     }
   }
   

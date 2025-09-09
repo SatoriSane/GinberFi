@@ -470,32 +470,37 @@ class ResumenManager {
     const timelineData = this.groupExpensesByDay(expenses);
     
     return Object.keys(timelineData)
-      .sort((a, b) => new Date(b) - new Date(a))
-      .map(date => `
-        <div class="timeline-item">
-          <div class="timeline-date">
-            <div class="date-day">${new Date(date).getDate()}</div>
-            <div class="date-month">${new Date(date).toLocaleDateString('es-ES', { month: 'short' })}</div>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-total">${Utils.formatCurrency(timelineData[date])}</div>
-            <div class="timeline-expenses">
-              ${expenses
-                .filter(exp => exp.date.startsWith(date))
-                .map(exp => {
-                  const category = this.getCategoryForExpense(exp);
-                  return `
-                    <div class="timeline-expense">
-                      <span class="expense-name">${exp.name}</span>
-                      <span class="expense-category">${category ? category.name : 'Sin categoría'}</span>
-                      <span class="expense-amount">${Utils.formatCurrency(exp.amount)}</span>
-                    </div>
-                  `;
-                }).join('')}
+      .sort((a, b) => new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) // 1. Ordena usando la convención T00:00:00
+      .map(date => {
+        // 2. Crea un objeto Date con la convención T00:00:00 para asegurar el día correcto
+        const localDate = new Date(date + 'T00:00:00');
+        
+        return `
+          <div class="timeline-item">
+            <div class="timeline-date">
+              <div class="date-day">${localDate.getDate()}</div>
+              <div class="date-month">${localDate.toLocaleDateString('es-ES', { month: 'short' })}</div>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-total">${Utils.formatCurrency(timelineData[date])}</div>
+              <div class="timeline-expenses">
+                ${expenses
+                  .filter(exp => exp.date.startsWith(date))
+                  .map(exp => {
+                    const category = this.getCategoryForExpense(exp);
+                    return `
+                      <div class="timeline-expense">
+                        <span class="expense-name">${exp.name}</span>
+                        <span class="expense-category">${category ? category.name : 'Sin categoría'}</span>
+                        <span class="expense-amount">${Utils.formatCurrency(exp.amount)}</span>
+                      </div>
+                    `;
+                  }).join('')}
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
   }
 
   generateWalletsBreakdown(expenses, wallets) {
