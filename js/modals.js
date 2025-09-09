@@ -113,21 +113,37 @@ function formatLocalDate(dateStr) {
 
 // Modal functionality
 class ModalManager {
+    static instance = null;
+
     constructor() {
-      this.modalsContainer = document.getElementById('modalsContainer');
-      this.currentModal = null;
-      this.init();
+        if (ModalManager.instance) {
+            return ModalManager.instance;
+        }
+
+        this.modalsContainer = document.getElementById('modalsContainer');
+        this.currentModal = null;
+        this.escapeHandler = null; // Para poder remover el listener correctamente
+
+        ModalManager.instance = this;
+        this.init();
     }
-  
+
+    static getInstance() {
+        if (!ModalManager.instance) {
+            ModalManager.instance = new ModalManager();
+        }
+        return ModalManager.instance;
+    }
+
     init() {
-      // Listen for modal events
-      window.appEvents.on('openModal', (modalData) => {
-        this.openModal(modalData);
-      });
-      
-      window.appEvents.on('closeModal', () => {
-        this.closeModal();
-      });
+        // Listen for modal events
+        window.appEvents.on('openModal', (modalData) => {
+            this.openModal(modalData);
+        });
+
+        window.appEvents.on('closeModal', () => {
+            this.closeModal();
+        });
     }
   
     openModal(modalData) {
@@ -147,15 +163,17 @@ class ModalManager {
     }
   
     closeModal() {
-      if (this.currentModal) {
-        this.currentModal.classList.remove('show');
-        setTimeout(() => {
-          if (this.currentModal && this.currentModal.parentNode) {
-            this.currentModal.parentNode.removeChild(this.currentModal);
-          }
-          this.currentModal = null;
-        }, 300);
-      }
+        if (this.currentModal) {
+            this.currentModal.classList.remove('show');
+            this.removeEventListeners(); // Limpiar listeners
+
+            setTimeout(() => {
+                if (this.currentModal && this.currentModal.parentNode) {
+                    this.currentModal.parentNode.removeChild(this.currentModal);
+                }
+                this.currentModal = null;
+            }, 300);
+        }
     }
   
     createModal(modalData) {
@@ -191,15 +209,21 @@ class ModalManager {
       });
       
       // Close on Escape key
-      const escapeHandler = (e) => {
+      this.escapeHandler = (e) => {
         if (e.key === 'Escape') {
           this.closeModal();
-          document.removeEventListener('keydown', escapeHandler);
         }
       };
-      document.addEventListener('keydown', escapeHandler);
+      document.addEventListener('keydown', this.escapeHandler);
     }
   
+    removeEventListeners() {
+        if (this.escapeHandler) {
+            document.removeEventListener('keydown', this.escapeHandler);
+            this.escapeHandler = null;
+        }
+    }
+
     // Specific modal creators
 // --- Crear subcategoría ---
 static createSubcategoryModal(categoryId) {
@@ -438,48 +462,61 @@ static editSubcategoryModal(subcategory) {
         `
       };
     }
-    static editExpenseModal(expense, currency = 'BOB') {
-      return {
-        title: 'Editar Gasto',
-        className: 'expense-modal',
-        body: `
+// ✅ FUNCIÓN EDITADA para gastos (clasificados y no clasificados) con cierre funcional
+static editExpenseModal(expense, currency = 'BOB', isUnclassified = false) {
+    const subcategoryInputHtml = isUnclassified
+        ? `<div id="subcategory-container-placeholder"></div>`
+        : `<input type="hidden" name="subcategoryId" value="${expense.subcategoryId}">`;
+
+  return {
+      title: isUnclassified ? 'Clasificar Gasto' : 'Editar Gasto',
+      className: 'expense-modal',
+      body: `
           <form class="modal-form" id="editExpenseForm">
-            <div class="form-group">
-              <label for="editExpenseName">Producto/Servicio</label>
-              <input type="text" id="editExpenseName" name="name" required value="${expense.name}">
-            </div>
-            <div class="form-group">
-              <label for="editExpenseAmount">Valor <span class="currency-display">${currency}</span></label>
-              <input type="number" id="editExpenseAmount" name="amount" required value="${expense.amount}" step="0.01" min="0.01">
-            </div>
-            <div class="form-group">
-              <label for="editExpenseDate">Fecha</label>
-              <input type="date" id="editExpenseDate" name="date" required value="${expense.date}">
-            </div>
-            <div class="form-group">
-              <label for="editExpenseWallet">Wallet</label>
-              <select id="editExpenseWallet" name="walletId" required>
-                ${AppState.wallets.map(w => `
-                  <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
-                    ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
-                  </option>
-                `).join('')}
-              </select>
-            </div>
-            <div class="form-group delete-expense">
-              <button type="button" class="btn-text-danger" onclick="if(confirm('¿Seguro que quieres eliminar este gasto?')) deleteExpense(${expense.id})">
-                🗑️ Eliminar gasto
-              </button>
-            </div>
-            <input type="hidden" name="expenseId" value="${expense.id}">
+              <div class="form-group">
+                  <label for="editExpenseName">Producto/Servicio</label>
+                  <input type="text" id="editExpenseName" name="name" required value="${expense.name}">
+              </div>
+              <div class="form-group">
+                  <label for="editExpenseAmount">Valor <span class="currency-display">${currency}</span></label>
+                  <input type="number" id="editExpenseAmount" name="amount" required value="${expense.amount}" step="0.01" min="0.01">
+              </div>
+              <div class="form-group">
+                  <label for="editExpenseDate">Fecha</label>
+                  <input type="date" id="editExpenseDate" name="date" required value="${expense.date}">
+              </div>
+              <div class="form-group">
+                  <label for="editExpenseWallet">Wallet</label>
+                  <select id="editExpenseWallet" name="walletId" required>
+                      ${AppState.wallets.map(w => `
+                          <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
+                              ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
+                          </option>
+                      `).join('')}
+                  </select>
+              </div>
+
+              ${subcategoryInputHtml}
+
+              <div class="form-group delete-expense">
+                  <button type="button" class="btn-text-danger" onclick="window.gastosManager.handleDeleteExpense('${expense.id}')">
+                      🗑️ Eliminar gasto
+                  </button>
+              </div>
+
+              <input type="hidden" name="expenseId" value="${expense.id}">
           </form>
-        `,
-        footer: `
+      `,
+      footer: `
           <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
           <button type="submit" class="btn-primary" form="editExpenseForm">Guardar</button>
-        `
-      };
-    }
+      `
+  };
+}
+
+
+
+
     
     static createWalletModal() {
       const currencies = [
@@ -698,7 +735,46 @@ static editSubcategoryModal(subcategory) {
         `
       };
     }
+// 🚀 NUEVA FUNCIÓN para el Gasto Rápido
+static createQuickExpenseModal() {
+  const wallets = AppState.wallets;
+  // Obtenemos la wallet activa para preseleccionarla y hacer el proceso más rápido
+  const activeWalletId = Storage.get('ginbertfi_activeWalletId') || (wallets.length > 0 ? wallets[0].id : '');
 
+  // Generamos las opciones para el selector de wallets
+  const walletOptions = wallets.map(wallet => 
+      `<option value="${wallet.id}" ${wallet.id === activeWalletId ? 'selected' : ''}>
+          ${wallet.name} (${Utils.formatCurrency(wallet.balance, wallet.currency)})
+      </option>`
+  ).join('');
+
+  return {
+      title: 'Gasto Rápido',
+      className: 'expense-modal',
+      body: `
+          <form class="modal-form" id="quickExpenseForm">
+              <div class="form-group">
+                  <label for="quickExpenseName">Nombre del Gasto</label>
+                  <input type="text" id="quickExpenseName" name="name" required placeholder="ej: Café y pastel">
+              </div>
+              <div class="form-group">
+                  <label for="quickExpenseAmount">Monto</label>
+                  <input type="number" id="quickExpenseAmount" name="amount" step="0.01" required placeholder="0.00">
+              </div>
+              <div class="form-group">
+                  <label for="quickExpenseWallet">Pagar con</label>
+                  <select id="quickExpenseWallet" name="walletId" required>
+                      ${walletOptions}
+                  </select>
+              </div>
+          </form>
+      `,
+      footer: `
+          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+          <button type="submit" class="btn-primary" form="quickExpenseForm">Guardar Gasto</button>
+      `
+  };
+}
     static getTransactionTypeLabel(type) {
       const labels = {
         'income': 'Ingreso',

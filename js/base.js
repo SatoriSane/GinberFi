@@ -9,7 +9,16 @@ class Utils {
     };
     
     const symbol = currencySymbols[currency] || currency;
-    const formattedAmount = parseFloat(amount).toFixed(2);
+    let numericAmount;
+    if (amount === null || amount === undefined) {
+      numericAmount = 0;
+    } else {
+      numericAmount = parseFloat(amount);
+      if (isNaN(numericAmount)) {
+        numericAmount = 0;
+      }
+    }
+    const formattedAmount = numericAmount.toFixed(2);
     return `${formattedAmount} ${symbol}`;
   }
   static formatDate(input) {

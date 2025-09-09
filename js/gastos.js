@@ -4,86 +4,95 @@ class GastosManager {
     this.categoriesContainer = document.getElementById('categoriesContainer');
     this.emptyCategoriesState = document.getElementById('emptyCategoriesState');
     this.addCategoryBtn = document.getElementById('addCategoryBtn');
-    this.addNewCategoryFab = document.getElementById('addNewCategoryFab');
+
+    // ✅ CAMBIO: IDs de los botones actualizados según el nuevo index.html
+    this.addQuickExpenseFab = document.getElementById('addQuickExpenseFab');
+    this.addCategoryListBtn = document.getElementById('addCategoryListBtn');
     
     this.init();
   }
 
-
   init() {
     this.setupEventListeners();
-    
-    // 👇 Antes de renderizar, revisar si hay subcategorías que deben reiniciarse
     this.checkAndResetBudgets();
-  
     this.render();
     
     // Listen for data updates
     window.appEvents.on('dataUpdated', () => {
-      this.checkAndResetBudgets(); // 👈 también aquí
+      this.checkAndResetBudgets();
       this.render();
     });
     
     // Listen for tab changes
     window.appEvents.on('tabChanged', (tabName) => {
       if (tabName === 'gastos') {
-        this.checkAndResetBudgets(); // 👈 también aquí
+        this.checkAndResetBudgets();
         this.render();
       }
     });
   }
   
-
   setupEventListeners() {
+    // Hacemos la instancia accesible globalmente para los onclick de los modales
+    window.gastosManager = this;
+
+    // El botón del estado vacío sigue abriendo el modal de crear categoría
     this.addCategoryBtn.addEventListener('click', () => {
       this.openCreateCategoryModal();
     });
 
-    this.addNewCategoryFab.addEventListener('click', () => {
-      this.openCreateCategoryModal();
+    // ✅ CAMBIO: El FAB ahora abre el modal de "Gasto Rápido"
+    this.addQuickExpenseFab.addEventListener('click', () => {
+      this.openQuickExpenseModal();
     });
-    // Handle form submissions
-    document.addEventListener('submit', (e) => {
-      e.preventDefault(); // prevenimos submit por defecto para todos los formularios
 
-      const form = e.target;
-
-
-      switch (form.id) {
-        case 'categoryForm':
-          this.handleCreateCategory(form);
-          break;
-
-        case 'subcategoryForm':
-          this.handleCreateSubcategory(form);
-          break;
-
-        case 'editCategoryForm': {
-          const formData = new FormData(form);
-          const categoryId = formData.get('categoryId'); 
-          this.handleEditCategory(form, categoryId);
-          break;
-        }
-
-        case 'editSubcategoryForm': {
-          const formData = new FormData(form);
-          const categoryId = formData.get('categoryId');        
-          const subcategoryId = formData.get('subcategoryId');  
-          this.handleEditSubcategory(form, categoryId, subcategoryId);
-          break;
-        }
-        case 'editExpenseForm':
-          this.handleEditExpense(form);
-          break;
-
-        case 'expenseForm':
-          this.handleCreateExpense(form);
-          break;
-
-        default:
-          console.warn('Formulario no manejado:', form.id);
-      }
+    // 🚀 NUEVO: El nuevo botón "+ Añadir Categoría" también abre el modal de creación
+    this.addCategoryListBtn.addEventListener('click', () => {
+        this.openCreateCategoryModal();
     });
+
+// Handle form submissions
+document.addEventListener('submit', (e) => {
+  e.preventDefault(); 
+  const form = e.target;
+
+  switch (form.id) {
+    case 'categoryForm':
+      this.handleCreateCategory(form);
+      break;
+    case 'subcategoryForm':
+      this.handleCreateSubcategory(form);
+      break;
+    case 'editCategoryForm': {
+      const formData = new FormData(form);
+      const categoryId = formData.get('categoryId'); 
+      this.handleEditCategory(form, categoryId);
+      break;
+    }
+    case 'editSubcategoryForm': {
+      const formData = new FormData(form);
+      const categoryId = formData.get('categoryId');        
+      const subcategoryId = formData.get('subcategoryId');  
+      this.handleEditSubcategory(form, categoryId, subcategoryId);
+      break;
+    }
+    case 'editExpenseForm':
+      this.handleEditExpense(form);
+      break;
+    case 'expenseForm':
+      this.handleCreateExpense(form);
+      break;
+    // 🚀 NUEVO: Manejador para el formulario de gasto rápido
+    case 'quickExpenseForm':
+      this.handleCreateQuickExpense(form);
+      window.appEvents.emit('closeModal'); // 🔥 cerrar modal después de guardar
+      break;
+    default:
+      console.warn('Formulario no manejado:', form.id);
+  }
+});
+
+
     document.getElementById('subcategoryFrequency')?.addEventListener('change', (e) => {
       const freq = e.target.value;
       const startDateInput = document.getElementById('subcategoryStartDate');
@@ -92,28 +101,50 @@ class GastosManager {
       }
     });
   }
+
   // ---------------------------------------
   // --- Renderizado de categorías/subcategorías---
   // ---------------------------------------
 
   render() {
     const categories = AppState.categories;
-    
-    if (categories.length === 0) {
-      this.emptyCategoriesState.style.display = 'block';
-      this.addNewCategoryFab.style.display = 'none';
-      this.categoriesContainer.querySelectorAll('.category-wrapper').forEach(el => el.remove());
-    } else {
-      this.emptyCategoriesState.style.display = 'none';
-      this.addNewCategoryFab.style.display = 'flex';
-      this.renderCategories(categories);
+    // 🚀 NUEVO: Obtenemos los gastos sin clasificar
+    const unclassifiedExpenses = AppState.expenses.filter(e => e.categoryId === 'unclassified');
+
+    // ✅ CAMBIO: La lógica de visibilidad ahora considera los gastos sin clasificar
+    // Limpiamos el contenido anterior, pero mantenemos el nodo del estado vacío
+    while (this.categoriesContainer.firstChild && this.categoriesContainer.firstChild !== this.emptyCategoriesState) {
+        this.categoriesContainer.removeChild(this.categoriesContainer.firstChild);
     }
+
+    if (categories.length === 0 && unclassifiedExpenses.length === 0) {
+        this.emptyCategoriesState.style.display = 'block';
+        this.addCategoryListBtn.style.display = 'none';
+    } else {
+        this.emptyCategoriesState.style.display = 'none';
+        this.addCategoryListBtn.style.display = 'block';
+
+        let finalHtml = '';
+        if (unclassifiedExpenses.length > 0) {
+            finalHtml += this.renderUnclassifiedCategory(unclassifiedExpenses);
+        }
+        if (categories.length > 0) {
+            finalHtml += this.renderCategories(categories);
+        }
+        
+        // Insertamos el nuevo contenido ANTES del nodo de estado vacío
+        this.categoriesContainer.insertAdjacentHTML('afterbegin', finalHtml);
+        this.attachCategoryEventListeners();
+    }
+    
+    // El FAB de gasto rápido siempre debe estar visible si hay wallets
+    this.addQuickExpenseFab.style.display = AppState.wallets.length > 0 ? 'flex' : 'none';
   }
 
   renderCategories(categories) {
     const expenses = AppState.expenses;
-    
-    this.categoriesContainer.innerHTML = categories.map(category => {
+    // ✅ CAMBIO: La función ahora devuelve el string HTML en lugar de modificar el DOM directamente
+    return categories.map(category => {
       const categoryExpenses = this.getCategoryExpenses(category.id, expenses);
       const totalBudget = this.getCategoryBudget(category);
       const totalSpent = this.getCategorySpent(category.id, expenses);
@@ -148,11 +179,50 @@ class GastosManager {
         </div>
       `;
     }).join('');
+  }
 
-    this.attachCategoryEventListeners();
+  // 🚀 NUEVO: Función para renderizar la pseudo-categoría de gastos sin clasificar
+  renderUnclassifiedCategory(unclassifiedExpenses) {
+    const totalSpent = unclassifiedExpenses.reduce((sum, e) => sum + e.amount, 0);
+    // Ordenamos los gastos del más reciente al más antiguo
+    const sortedExpenses = [...unclassifiedExpenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return `
+      <div class="category-wrapper expanded unclassified-category">
+        <div class="category-content" style="background-color: #f5f5f5; border-color: #ddd;">
+          <div class="category-left">
+            <span class="category-arrow"></span>
+            <span class="category-name">Gastos sin Clasificar</span>
+          </div>
+          <div class="category-right">
+            <div class="category-budget">
+              <div class="budget-amount">${Utils.formatCurrency(totalSpent)}</div>
+            </div>
+          </div>
+        </div>
+        <div class="subcategories-container">
+          <div class="expenses-container">
+            ${sortedExpenses.map(expense => `
+              <div class="expense-item unclassified-expense-item" data-expense-id="${expense.id}" title="Haz clic para clasificar este gasto">
+                <div class="expense-info">
+                  <div class="expense-name">${expense.name}</div>
+                  <div class="expense-date">${Utils.formatDate(expense.date)}</div>
+                </div>
+                <div class="expense-right">
+                  <div class="expense-amount">
+                    -${Utils.formatCurrency(expense.amount)}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   renderSubcategories(category, expenses) {
+    // ... (sin cambios en esta función)
     if (!category.subcategories || category.subcategories.length === 0) {
       return `
         <div class="subcategories-container">
@@ -234,13 +304,9 @@ class GastosManager {
     `;
   }
   
-  
-  
-  
-  
-
   renderExpenses(expenses) {
-    if (expenses.length === 0) {
+    // ... (sin cambios en esta función)
+     if (expenses.length === 0) {
       return `
         <div class="expenses-container">
           <div class="empty-state">
@@ -276,8 +342,8 @@ class GastosManager {
     `;
   }
   
-  
   attachCategoryEventListeners() {
+    // ... (código existente sin cambios)
     // Category toggle
     this.categoriesContainer.querySelectorAll('[data-toggle="category"]').forEach(element => {
       element.addEventListener('click', (e) => {
@@ -342,43 +408,32 @@ class GastosManager {
         this.openEditSubcategoryModal(subcategoryId);
       });
     });
-        // Editar gasto al hacer click
-    this.categoriesContainer.querySelectorAll('.expense-item').forEach(item => {
-      item.addEventListener('click', (e) => {
+// Editar gasto al hacer click
+this.categoriesContainer.querySelectorAll('.expense-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const expenseId = item.dataset.expenseId;
+    this.openEditExpenseModal(expenseId); // usa la función que llama al ModalManager
+  });
+});
+
+// 🚀 Listener para los items de gastos sin clasificar
+this.categoriesContainer.querySelectorAll('.unclassified-expense-item').forEach(item => {
+    item.addEventListener('click', (e) => {
         e.stopPropagation();
         const expenseId = item.dataset.expenseId;
-        this.openEditExpenseModal(expenseId);
-      });
+        this.openEditExpenseModal(expenseId); // mismo flujo, ModalManager maneja el cierre
     });
+});
 
   }
+
+  // --- El resto de tus funciones (toggle, helpers, etc.) ---
   
-
-  toggleCategory(categoryId) {
-    const categories = AppState.categories;
-    const category = categories.find(cat => cat.id === categoryId);
-    if (category) {
-      category.expanded = !category.expanded;
-      Storage.saveCategories(categories);
-      this.render();
-    }
-  }
-
-  toggleSubcategory(subcategoryId) {
-    const categories = AppState.categories;
-    let subcategory = null;
-    
-    categories.forEach(category => {
-      const found = category.subcategories.find(sub => sub.id === subcategoryId);
-      if (found) subcategory = found;
-    });
-    
-    if (subcategory) {
-      subcategory.expanded = !subcategory.expanded;
-      Storage.saveCategories(categories);
-      this.render();
-    }
-  }
+  // ✅ CAMBIO: He movido los manejadores de modales y formularios aquí abajo para agrupar la lógica nueva
+  // ----------------------------------------------------
+  // --- MODAL & FORM HANDLERS ---
+  // ----------------------------------------------------
 
   // Modal handlers
   openCreateCategoryModal() {
@@ -386,11 +441,23 @@ class GastosManager {
     window.appEvents.emit('openModal', modalData);
   }
 
+  // 🚀 NUEVO: Modal para gasto rápido
+  openQuickExpenseModal() {
+    if (AppState.wallets.length === 0) {
+      Utils.showToast('Primero debes crear una wallet en la pestaña Wallets', 'warning');
+      return;
+    }
+    const modalData = ModalManager.createQuickExpenseModal(); // Necesitarás crear esta función en modals.js
+    window.appEvents.emit('openModal', modalData);
+  }
+
   openCreateSubcategoryModal(categoryId, categoryName) {
+    // ... (sin cambios)
     const modalData = ModalManager.createSubcategoryModal(categoryId, categoryName);
     window.appEvents.emit('openModal', modalData);
   }
   openEditCategoryModal(categoryId) {
+    // ... (sin cambios)
     const category = AppState.categories.find(cat => cat.id === categoryId);
     if (!category) return;
   
@@ -399,7 +466,8 @@ class GastosManager {
   }
   
   openEditSubcategoryModal(subcategoryId) {
-    let subcategory = null;
+    // ... (sin cambios)
+     let subcategory = null;
     AppState.categories.forEach(cat => {
       const found = cat.subcategories.find(sub => sub.id === subcategoryId);
       if (found) subcategory = found;
@@ -410,20 +478,91 @@ class GastosManager {
     window.appEvents.emit('openModal', modalData);
   }
   openEditExpenseModal(expenseId) {
-    const expense = AppState.expenses.find(e => e.id === expenseId);
-    if (!expense) return;
-  
-    const wallet = AppState.wallets.find(acc => acc.id === expense.walletId);
-    const modalData = ModalManager.editExpenseModal(expense, wallet ? wallet.currency : 'BOB');
-    window.appEvents.emit('openModal', modalData);
-  }
-  
-  openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget) {
-    if (AppState.wallets.length === 0) {
-      Utils.showToast('Primero debes crear una wallet en la pestaña Wallets', 'warning');
-      return;
+    try {
+      const expense = AppState.expenses.find(e => e.id === expenseId);
+      if (!expense) {
+        console.error(`Expense with ID ${expenseId} not found.`);
+        return;
+      }
+
+      const wallet = AppState.wallets.find(acc => acc.id === expense.walletId);
+      const isUnclassified = !expense.categoryId || expense.categoryId === 'unclassified';
+
+      const modalData = ModalManager.editExpenseModal(
+        expense,
+        wallet ? wallet.currency : 'BOB',
+        isUnclassified
+      );
+
+      window.appEvents.emit('openModal', modalData);
+
+      if (isUnclassified) {
+        setTimeout(() => {
+          this.populateSubcategoryDropdown();
+        }, 10); // A small delay to ensure the modal is in the DOM
+      }
+    } catch (error) {
+      console.error('Error in openEditExpenseModal:', error);
+      Utils.showToast('No se pudo abrir el modal de edición.', 'error');
     }
-    
+  }
+
+  populateSubcategoryDropdown() {
+    try {
+      const placeholder = document.getElementById('subcategory-container-placeholder');
+      if (!placeholder) {
+        console.error('Subcategory placeholder not found in modal.');
+        return;
+      }
+
+      const container = document.createElement('div');
+      container.className = 'form-group';
+
+      const label = document.createElement('label');
+      label.setAttribute('for', 'expenseSubcategory');
+      label.textContent = 'Clasificar en';
+
+      const select = document.createElement('select');
+      select.id = 'expenseSubcategory';
+      select.name = 'subcategoryId';
+      select.required = true;
+
+      const defaultOption = document.createElement('option');
+      defaultOption.value = "";
+      defaultOption.textContent = "-- Selecciona para clasificar --";
+      select.appendChild(defaultOption);
+
+      const categories = AppState.categories || [];
+      categories.forEach(cat => {
+        if (cat && Array.isArray(cat.subcategories) && cat.subcategories.length > 0) {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = cat.name;
+          cat.subcategories.forEach(sub => {
+            if (sub && sub.id && sub.name) {
+              const option = document.createElement('option');
+              option.value = sub.id;
+              option.textContent = sub.name;
+              optgroup.appendChild(option);
+            }
+          });
+          select.appendChild(optgroup);
+        }
+      });
+
+      container.appendChild(label);
+      container.appendChild(select);
+      placeholder.replaceWith(container);
+
+    } catch (error) {
+      console.error("Fatal error building subcategory dropdown:", error);
+      const placeholder = document.getElementById('subcategory-container-placeholder');
+      if (placeholder) {
+        placeholder.innerHTML = `<p style="color: red;">Error crítico al cargar categorías.</p>`;
+      }
+    }
+  }
+
+  openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget) {
     const modalData = ModalManager.createExpenseModal(subcategoryId, subcategoryName, remainingBudget);
     window.appEvents.emit('openModal', modalData);
     
@@ -449,6 +588,7 @@ class GastosManager {
 
   // Form handlers
   handleCreateCategory(form) {
+    // ... (sin cambios)
     const formData = new FormData(form);
     const categoryData = {
       name: Utils.sanitizeInput(formData.get('name')),
@@ -466,6 +606,7 @@ class GastosManager {
   }
 
   handleCreateSubcategory(form) {
+    // ... (sin cambios)
     const formData = new FormData(form);
     const subcategoryData = {
       name: Utils.sanitizeInput(formData.get('name')),
@@ -500,7 +641,8 @@ class GastosManager {
   }
   
   handleEditSubcategory(form, categoryId, subcategoryId) {
-    const formData = new FormData(form);
+    // ... (sin cambios)
+     const formData = new FormData(form);
     const updatedData = {
       name: Utils.sanitizeInput(formData.get('name')),
       budget: parseFloat(formData.get('budget')),
@@ -522,9 +664,9 @@ class GastosManager {
     }
   }
   
-  
   handleEditCategory(form, categoryId) {
-    const formData = new FormData(form);
+    // ... (sin cambios)
+     const formData = new FormData(form);
     const updatedData = {
       name: Utils.sanitizeInput(formData.get('name')),
       description: Utils.sanitizeInput(formData.get('description') || '')
@@ -538,15 +680,30 @@ class GastosManager {
       Utils.showToast('Error al actualizar la categoría', 'error');
     }
   }
+
   handleEditExpense(form) {
+    // ✅ CAMBIO: Al editar un gasto, buscamos la nueva categoryId a partir de la subcategoría
     const formData = new FormData(form);
-    const expenseId = formData.get('expenseId'); // asegurarse de que el input hidden exista
+    const expenseId = formData.get('expenseId');
+    const subcategoryId = formData.get('subcategoryId'); // Este es el campo clave
+
+    const category = AppState.categories.find(cat =>
+      cat.subcategories.some(sub => sub.id === subcategoryId)
+    );
+
+    if (!category) {
+      Utils.showToast('Debes seleccionar una subcategoría válida.', 'error');
+      // No cerramos el modal aquí para que el usuario pueda corregir.
+      return;
+    }
+    
     const updatedData = {
       name: Utils.sanitizeInput(formData.get('name')),
       amount: parseFloat(formData.get('amount')),
       date: formData.get('date'),
       walletId: formData.get('walletId'),
-      subcategoryId: formData.get('subcategoryId')
+      subcategoryId: subcategoryId,
+      categoryId: category.id // <- Guardamos la categoryId correcta
     };
   
     if (!Utils.validateNumber(updatedData.amount)) {
@@ -554,23 +711,129 @@ class GastosManager {
       return;
     }
   
-    // Validar saldo de wallet si es necesario
-    const wallet = AppState.wallets.find(acc => acc.id === updatedData.walletId);
-    if (!wallet || wallet.balance < updatedData.amount) {
+    if (Storage.updateExpense(expenseId, updatedData)) {
+        AppState.refreshData();
+        Utils.showToast('Gasto actualizado y clasificado exitosamente', 'success');
+        window.appEvents.emit('closeModal'); // Cierra solo en caso de éxito
+    } else {
+        Utils.showToast('Error al actualizar el gasto', 'error');
+        // No cerramos el modal aquí para que el usuario vea el error.
+    }
+
+  }
+  
+  handleCreateExpense(form) {
+    // ✅ CAMBIO: Añadimos la categoryId al crear un gasto normal
+    const formData = new FormData(form);
+    const subcategoryId = formData.get('subcategoryId');
+
+    const category = AppState.categories.find(cat =>
+      cat.subcategories.some(sub => sub.id === subcategoryId)
+    );
+    
+    if (!category) { // Esto no debería pasar, pero por seguridad
+      Utils.showToast('Error: Subcategoría no encontrada.', 'error');
+      return;
+    }
+
+    const expenseData = {
+      name: Utils.sanitizeInput(formData.get('name')),
+      amount: parseFloat(formData.get('amount')),
+      date: formData.get('date'),
+      walletId: formData.get('walletId'),
+      subcategoryId: subcategoryId,
+      categoryId: category.id // <- Guardamos la categoryId
+    };
+  
+    if (!Utils.validateNumber(expenseData.amount)) {
+      Utils.showToast('El monto debe ser un número válido', 'error');
+      return;
+    }
+  
+    const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
+    if (!wallet || wallet.balance < expenseData.amount) {
       Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
       return;
     }
   
-    if (Storage.updateExpense(expenseId, updatedData)) {
+    if (Storage.addExpense(expenseData)) {
       AppState.refreshData();
+      const cat = AppState.categories.find(c => c.id === category.id);
+      const sub = cat.subcategories.find(s => s.id === subcategoryId);
+      if (cat) cat.expanded = true;
+      if (sub) sub.expanded = true;
+      Storage.saveCategories(AppState.categories);
+  
       window.appEvents.emit('closeModal');
-      Utils.showToast('Gasto actualizado exitosamente', 'success');
+      Utils.showToast('Gasto agregado exitosamente', 'success');
+      this.render();
     } else {
-      Utils.showToast('Error al actualizar el gasto', 'error');
+      Utils.showToast('Error al agregar el gasto', 'error');
     }
   }
-  
+
+  // 🚀 NUEVO: Manejador para guardar un gasto rápido
+  handleCreateQuickExpense(form) {
+    const formData = new FormData(form);
+    const expenseData = {
+      name: Utils.sanitizeInput(formData.get('name')),
+      amount: parseFloat(formData.get('amount')),
+      date: new Date().toISOString().split('T')[0], // Fecha actual
+      walletId: formData.get('walletId'),
+      categoryId: 'unclassified', // <- La magia está aquí
+      subcategoryId: null
+    };
+
+    if (!expenseData.name || !Utils.validateNumber(expenseData.amount)) {
+        Utils.showToast('Por favor, completa nombre y monto.', 'error');
+        return;
+    }
+
+    const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
+    if (!wallet || wallet.balance < expenseData.amount) {
+      Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
+      return;
+    }
+
+    if (Storage.addExpense(expenseData)) {
+      AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Utils.showToast('Gasto rápido guardado. ¡Clasifícalo cuando puedas!', 'success');
+    } else {
+      Utils.showToast('Error al guardar el gasto rápido', 'error');
+    }
+  }
+
+  // --- Dejo el resto de tus funciones de helpers y reinicio intactas ---
+  toggleCategory(categoryId) {
+    // ... (sin cambios)
+     const categories = AppState.categories;
+    const category = categories.find(cat => cat.id === categoryId);
+    if (category) {
+      category.expanded = !category.expanded;
+      Storage.saveCategories(categories);
+      this.render();
+    }
+  }
+
+  toggleSubcategory(subcategoryId) {
+    // ... (sin cambios)
+     const categories = AppState.categories;
+    let subcategory = null;
+    
+    categories.forEach(category => {
+      const found = category.subcategories.find(sub => sub.id === subcategoryId);
+      if (found) subcategory = found;
+    });
+    
+    if (subcategory) {
+      subcategory.expanded = !subcategory.expanded;
+      Storage.saveCategories(categories);
+      this.render();
+    }
+  }
   handleDeleteCategory(categoryId) {
+    // ... (sin cambios)
     if (confirm('¿Seguro que quieres eliminar esta categoría y todas sus subcategorías?')) {
       if (Storage.deleteCategory(categoryId)) {
         AppState.refreshData();
@@ -581,8 +844,23 @@ class GastosManager {
     }
   }
 
+
+  handleDeleteExpense(expenseId) {
+    if (!expenseId) return;
+    if (confirm('¿Seguro que quieres eliminar este gasto?')) {
+      if (Storage.deleteExpense(expenseId)) {
+        AppState.refreshData();
+        window.appEvents.emit('closeModal');
+        Utils.showToast('Gasto eliminado exitosamente', 'success');
+      } else {
+        Utils.showToast('Error al eliminar el gasto', 'error');
+      }
+    }
+  }
+
   handleDeleteSubcategory(categoryId, subcategoryId) {
-    if (confirm('¿Seguro que quieres eliminar esta subcategoría?')) {
+    // ... (sin cambios)
+     if (confirm('¿Seguro que quieres eliminar esta subcategoría?')) {
       if (Storage.deleteSubcategory(categoryId, subcategoryId)) {
         AppState.refreshData();
         Utils.showToast('Subcategoría eliminada', 'success');
@@ -591,75 +869,27 @@ class GastosManager {
       }
     }
   }
-  handleCreateExpense(form) {
-    const formData = new FormData(form);
-    const expenseData = {
-      name: Utils.sanitizeInput(formData.get('name')),
-      amount: parseFloat(formData.get('amount')),
-      date: formData.get('date'),
-      walletId: formData.get('walletId'),
-      subcategoryId: formData.get('subcategoryId')
-    };
-  
-    if (!Utils.validateNumber(expenseData.amount)) {
-      Utils.showToast('El monto debe ser un número válido', 'error');
-      return;
-    }
-  
-    // Check if wallet has sufficient balance
-    const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
-    if (!wallet || wallet.balance < expenseData.amount) {
-      Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
-      return;
-    }
-  
-    if (Storage.addExpense(expenseData)) {
-      AppState.refreshData();
-  
-      // 🔹 Desplegar automáticamente la subcategoría a la que pertenece el gasto
-      const category = AppState.categories.find(cat =>
-        cat.subcategories.some(sub => sub.id === expenseData.subcategoryId)
-      );
-      if (category) {
-        const sub = category.subcategories.find(s => s.id === expenseData.subcategoryId);
-        if (sub) {
-          sub.expanded = true; // aseguramos que se muestre expandida
-        }
-      }
-  
-      window.appEvents.emit('closeModal');
-      Utils.showToast('Gasto agregado exitosamente', 'success');
-  
-      // 🔹 Forzar render después de marcar expandida
-      this.render();
-    } else {
-      Utils.showToast('Error al agregar el gasto', 'error');
-    }
-  }
-  
-
-  // Helper methods
   getCategoryExpenses(categoryId, expenses) {
+    // ... (sin cambios)
     const category = AppState.categories.find(cat => cat.id === categoryId);
     if (!category || !category.subcategories) return [];
     
     const subcategoryIds = category.subcategories.map(sub => sub.id);
     return expenses.filter(expense => subcategoryIds.includes(expense.subcategoryId));
   }
-
   getCategoryBudget(category) {
+    // ... (sin cambios)
     if (!category.subcategories) return 0;
     return category.subcategories.reduce((total, sub) => total + (sub.budget || 0), 0);
   }
-
   getCategorySpent(categoryId, expenses) {
+    // ... (sin cambios)
     const categoryExpenses = this.getCategoryExpenses(categoryId, expenses);
     return categoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
-
   getRemainingTime(endDateStr) {
+    // ... (sin cambios)
     const now = new Date();
-    // El ciclo termina al FINAL del `endDateStr`, así que el reinicio es al día siguiente a las 00:00
     const endDate = new Date(endDateStr + 'T23:59:59.999');
 
     const diffMs = endDate - now;
@@ -681,9 +911,8 @@ class GastosManager {
     const diffMinutes = diffMs / (1000 * 60);
     return `${Math.ceil(diffMinutes)} minutos`;
   }
-
   getSubcategoryExpenses(subcategoryId, expenses) {
-    // Find the subcategory to get its date range
+    // ... (sin cambios)
     let subcategory = null;
     for (const category of AppState.categories) {
         const found = category.subcategories.find(sub => sub.id === subcategoryId);
@@ -700,7 +929,6 @@ class GastosManager {
     const { startDate, endDate } = subcategory;
 
     if (!startDate || !endDate) {
-        // If no date range, return all expenses for that subcategory (old behavior)
         return expenses.filter(expense => expense.subcategoryId === subcategoryId);
     }
 
@@ -714,21 +942,20 @@ class GastosManager {
                expenseDate <= periodEnd;
     });
   }
-
   getSubcategorySpent(subcategoryId, expenses) {
+    // ... (sin cambios)
     const subcategoryExpenses = this.getSubcategoryExpenses(subcategoryId, expenses);
     return subcategoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
-
   getDefaultStartDate(frequency) {
+    // ... (sin cambios)
     const today = new Date();
     let startDate;
   
     switch (frequency) {
       case 'semanal': {
-        // Obtener el lunes de la semana actual
-        const day = today.getDay(); // 0=domingo, 1=lunes...
-        const diff = (day === 0 ? -6 : 1 - day); // ajustar si hoy es domingo
+        const day = today.getDay(); 
+        const diff = (day === 0 ? -6 : 1 - day);
         startDate = new Date(today);
         startDate.setDate(today.getDate() + diff);
         break;
@@ -745,11 +972,10 @@ class GastosManager {
         startDate = today;
     }
   
-    // Formatear a yyyy-mm-dd para el input date
     return startDate.toISOString().split('T')[0];
   }
   resetSubcategoryBudget(categoryId, subcategoryId, allExpenses) {
-    // 1. Filtrar gastos de la subcategoría que están dentro del ciclo que termina
+    // ... (sin cambios)
     const sub = AppState.categories
       .flatMap(cat => cat.subcategories)
       .find(s => s.id === subcategoryId);
@@ -765,7 +991,6 @@ class GastosManager {
     });
 
     if (expensesToArchive.length > 0) {
-        // 2. Guardar en histórico
         const enrichedExpenses = expensesToArchive.map(e => ({
             ...e,
             archivedAt: new Date().toISOString(),
@@ -774,20 +999,17 @@ class GastosManager {
         }));
         Storage.archiveExpenses(enrichedExpenses);
 
-        // 3. Eliminar de la lista activa
         const expenseIdsToArchive = new Set(expensesToArchive.map(e => e.id));
         const remaining = allExpenses.filter(e => !expenseIdsToArchive.has(e.id));
         Storage.saveExpenses(remaining);
     }
 
-    // 4. Actualizar la subcategoría con la nueva fecha de inicio
     const categories = Storage.getCategories();
     const category = categories.find(cat => cat.id === categoryId);
     if (category) {
         const subToUpdate = category.subcategories.find(s => s.id === subcategoryId);
         if (subToUpdate) {
             const nextStartDate = getNextResetDate(subToUpdate.startDate, subToUpdate.frequency);
-            // Formatear a YYYY-MM-DD
             const year = nextStartDate.getFullYear();
             const month = String(nextStartDate.getMonth() + 1).padStart(2, '0');
             const day = String(nextStartDate.getDate()).padStart(2, '0');
@@ -799,18 +1021,15 @@ class GastosManager {
     }
   }
   
-  
   checkAndResetBudgets() {
-    const categories = Storage.getCategories();
+    // ... (sin cambios)
+     const categories = Storage.getCategories();
     const allExpenses = Storage.getExpenses();
     let didReset = false;
 
     categories.forEach(category => {
         category.subcategories.forEach(sub => {
-            // La fecha de reinicio es el día DESPUÉS del `endDate`
             const resetDate = getNextResetDate(sub.startDate, sub.frequency);
-
-            // Si la fecha actual es igual o posterior a la fecha de reinicio, se procede
             if (new Date() >= resetDate) {
                 this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
                 didReset = true;
@@ -823,7 +1042,6 @@ class GastosManager {
         Utils.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
     }
   }
-  
 }
 
 // Initialize gastos manager when DOM is loaded

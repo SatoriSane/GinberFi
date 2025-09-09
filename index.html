@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GinbertFi</title>
     
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4A90E2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="GinbertFi">
     <link rel="manifest" href="manifest.json">
     
-    <!-- CSS Files -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/navigation.css">
@@ -22,7 +20,6 @@
     <link rel="stylesheet" href="css/modals.css">
 </head>
 <body>
-    <!-- Header -->
     <header role="banner" class="app-header">
         <div class="header-content">
             <h1 class="app-name">GinbertFi</h1>
@@ -32,11 +29,9 @@
             </div>
         </div>
         
-        <!-- Balance Dropdown -->
         <div class="balance-dropdown" id="balanceDropdown">
             <div class="wallets-list" id="walletsList">
-                <!-- wallets will be populated by JavaScript -->
-            </div>
+                </div>
             <button class="config-wallets-btn" id="configwalletsBtn">
                 <span class="pig-icon">🐷</span>
                 Configurar Wallets
@@ -44,20 +39,20 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="app-main">
-        <!-- Gastos Tab Content -->
         <div class="tab-content active" id="gastosTab">
             <div class="categories-container" id="categoriesContainer">
                 <div class="empty-state" id="emptyCategoriesState">
                     <p>No hay categorías creadas</p>
                     <button class="add-category-btn" id="addCategoryBtn">Crear Primera Categoría</button>
                 </div>
-            </div>
-            <button class="fab" id="addNewCategoryFab">+</button>
+                </div>
+
+            <button class="add-category-list-btn" id="addCategoryListBtn">+ Añadir Categoría</button>
+
+            <button class="fab" id="addQuickExpenseFab">+</button>
         </div>
 
-        <!-- Wallets Tab Content -->
         <div class="tab-content" id="huchasTab">
             <div class="wallets-container" id="walletsContainer">
                 <div class="empty-state" id="emptywalletsState">
@@ -68,13 +63,11 @@
             <button class="fab" id="addNewWalletFab">+</button>
         </div>
 
-        <!-- Resumen Tab Content -->
         <div class="tab-content" id="resumenTab">
             <div id="resumenContainer"></div>
         </div>
     </main>
 
-    <!-- Navigation -->
     <nav role="tablist" class="app-navigation">
         <button role="tab" class="nav-tab" data-tab="huchas" id="huchasNavBtn">
             <span class="nav-icon">🐷</span>
@@ -92,10 +85,8 @@
         </button>
     </nav>
 
-    <!-- Modals Container -->
     <div class="modals-container" id="modalsContainer"></div>
 
-    <!-- JavaScript Files -->
     <script src="js/base.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/header.js"></script>
