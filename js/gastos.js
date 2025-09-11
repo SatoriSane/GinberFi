@@ -343,7 +343,6 @@ document.addEventListener('submit', (e) => {
   }
   
   attachCategoryEventListeners() {
-    // ... (código existente sin cambios)
     // Category toggle
     this.categoriesContainer.querySelectorAll('[data-toggle="category"]').forEach(element => {
       element.addEventListener('click', (e) => {
@@ -408,25 +407,17 @@ document.addEventListener('submit', (e) => {
         this.openEditSubcategoryModal(subcategoryId);
       });
     });
-// Editar gasto al hacer click
-this.categoriesContainer.querySelectorAll('.expense-item').forEach(item => {
-  item.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const expenseId = item.dataset.expenseId;
-    this.openEditExpenseModal(expenseId); // usa la función que llama al ModalManager
-  });
-});
-
-// 🚀 Listener para los items de gastos sin clasificar
-this.categoriesContainer.querySelectorAll('.unclassified-expense-item').forEach(item => {
-    item.addEventListener('click', (e) => {
+  
+    // Editar gasto (clasificado o sin clasificar)
+    this.categoriesContainer.querySelectorAll('.expense-item').forEach(item => {
+      item.addEventListener('click', (e) => {
         e.stopPropagation();
         const expenseId = item.dataset.expenseId;
-        this.openEditExpenseModal(expenseId); // mismo flujo, ModalManager maneja el cierre
+        this.openEditExpenseModal(expenseId); 
+      });
     });
-});
-
   }
+  
 
   // --- El resto de tus funciones (toggle, helpers, etc.) ---
   
@@ -466,7 +457,6 @@ this.categoriesContainer.querySelectorAll('.unclassified-expense-item').forEach(
   }
   
   openEditSubcategoryModal(subcategoryId) {
-    // ... (sin cambios)
      let subcategory = null;
     AppState.categories.forEach(cat => {
       const found = cat.subcategories.find(sub => sub.id === subcategoryId);
@@ -478,89 +468,65 @@ this.categoriesContainer.querySelectorAll('.unclassified-expense-item').forEach(
     window.appEvents.emit('openModal', modalData);
   }
   openEditExpenseModal(expenseId) {
-    try {
-      const expense = AppState.expenses.find(e => e.id === expenseId);
-      if (!expense) {
-        console.error(`Expense with ID ${expenseId} not found.`);
-        return;
-      }
-
-      const wallet = AppState.wallets.find(acc => acc.id === expense.walletId);
-      const isUnclassified = !expense.categoryId || expense.categoryId === 'unclassified';
-
-      const modalData = ModalManager.editExpenseModal(
-        expense,
-        wallet ? wallet.currency : 'BOB',
-        isUnclassified
-      );
-
-      window.appEvents.emit('openModal', modalData);
-
-      if (isUnclassified) {
-        setTimeout(() => {
-          this.populateSubcategoryDropdown();
-        }, 10); // A small delay to ensure the modal is in the DOM
-      }
-    } catch (error) {
-      console.error('Error in openEditExpenseModal:', error);
-      Utils.showToast('No se pudo abrir el modal de edición.', 'error');
-    }
-  }
-
-  populateSubcategoryDropdown() {
-    try {
-      const placeholder = document.getElementById('subcategory-container-placeholder');
-      if (!placeholder) {
-        console.error('Subcategory placeholder not found in modal.');
-        return;
-      }
-
-      const container = document.createElement('div');
-      container.className = 'form-group';
-
-      const label = document.createElement('label');
-      label.setAttribute('for', 'expenseSubcategory');
-      label.textContent = 'Clasificar en';
-
-      const select = document.createElement('select');
-      select.id = 'expenseSubcategory';
-      select.name = 'subcategoryId';
-      select.required = true;
-
-      const defaultOption = document.createElement('option');
-      defaultOption.value = "";
-      defaultOption.textContent = "-- Selecciona para clasificar --";
-      select.appendChild(defaultOption);
-
-      const categories = AppState.categories || [];
-      categories.forEach(cat => {
-        if (cat && Array.isArray(cat.subcategories) && cat.subcategories.length > 0) {
-          const optgroup = document.createElement('optgroup');
-          optgroup.label = cat.name;
-          cat.subcategories.forEach(sub => {
-            if (sub && sub.id && sub.name) {
-              const option = document.createElement('option');
-              option.value = sub.id;
-              option.textContent = sub.name;
-              optgroup.appendChild(option);
-            }
-          });
-          select.appendChild(optgroup);
+    const expense = AppState.expenses.find(e => e.id === expenseId);
+    if (!expense) return;
+  
+    const wallet   = AppState.wallets.find(w => w.id === expense.walletId);
+    const currency = wallet ? wallet.currency : 'BOB';
+    const isUnclassified = !expense.categoryId || expense.categoryId === 'unclassified';
+  
+    const modalData = isUnclassified
+      ? ModalManager.editExpenseModalUnclassified(expense, currency)
+      : ModalManager.editExpenseModalClassified(expense, currency);
+  
+    // Abrimos el modal
+    window.appEvents.emit('openModal', modalData);
+  
+    if (isUnclassified) {
+      setTimeout(() => {
+        this.fillSubcategorySelect();
+  
+        const cancelBtn = document.getElementById('cancelButton');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', () => window.appEvents.emit('closeModal'));
         }
-      });
-
-      container.appendChild(label);
-      container.appendChild(select);
-      placeholder.replaceWith(container);
-
-    } catch (error) {
-      console.error("Fatal error building subcategory dropdown:", error);
-      const placeholder = document.getElementById('subcategory-container-placeholder');
-      if (placeholder) {
-        placeholder.innerHTML = `<p style="color: red;">Error crítico al cargar categorías.</p>`;
-      }
+      }, 50);
     }
   }
+  
+
+
+
+/**
+ * Rellena el <select id="expenseSubcategory"> dentro del modal
+ * de clasificación de gasto sin categoría.
+ * No toca el resto del modal, por lo que los listeners de cierre siguen activos.
+ */
+fillSubcategorySelect() {
+  const select = document.getElementById('expenseSubcategory');
+  if (!select) return;               // <-- proteger contra null
+
+  // Opción por defecto
+  select.innerHTML = `<option value="">-- Selecciona para clasificar --</option>`;
+
+  const categories = AppState.categories || [];
+  categories.forEach(cat => {
+    if (!cat.subcategories?.length) return;
+
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = cat.name;
+
+    cat.subcategories.forEach(sub => {
+      if (!sub.id || !sub.name) return;
+      const option = document.createElement('option');
+      option.value = sub.id;
+      option.textContent = sub.name;
+      optgroup.appendChild(option);
+    });
+
+    select.appendChild(optgroup);
+  });
+}
 
   openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget) {
     const modalData = ModalManager.createExpenseModal(subcategoryId, subcategoryName, remainingBudget);
@@ -1017,6 +983,7 @@ this.categoriesContainer.querySelectorAll('.unclassified-expense-item').forEach(
             subToUpdate.startDate = `${year}-${month}-${day}`;
             subToUpdate.endDate = getEndDate(subToUpdate.startDate, subToUpdate.frequency);
             Storage.saveCategories(categories);
+            
         }
     }
   }

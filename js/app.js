@@ -18,9 +18,6 @@ class GinbertFiApp {
 
       // Initialize app state
       AppState.init();
-
-      // Initialize the singleton ModalManager
-      new ModalManager();
       
       // Register service worker for PWA functionality
       this.registerServiceWorker();

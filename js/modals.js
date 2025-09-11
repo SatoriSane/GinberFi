@@ -223,6 +223,31 @@ class ModalManager {
             this.escapeHandler = null;
         }
     }
+    reattachCloseHandlers() {
+      if (!this.currentModal) return;
+  
+      // Elimina el listener de Escape que pudiera quedar colgado
+      this.removeEventListeners();
+  
+      const closeBtn = this.currentModal.querySelector('.modal-close');
+      const overlay  = this.currentModal;   // overlay = elemento .modal‑overlay
+  
+      // Botón X
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => this.closeModal());
+      }
+  
+      // Click fuera del contenido
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) this.closeModal();
+      });
+  
+      // Tecla Escape
+      this.escapeHandler = e => {
+        if (e.key === 'Escape') this.closeModal();
+      };
+      document.addEventListener('keydown', this.escapeHandler);
+    }
 
     // Specific modal creators
 // --- Crear subcategoría ---
@@ -462,55 +487,135 @@ static editSubcategoryModal(subcategory) {
         `
       };
     }
-// ✅ FUNCIÓN EDITADA para gastos (clasificados y no clasificados) con cierre funcional
-static editExpenseModal(expense, currency = 'BOB', isUnclassified = false) {
-    const subcategoryInputHtml = isUnclassified
-        ? `<div id="subcategory-container-placeholder"></div>`
-        : `<input type="hidden" name="subcategoryId" value="${expense.subcategoryId}">`;
-
+// ------------------------------------------------------------
+//  EDIT EXPENSE – GASTO CLASIFICADO (ya tiene categoría)
+// ------------------------------------------------------------
+static editExpenseModalClassified(expense, currency = 'BOB') {
   return {
-      title: isUnclassified ? 'Clasificar Gasto' : 'Editar Gasto',
-      className: 'expense-modal',
-      body: `
-          <form class="modal-form" id="editExpenseForm">
-              <div class="form-group">
-                  <label for="editExpenseName">Producto/Servicio</label>
-                  <input type="text" id="editExpenseName" name="name" required value="${expense.name}">
-              </div>
-              <div class="form-group">
-                  <label for="editExpenseAmount">Valor <span class="currency-display">${currency}</span></label>
-                  <input type="number" id="editExpenseAmount" name="amount" required value="${expense.amount}" step="0.01" min="0.01">
-              </div>
-              <div class="form-group">
-                  <label for="editExpenseDate">Fecha</label>
-                  <input type="date" id="editExpenseDate" name="date" required value="${expense.date}">
-              </div>
-              <div class="form-group">
-                  <label for="editExpenseWallet">Wallet</label>
-                  <select id="editExpenseWallet" name="walletId" required>
-                      ${AppState.wallets.map(w => `
-                          <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
-                              ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
-                          </option>
-                      `).join('')}
-                  </select>
-              </div>
+    title: 'Editar Gasto',
+    className: 'expense-modal',
 
-              ${subcategoryInputHtml}
+    /* ----------  SOLO EL FORMULARIO  ---------- */
+    body: `
+      <form class="modal-form" id="editExpenseForm">
+        <div class="form-group">
+          <label for="editExpenseName">Producto/Servicio</label>
+          <input type="text" id="editExpenseName" name="name" required
+                 value="${expense.name}">
+        </div>
 
-              <div class="form-group delete-expense">
-                  <button type="button" class="btn-text-danger" onclick="window.gastosManager.handleDeleteExpense('${expense.id}')">
-                      🗑️ Eliminar gasto
-                  </button>
-              </div>
+        <div class="form-group">
+          <label for="editExpenseAmount">Valor <span class="currency-display">${currency}</span></label>
+          <input type="number" id="editExpenseAmount" name="amount" required
+                 value="${expense.amount}" step="0.01" min="0.01">
+        </div>
 
-              <input type="hidden" name="expenseId" value="${expense.id}">
-          </form>
-      `,
-      footer: `
-          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-          <button type="submit" class="btn-primary" form="editExpenseForm">Guardar</button>
-      `
+        <div class="form-group">
+          <label for="editExpenseDate">Fecha</label>
+          <input type="date" id="editExpenseDate" name="date" required
+                 value="${expense.date}">
+        </div>
+
+        <div class="form-group">
+          <label for="editExpenseWallet">Wallet</label>
+          <select id="editExpenseWallet" name="walletId" required>
+            ${AppState.wallets.map(w => `
+              <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
+                ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
+              </option>`).join('')}
+          </select>
+        </div>
+
+        <!-- La sub‑categoría ya está guardada → la enviamos como hidden -->
+        <input type="hidden" name="subcategoryId"
+               value="${expense.subcategoryId}">
+
+        <div class="form-group delete-expense">
+          <button type="button" class="btn-text-danger"
+                  onclick="window.gastosManager.handleDeleteExpense('${expense.id}')">
+            🗑️ Eliminar gasto
+          </button>
+        </div>
+
+        <input type="hidden" name="expenseId" value="${expense.id}">
+      </form>
+    `,
+
+    /* ----------  FOOTER FUERA DEL FORMULARIO  ---------- */
+    footer: `
+      <button type="button" class="btn-secondary"
+              onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+      <button type="submit" class="btn-primary"
+              form="editExpenseForm">Guardar</button>
+    `
+  };
+}
+/**
+ * Modal → Clasificar un gasto que se creó con “Gasto rápido”.
+ * Contiene un <select> para elegir la sub‑categoría a la que se quiere
+ * asignar el gasto.
+ */
+// ------------------------------------------------------------
+//  EDIT EXPENSE – GASTO SIN CLASIFICAR (quick‑expense)
+// ------------------------------------------------------------
+static editExpenseModalUnclassified(expense, currency = 'BOB') {
+  return {
+    title: 'Clasificar Gasto',
+    className: 'expense-modal',
+
+    body: `
+      <form class="modal-form" id="editExpenseForm">
+        <div class="form-group">
+          <label for="editExpenseName">Producto/Servicio</label>
+          <input type="text" id="editExpenseName" name="name" required
+                 value="${expense.name}">
+        </div>
+
+        <div class="form-group">
+          <label for="editExpenseAmount">Valor <span class="currency-display">${currency}</span></label>
+          <input type="number" id="editExpenseAmount" name="amount" required
+                 value="${expense.amount}" step="0.01" min="0.01">
+        </div>
+
+        <div class="form-group">
+          <label for="editExpenseDate">Fecha</label>
+          <input type="date" id="editExpenseDate" name="date" required
+                 value="${expense.date}">
+        </div>
+
+        <div class="form-group">
+          <label for="editExpenseWallet">Wallet</label>
+          <select id="editExpenseWallet" name="walletId" required>
+            ${AppState.wallets.map(w => `
+              <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
+                ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
+              </option>`).join('')}
+          </select>
+        </div>
+
+        <div class="form-group" id="subcategory-container">
+          <label for="expenseSubcategory">Clasificar en</label>
+          <select id="expenseSubcategory" name="subcategoryId" required>
+            <option value="">-- Selecciona para clasificar --</option>
+          </select>
+        </div>
+
+        <div class="form-group delete-expense">
+          <button type="button" class="btn-text-danger"
+                  onclick="window.gastosManager.handleDeleteExpense('${expense.id}')">
+            🗑️ Eliminar gasto
+          </button>
+        </div>
+
+        <input type="hidden" name="expenseId" value="${expense.id}">
+
+        <!-- MOVEMOS EL FOOTER DENTRO DEL FORM -->
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="cancelButton">Cancelar</button>
+          <button type="submit" class="btn-primary">Clasificar</button>
+        </div>
+      </form>
+    `
   };
 }
 
@@ -788,6 +893,6 @@ static createQuickExpenseModal() {
   
   // Initialize modal manager when DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
-    new ModalManager();
+    ModalManager.getInstance();  
   });
   
