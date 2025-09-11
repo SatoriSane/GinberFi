@@ -362,10 +362,17 @@ static editSubcategoryModal(subcategory) {
             if (deleteChoice === 'move') {
               wrapper.style.display = 'block';
               wrapper.innerHTML = '';
-              wrapper.appendChild(Helpers.buildSubcategorySelect(null, subcategory.id));
+              const select = Helpers.buildSubcategorySelect(null, subcategory.id);
+              
+              // ⚡ Evita que los clics dentro del select afecten al card-option padre
+              select.addEventListener('click', e => e.stopPropagation());
+              select.addEventListener('change', e => e.stopPropagation());
+              
+              wrapper.appendChild(select);
             } else {
               wrapper.style.display = 'none';
             }
+            
           });
         });
 
