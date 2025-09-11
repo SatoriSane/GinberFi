@@ -1,116 +1,3 @@
-// --- Helpers internos para calcular fecha por defecto ---
-// Formatea siempre en YYYY-MM-DD en hora local
-// -----------------------------
-// Helpers (colocar AL PRINCIPIO de modals.js)
-// -----------------------------
-
-// Formatea una Date local como YYYY-MM-DD (sin usar toISOString)
-function formatDateLocalYYYYMMDD(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-// Devuelve la fecha de inicio por defecto (YYYY-MM-DD) en hora local
-function getDefaultStartDate(frequency) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // normalizamos hora
-
-  switch (frequency) {
-    case 'semanal': {
-      const day = today.getDay(); // domingo=0, lunes=1
-      const diff = (day === 0 ? -6 : 1 - day); // mover al lunes de esta semana
-      const monday = new Date(today);
-      monday.setDate(today.getDate() + diff);
-      return formatDateLocalYYYYMMDD(monday);
-    }
-    case 'mensual': {
-      const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      return formatDateLocalYYYYMMDD(startMonth);
-    }
-    case 'trimestral': {
-      // Obtener el primer mes del trimestre actual
-      const quarterMonth = today.getMonth() - (today.getMonth() % 3);
-      const startQuarter = new Date(today.getFullYear(), quarterMonth, 1);
-      return formatDateLocalYYYYMMDD(startQuarter);
-    }
-    case 'anual': {
-      const startYear = new Date(today.getFullYear(), 0, 1);
-      return formatDateLocalYYYYMMDD(startYear);
-    }
-    default:
-      return formatDateLocalYYYYMMDD(today);
-  }
-}
-
-
-// Calcula la fecha de reinicio (primer día siguiente ciclo) en YYYY-MM-DD (hora local)
-// startDate debe ser 'YYYY-MM-DD'
-function getNextResetDate(startDate, frequency) {
-    // Devuelve el primer día del SIGUIENTE ciclo
-    const start = new Date(startDate + 'T00:00:00');
-    let nextDate = new Date(start);
-
-    switch (frequency) {
-        case 'semanal':
-            nextDate.setDate(start.getDate() + 7);
-            break;
-        case 'mensual':
-            nextDate.setMonth(start.getMonth() + 1);
-            break;
-        case 'trimestral':
-            nextDate.setMonth(start.getMonth() + 3);
-            break;
-        case 'anual':
-            nextDate.setFullYear(start.getFullYear() + 1);
-            break;
-        default:
-            nextDate = new Date(start);
-    }
-    nextDate.setHours(0, 0, 0, 0);
-    return nextDate; // Devuelve el objeto Date completo
-}
-
-function getEndDate(startDate, frequency) {
-    // Forzamos hora local a medianoche creando Date con T00:00:00
-    const start = new Date(startDate + 'T00:00:00');
-    let end = new Date(start);
-
-    switch (frequency) {
-        case 'semanal':
-            end.setDate(start.getDate() + 7);
-            break;
-        case 'mensual':
-            end.setMonth(start.getMonth() + 1);
-            break;
-        case 'trimestral':
-            end.setMonth(start.getMonth() + 3);
-            break;
-        case 'anual':
-            end.setFullYear(start.getFullYear() + 1);
-            break;
-        default:
-            end = new Date(start);
-    }
-
-    // Restamos un día para obtener el ÚLTIMO día del ciclo actual
-    end.setDate(end.getDate() - 1);
-    end.setHours(0, 0, 0, 0);
-    return formatDateLocalYYYYMMDD(end);
-}
-
-// Convierte 'YYYY-MM-DD' a texto legible local (ej: "1 de enero de 2026")
-function formatLocalDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00'); // forzar medianoche local
-  return d.toLocaleDateString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  });
-}
-
 // Modal functionality
 class ModalManager {
     static instance = null;
@@ -146,21 +33,27 @@ class ModalManager {
         });
     }
   
-    openModal(modalData) {
-      this.closeModal(); // Close any existing modal
-      
-      const modal = this.createModal(modalData);
-      this.modalsContainer.appendChild(modal);
-      this.currentModal = modal;
-      
-      // Show modal with animation
-      setTimeout(() => {
-        modal.classList.add('show');
-      }, 10);
-      
-      // Setup close handlers
-      this.setupCloseHandlers(modal);
-    }
+// Abrir modal genérico
+openModal(modalData) {
+  if (!this.modalsContainer) return;
+
+  this.closeModal(); // siempre cerramos el modal actual antes de mostrar uno nuevo
+
+  const modal = this.createModal(modalData);
+  this.modalsContainer.appendChild(modal);
+  this.currentModal = modal;
+
+  // Mostrar con animación
+  setTimeout(() => modal.classList.add('show'), 10);
+
+  // Handlers de cierre
+  this.setupCloseHandlers(modal);
+
+  // Ejecutar función específica si la hay (como asignar eventos)
+  if (modalData.onShow) modalData.onShow(modal);
+}
+
+    
   
     closeModal() {
         if (this.currentModal) {
@@ -203,10 +96,12 @@ class ModalManager {
       closeBtn.addEventListener('click', () => this.closeModal());
       
       overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
+        const modalContent = overlay.querySelector('.modal');
+        if (!modalContent.contains(e.target)) {
           this.closeModal();
         }
       });
+      
       
       // Close on Escape key
       this.escapeHandler = (e) => {
@@ -253,8 +148,8 @@ class ModalManager {
 // --- Crear subcategoría ---
 static createSubcategoryModal(categoryId) {
   const defaultFrequency = 'mensual';
-  const defaultStartDate = getDefaultStartDate(defaultFrequency);
-  const defaultEndDate = getEndDate(defaultStartDate, defaultFrequency);
+  const defaultStartDate = Helpers.getDefaultStartDate(defaultFrequency);
+  const defaultEndDate = Helpers.getEndDate(defaultStartDate, defaultFrequency);
 
   const modalConfig = {
     title: 'Crear Subcategoría',
@@ -282,7 +177,7 @@ static createSubcategoryModal(categoryId) {
           <label for="subcategoryStartDate">Fecha de inicio del presupuesto</label>
           <input type="date" id="subcategoryStartDate" name="startDate" required value="${defaultStartDate}">
           <small id="subcategoryInfo" class="info-text">
-            Último día: ${formatLocalDate(defaultEndDate)}
+            Último día: ${Helpers.formatLocalDate(defaultEndDate)}
           </small>
         </div>
         <input type="hidden" name="categoryId" value="${categoryId}">
@@ -303,14 +198,14 @@ static createSubcategoryModal(categoryId) {
       const frequency = freqSelect.value;
       const startDate = startInput.value;
       if (startDate) {
-        const endDate = getEndDate(startDate, frequency);
-        info.textContent = `Último día: ${formatLocalDate(endDate)}`;
+        const endDate = Helpers.getEndDate(startDate, frequency);
+        info.textContent = `Último día: ${Helpers.formatLocalDate(endDate)}`;
       }
     }
 
     if (freqSelect && startInput) {
       freqSelect.addEventListener('change', () => {
-        startInput.value = getDefaultStartDate(freqSelect.value);
+        startInput.value = Helpers.getDefaultStartDate(freqSelect.value);
         updateInfo();
       });
       startInput.addEventListener('change', updateInfo);
@@ -325,45 +220,72 @@ static createSubcategoryModal(categoryId) {
 
 
 
-// --- Editar subcategoría ---
 static editSubcategoryModal(subcategory) {
-  const defaultStartDate = subcategory.startDate || getDefaultStartDate(subcategory.frequency);
-  const defaultEndDate = subcategory.endDate || getEndDate(defaultStartDate, subcategory.frequency);
+  const defaultStartDate = subcategory.startDate || Helpers.getDefaultStartDate(subcategory.frequency);
+  const defaultEndDate = Helpers.getEndDate(defaultStartDate, subcategory.frequency);
+
+  const category = AppState.categories.find(c => c.id === subcategory.categoryId);
+  const expenses = Storage.getExpenses();
+  const hasExpenses = expenses.some(exp => exp.subcategoryId === subcategory.id);
 
   const modalConfig = {
     title: 'Editar Subcategoría',
     className: 'subcategory-modal',
     body: `
       <form class="modal-form" id="editSubcategoryForm">
-        <div class="form-group">
-          <label for="editSubcategoryName">Nombre de la subcategoría</label>
-          <input type="text" id="editSubcategoryName" name="name" required value="${subcategory.name || ''}">
+        <!-- Sección edición -->
+        <div id="editSection">
+          <div class="form-group">
+            <label for="editSubcategoryName">Nombre de la subcategoría</label>
+            <input type="text" id="editSubcategoryName" name="name" required value="${subcategory.name}">
+          </div>
+
+          <div class="form-group">
+            <label for="editSubcategoryBudget">Presupuesto</label>
+            <input type="number" id="editSubcategoryBudget" name="budget" required value="${subcategory.budget}" step="0.01" min="0">
+          </div>
+
+          <div class="form-group">
+            <label for="editSubcategoryFrequency">Frecuencia</label>
+            <select id="editSubcategoryFrequency" name="frequency" required>
+              <option value="semanal" ${subcategory.frequency === 'semanal' ? 'selected' : ''}>Semanal</option>
+              <option value="mensual" ${subcategory.frequency === 'mensual' ? 'selected' : ''}>Mensual</option>
+              <option value="trimestral" ${subcategory.frequency === 'trimestral' ? 'selected' : ''}>Trimestral</option>
+              <option value="anual" ${subcategory.frequency === 'anual' ? 'selected' : ''}>Anual</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
+            <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
+            <small id="editSubcategoryInfo" class="info-text">
+              Último día: ${Helpers.formatLocalDate(defaultEndDate)}
+            </small>
+          </div>
+
+          <div class="form-group delete-subcategory">
+            <button type="button" class="btn-text-danger" id="triggerDeleteBtn">🗑️ Eliminar subcategoría</button>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="editSubcategoryBudget">Presupuesto</label>
-          <input type="number" id="editSubcategoryBudget" name="budget" required value="${subcategory.budget}" step="0.01" min="0">
-        </div>
-        <div class="form-group">
-          <label for="editSubcategoryFrequency">Frecuencia</label>
-          <select id="editSubcategoryFrequency" name="frequency" required>
-            <option value="semanal" ${subcategory.frequency === 'semanal' ? 'selected' : ''}>Semanal</option>
-            <option value="mensual" ${subcategory.frequency === 'mensual' ? 'selected' : ''}>Mensual</option>
-            <option value="trimestral" ${subcategory.frequency === 'trimestral' ? 'selected' : ''}>Trimestral</option>
-            <option value="anual" ${subcategory.frequency === 'anual' ? 'selected' : ''}>Anual</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="editSubcategoryStartDate">Fecha de inicio del presupuesto</label>
-          <input type="date" id="editSubcategoryStartDate" name="startDate" required value="${defaultStartDate}">
-          <small id="editSubcategoryInfo" class="info-text">
-            Último día: ${formatLocalDate(defaultEndDate)}
-          </small>
-        </div>
-        <div class="form-group delete-subcategory">
-          <button type="button" class="btn-text-danger"
-                  onclick="if(confirm('¿Seguro que quieres eliminar esta subcategoría?')) deleteSubcategory(${subcategory.id})">
-            🗑️ Eliminar subcategoría
-          </button>
+
+        <!-- Sección eliminación -->
+        <div id="deleteSection" style="display: none; margin-top: 1rem;">
+          ${hasExpenses ? `
+            <p>La subcategoría <strong>${subcategory.name}</strong> tiene gastos asociados.</p>
+            <div class="delete-options">
+              <div class="delete-option card-option" data-option="delete">
+                <h4>🗑️ Eliminar gastos</h4>
+                <p>Todos los gastos asociados serán eliminados junto con la subcategoría.</p>
+              </div>
+              <div class="delete-option card-option" data-option="move">
+                <h4>📂 Mover gastos</h4>
+                <p>Conserva los gastos y muévelos a otra subcategoría.</p>
+                <div id="subcategorySelectWrapper" style="display:none; margin-top:0.5rem;"></div>
+              </div>
+            </div>
+          ` : `
+            <p>¿Deseas eliminar la subcategoría <strong>${subcategory.name}</strong>?</p>
+          `}
         </div>
 
         <input type="hidden" name="subcategoryId" value="${subcategory.id}">
@@ -371,70 +293,280 @@ static editSubcategoryModal(subcategory) {
       </form>
     `,
     footer: `
-      <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-      <button type="submit" class="btn-primary" form="editSubcategoryForm">Guardar</button>
-    `
-  };
+      <button type="button" class="btn-secondary" id="modalCancelBtn">Cancelar</button>
+      <button type="submit" class="btn-primary" form="editSubcategoryForm" id="modalSubmitBtn">Guardar</button>
+    `,
+    onShow: (modal) => {
+      const editSection = modal.querySelector('#editSection');
+      const deleteSection = modal.querySelector('#deleteSection');
+      const modalTitle = modal.querySelector('.modal-title');
+      const freqSelect = modal.querySelector('#editSubcategoryFrequency');
+      const startInput = modal.querySelector('#editSubcategoryStartDate');
+      const info = modal.querySelector('#editSubcategoryInfo');
+      const triggerDeleteBtn = modal.querySelector('#triggerDeleteBtn');
+      const cancelBtn = modal.querySelector('#modalCancelBtn');
+      const submitBtn = modal.querySelector('#modalSubmitBtn');
+      const wrapper = modal.querySelector('#subcategorySelectWrapper');
 
-  setTimeout(() => {
-    const freqSelect = document.getElementById('editSubcategoryFrequency');
-    const startInput = document.getElementById('editSubcategoryStartDate');
-    const info = document.getElementById('editSubcategoryInfo');
-
-    function updateInfo() {
-      const frequency = freqSelect.value;
-      const startDate = startInput.value;
-      if (startDate) {
-        const endDate = getEndDate(startDate, frequency);
-        info.textContent = `Último día: ${formatLocalDate(endDate)}`;
+      // Actualizar info de fechas
+      function updateInfo() {
+        const frequency = freqSelect.value;
+        const startDate = startInput.value;
+        if (startDate) {
+          const endDate = Helpers.getEndDate(startDate, frequency);
+          info.textContent = `Último día: ${Helpers.formatLocalDate(endDate)}`;
+        }
       }
-    }
-
-    if (freqSelect && startInput) {
       freqSelect.addEventListener('change', () => {
-        startInput.value = getDefaultStartDate(freqSelect.value);
+        startInput.value = Helpers.getDefaultStartDate(freqSelect.value);
         updateInfo();
       });
       startInput.addEventListener('change', updateInfo);
       updateInfo();
+
+      // Guardar cambios de edición
+      function saveEdit(e) {
+        e.preventDefault();
+        const formData = new FormData(modal.querySelector('#editSubcategoryForm'));
+        Storage.updateSubcategory(formData.get('categoryId'), formData.get('subcategoryId'), {
+          name: formData.get('name'),
+          budget: parseFloat(formData.get('budget')),
+          frequency: formData.get('frequency'),
+          startDate: formData.get('startDate')
+        });
+        AppState.refreshData();
+        Helpers.showToast('Subcategoría actualizada', 'success');
+        window.appEvents.emit('closeModal');
+      }
+      submitBtn.onclick = saveEdit;
+
+      // Cancelar
+      cancelBtn.onclick = () => window.appEvents.emit('closeModal');
+
+      // Modo eliminación
+      triggerDeleteBtn.addEventListener('click', () => {
+        editSection.style.display = 'none';
+        deleteSection.style.display = 'block';
+        modalTitle.textContent = 'Eliminar Subcategoría';
+        submitBtn.textContent = 'Eliminar';
+
+        let deleteChoice = 'delete';
+        const deleteOptions = modal.querySelectorAll('.delete-option');
+
+        deleteOptions.forEach(opt => {
+          opt.addEventListener('click', () => {
+            deleteOptions.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            deleteChoice = opt.dataset.option;
+
+            if (deleteChoice === 'move') {
+              wrapper.style.display = 'block';
+              wrapper.innerHTML = '';
+              wrapper.appendChild(Helpers.buildSubcategorySelect(null, subcategory.id));
+            } else {
+              wrapper.style.display = 'none';
+            }
+          });
+        });
+
+        // Confirmar eliminación
+        submitBtn.onclick = (e) => {
+          e.preventDefault();
+
+          let targetId = null;
+          if (deleteChoice === 'move') {
+            targetId = wrapper.querySelector('select[name="targetSubcategory"]')?.value;
+            if (!targetId) {
+              Helpers.showToast('Selecciona una subcategoría destino', 'error');
+              return;
+            }
+          }
+
+          Storage.deleteSubcategory(subcategory.categoryId, subcategory.id, {
+            action: deleteChoice,
+            targetSubcategoryId: targetId
+          });
+
+          AppState.refreshData();
+          Helpers.showToast(
+            deleteChoice === 'delete'
+              ? 'Subcategoría y gastos eliminados'
+              : 'Subcategoría eliminada y gastos movidos',
+            'success'
+          );
+
+          window.appEvents.emit('closeModal');
+        };
+      });
     }
-
-    // ⚡ Guardar cambios al enviar el formulario
-    const form = document.getElementById('editSubcategoryForm');
-
-
-  }, 0);
+  };
 
   return modalConfig;
 }
 
 
 
-    static editCategoryModal(category) {
-      return {
-        title: 'Editar Categoría',
-        className: 'category-modal',
-        body: `
-          <form class="modal-form" id="editCategoryForm">
-            <div class="form-group">
-              <label for="editCategoryName">Nombre de la categoría</label>
-              <input type="text" id="editCategoryName" name="name" required 
-                     value="${category.name || ''}">
+
+
+
+static editCategoryModal(category) {
+  const hasSubcategories = category.subcategories?.length > 0;
+  const otherCategories = (AppState.categories || []).filter(c => c.id !== category.id);
+
+  return {
+    title: 'Editar Categoría',
+    className: 'category-modal',
+    body: `
+      <form class="modal-form" id="editCategoryForm">
+        <!-- Sección edición -->
+        <div id="editCategorySection">
+          <div class="form-group">
+            <label for="editCategoryName">Nombre de la categoría</label>
+            <input type="text" id="editCategoryName" name="name" required 
+                   value="${category.name || ''}">
+          </div>
+          <div class="form-group">
+            <label for="editCategoryDescription">Descripción (opcional)</label>
+            <input type="text" id="editCategoryDescription" name="description" 
+                   value="${category.description || ''}">
+          </div>
+
+          <div class="form-group delete-category">
+            <button type="button" class="btn-text-danger" id="triggerDeleteCategoryBtn">
+              🗑️ Eliminar categoría
+            </button>
+          </div>
+        </div>
+
+        <!-- Sección eliminación -->
+        <div id="deleteCategorySection" style="display: none; margin-top: 1rem;">
+          ${hasSubcategories ? `
+            <p>La categoría <strong>${category.name}</strong> contiene subcategorías y gastos.</p>
+
+            <div class="delete-options">
+              <div class="delete-option card-option" data-option="delete">
+                <h4>🗑️ Eliminar todo</h4>
+                <p>Se eliminarán la categoría, sus subcategorías y todos los gastos asociados.</p>
+              </div>
+              <div class="delete-option card-option ${otherCategories.length ? '' : 'disabled'}" data-option="move">
+                <h4>📂 Mover subcategorías</h4>
+                <p>Mover todas las subcategorías (y sus gastos) a otra categoría.</p>
+                <div id="categorySelectWrapper" style="display:none; margin-top:0.5rem;"></div>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="editCategoryDescription">Descripción (opcional)</label>
-              <input type="text" id="editCategoryDescription" name="description" 
-                     value="${category.description || ''}">
-            </div>
-            <input type="hidden" name="categoryId" value="${category.id}">
-          </form>
-        `,
-        footer: `
-          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-          <button type="submit" class="btn-primary" form="editCategoryForm">Guardar</button>
-        `
-      };
+          ` : `
+            <p>¿Deseas eliminar la categoría <strong>${category.name}</strong>?</p>
+          `}
+        </div>
+
+        <input type="hidden" name="categoryId" value="${category.id}">
+      </form>
+    `,
+    footer: `
+      <button type="button" class="btn-secondary" id="categoryCancelBtn">Cancelar</button>
+      <button type="submit" class="btn-primary" form="editCategoryForm" id="categorySubmitBtn">Guardar</button>
+    `,
+    onShow: (modal) => {
+      const editSection = modal.querySelector('#editCategorySection');
+      const deleteSection = modal.querySelector('#deleteCategorySection');
+      const modalTitle = modal.querySelector('.modal-title');
+      const submitBtn = modal.querySelector('#categorySubmitBtn');
+      const cancelBtn = modal.querySelector('#categoryCancelBtn');
+      const triggerDeleteBtn = modal.querySelector('#triggerDeleteCategoryBtn');
+      const wrapper = modal.querySelector('#categorySelectWrapper');
+
+      // Guardar cambios
+      function saveEdit(e) {
+        e.preventDefault();
+        const formData = new FormData(modal.querySelector('#editCategoryForm'));
+        Storage.updateCategory(formData.get('categoryId'), {
+          name: formData.get('name'),
+          description: formData.get('description')
+        });
+        AppState.refreshData();
+        Helpers.showToast('Categoría actualizada', 'success');
+        window.appEvents.emit('closeModal');
+      }
+      submitBtn.onclick = saveEdit;
+
+      // Cancelar → cerrar modal
+      cancelBtn.onclick = () => window.appEvents.emit('closeModal');
+
+      // Pasar a modo eliminación
+      triggerDeleteBtn.addEventListener('click', () => {
+        editSection.style.display = 'none';
+        deleteSection.style.display = 'block';
+        modalTitle.textContent = 'Eliminar Categoría';
+        submitBtn.textContent = 'Eliminar';
+
+        let deleteChoice = null;
+
+        // Construir select si corresponde
+        if (wrapper && otherCategories.length) {
+          wrapper.innerHTML = '';
+          wrapper.appendChild(Helpers.buildCategorySelect(null, category.id));
+        }
+
+        // Selección de opción
+        const options = modal.querySelectorAll('.delete-option');
+        options.forEach(opt => {
+          if (opt.classList.contains('disabled')) return;
+          opt.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            deleteChoice = opt.dataset.option;
+
+            if (deleteChoice === 'move') {
+              wrapper.style.display = 'block';
+            } else {
+              wrapper.style.display = 'none';
+            }
+          });
+        });
+
+        // Confirmar eliminación
+        submitBtn.onclick = (e) => {
+          e.preventDefault();
+
+          if (hasSubcategories) {
+            if (!deleteChoice) {
+              Helpers.showToast('Selecciona una opción para continuar', 'error');
+              return;
+            }
+
+            let targetId = null;
+            if (deleteChoice === 'move') {
+              targetId = wrapper.querySelector('select[name="targetCategory"]')?.value;
+              if (!targetId) {
+                Helpers.showToast('Selecciona una categoría destino', 'error');
+                return;
+              }
+            }
+
+            Storage.deleteCategory(category.id, {
+              action: deleteChoice,
+              targetCategoryId: targetId
+            });
+            Helpers.showToast(
+              deleteChoice === 'delete'
+                ? 'Categoría y subcategorías eliminadas'
+                : 'Categoría eliminada y subcategorías movidas',
+              'success'
+            );
+          } else {
+            Storage.deleteCategory(category.id, { action: 'delete' });
+            Helpers.showToast('Categoría eliminada', 'success');
+          }
+
+          AppState.refreshData();
+          window.appEvents.emit('closeModal');
+        };
+      });
     }
+  };
+}
+
+
     
 
     
@@ -449,7 +581,7 @@ static editSubcategoryModal(subcategory) {
         body: `
           <div class="expense-info">
             <div class="expense-info-text">Presupuesto disponible:</div>
-            <div class="remaining-budget">${Utils.formatCurrency(remainingBudget, currency)}</div>
+            <div class="remaining-budget">${Helpers.formatCurrency(remainingBudget, currency)}</div>
           </div>
           <form class="modal-form" id="expenseForm">
 <div class="form-group">
@@ -463,7 +595,7 @@ static editSubcategoryModal(subcategory) {
               <select id="expenseWallet" name="walletId" required>
                 ${wallets.map(wallet => `
                   <option value="${wallet.id}" ${selectedWallet && selectedWallet.id === wallet.id ? 'selected' : ''}>
-                    ${wallet.name} (${Utils.formatCurrency(wallet.balance, wallet.currency)})
+                    ${wallet.name} (${Helpers.formatCurrency(wallet.balance, wallet.currency)})
                   </option>
                 `).join('')}
               </select>
@@ -521,7 +653,7 @@ static editExpenseModalClassified(expense, currency = 'BOB') {
           <select id="editExpenseWallet" name="walletId" required>
             ${AppState.wallets.map(w => `
               <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
-                ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
+                ${w.name} (${Helpers.formatCurrency(w.balance, w.currency)})
               </option>`).join('')}
           </select>
         </div>
@@ -588,7 +720,7 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
           <select id="editExpenseWallet" name="walletId" required>
             ${AppState.wallets.map(w => `
               <option value="${w.id}" ${w.id === expense.walletId ? 'selected' : ''}>
-                ${w.name} (${Utils.formatCurrency(w.balance, w.currency)})
+                ${w.name} (${Helpers.formatCurrency(w.balance, w.currency)})
               </option>`).join('')}
           </select>
         </div>
@@ -619,10 +751,6 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
   };
 }
 
-
-
-
-    
     static createWalletModal() {
       const currencies = [
         { code: 'BOB', name: 'Boliviano' },
@@ -731,7 +859,7 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
             <div class="form-group">
               <label>Desde: ${fromWallet ? fromWallet.name : ''}</label>
               <div class="wallet-balance">
-                Disponible: ${fromWallet ? Utils.formatCurrency(fromWallet.balance, fromWallet.currency) : '0.00'}
+                Disponible: ${fromWallet ? Helpers.formatCurrency(fromWallet.balance, fromWallet.currency) : '0.00'}
               </div>
             </div>
             <div class="form-group">
@@ -740,7 +868,7 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
                 <option value="">Seleccionar wallet destino</option>
                 ${wallets.map(wallet => `
                   <option value="${wallet.id}">
-                    ${wallet.name} (${Utils.formatCurrency(wallet.balance, wallet.currency)})
+                    ${wallet.name} (${Helpers.formatCurrency(wallet.balance, wallet.currency)})
                   </option>
                 `).join('')}
               </select>
@@ -768,7 +896,8 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
         `
       };
     }
-  
+
+
     static createTransactionsModal(walletId) {
       const wallet = AppState.wallets.find(acc => acc.id === walletId);
       if (!wallet) return null;
@@ -785,7 +914,7 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
           <div class="wallet-summary">
             <div class="wallet-balance">
               <span class="balance-label">Saldo actual:</span>
-              <span class="balance-value">${Utils.formatCurrency(wallet.balance, wallet.currency)}</span>
+              <span class="balance-value">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</span>
             </div>
           </div>
           <div class="transactions-list">
@@ -802,10 +931,10 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
                     ${transaction.source ? `<div class="transaction-source">Fuente: ${transaction.source}</div>` : ''}
                   </div>
                   <div class="transaction-amount ${transaction.amount > 0 ? 'positive' : 'negative'}">
-                    ${transaction.amount > 0 ? '+' : ''}${Utils.formatCurrency(Math.abs(transaction.amount), wallet.currency)}
+                    ${transaction.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(transaction.amount), wallet.currency)}
                   </div>
                 </div>
-                <div class="transaction-date">${Utils.formatDate(transaction.date)}</div>
+                <div class="transaction-date">${Helpers.formatDate(transaction.date)}</div>
               </div>
             `).join('')}
           </div>
@@ -849,7 +978,7 @@ static createQuickExpenseModal() {
   // Generamos las opciones para el selector de wallets
   const walletOptions = wallets.map(wallet => 
       `<option value="${wallet.id}" ${wallet.id === activeWalletId ? 'selected' : ''}>
-          ${wallet.name} (${Utils.formatCurrency(wallet.balance, wallet.currency)})
+          ${wallet.name} (${Helpers.formatCurrency(wallet.balance, wallet.currency)})
       </option>`
   ).join('');
 

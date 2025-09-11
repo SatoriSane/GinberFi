@@ -77,7 +77,7 @@ class HuchasManager {
             ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
           </div>
           <div class="wallet-balance-display" data-tap-target="wallet">
-            <div class="balance-amount-large">${Utils.formatCurrency(wallet.balance, wallet.currency)}</div>
+            <div class="balance-amount-large">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</div>
           </div>
           <div class="wallet-actions">
             <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">
@@ -165,7 +165,7 @@ class HuchasManager {
   openTransferModal(fromWalletId) {
     const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
     if (wallets.length === 0) {
-      Utils.showToast('Necesitas al menos 2 wallets para hacer transferencias', 'warning');
+      Helpers.showToast('Necesitas al menos 2 wallets para hacer transferencias', 'warning');
       return;
     }
     
@@ -218,12 +218,12 @@ class HuchasManager {
     // Handle adding new source
     if (addSourceBtn && newSourceInput && sourceInput) {
       addSourceBtn.addEventListener('click', () => {
-        const newSource = Utils.sanitizeInput(newSourceInput.value);
+        const newSource = Helpers.sanitizeInput(newSourceInput.value);
         if (newSource) {
           Storage.addIncomeSource(newSource);
           sourceInput.value = newSource;
           newSourceInput.value = '';
-          Utils.showToast('Nueva fuente agregada', 'success');
+          Helpers.showToast('Nueva fuente agregada', 'success');
         }
       });
       
@@ -240,23 +240,23 @@ class HuchasManager {
   handleCreateWallet(form) {
     const formData = new FormData(form);
     const walletData = {
-      name: Utils.sanitizeInput(formData.get('name')),
+      name: Helpers.sanitizeInput(formData.get('name')),
       currency: formData.get('currency'),
       balance: parseFloat(formData.get('balance')),
-      purpose: Utils.sanitizeInput(formData.get('purpose') || '')
+      purpose: Helpers.sanitizeInput(formData.get('purpose') || '')
     };
 
-    if (!Utils.validateNumber(walletData.balance)) {
-      Utils.showToast('El saldo inicial debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(walletData.balance)) {
+      Helpers.showToast('El saldo inicial debe ser un número válido', 'error');
       return;
     }
 
     if (Storage.addWallet(walletData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Wallet creada exitosamente', 'success');
+      Helpers.showToast('Wallet creada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al crear la wallet', 'error');
+      Helpers.showToast('Error al crear la wallet', 'error');
     }
   }
 
@@ -265,24 +265,24 @@ class HuchasManager {
     const walletId = formData.get('walletId');
     const amount = parseFloat(formData.get('amount'));
     const source = formData.get('source');
-    const description = Utils.sanitizeInput(formData.get('description') || '');
+    const description = Helpers.sanitizeInput(formData.get('description') || '');
 
-    if (!Utils.validateNumber(amount)) {
-      Utils.showToast('El monto debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(amount)) {
+      Helpers.showToast('El monto debe ser un número válido', 'error');
       return;
     }
 
     if (!source) {
-      Utils.showToast('Debes seleccionar una fuente de ingreso', 'error');
+      Helpers.showToast('Debes seleccionar una fuente de ingreso', 'error');
       return;
     }
 
     if (Storage.addIncome(walletId, amount, source, description)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Ingreso agregado exitosamente', 'success');
+      Helpers.showToast('Ingreso agregado exitosamente', 'success');
     } else {
-      Utils.showToast('Error al agregar el ingreso', 'error');
+      Helpers.showToast('Error al agregar el ingreso', 'error');
     }
   }
 
@@ -291,24 +291,24 @@ class HuchasManager {
     const fromWalletId = formData.get('fromWalletId');
     const toWalletId = formData.get('toWalletId');
     const amount = parseFloat(formData.get('amount'));
-    const description = Utils.sanitizeInput(formData.get('description') || '');
+    const description = Helpers.sanitizeInput(formData.get('description') || '');
 
-    if (!Utils.validateNumber(amount)) {
-      Utils.showToast('El monto debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(amount)) {
+      Helpers.showToast('El monto debe ser un número válido', 'error');
       return;
     }
 
     if (!toWalletId) {
-      Utils.showToast('Debes seleccionar una wallet destino', 'error');
+      Helpers.showToast('Debes seleccionar una wallet destino', 'error');
       return;
     }
 
     if (Storage.transferMoney(fromWalletId, toWalletId, amount, description)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Transferencia realizada exitosamente', 'success');
+      Helpers.showToast('Transferencia realizada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al realizar la transferencia. Verifica el saldo disponible.', 'error');
+      Helpers.showToast('Error al realizar la transferencia. Verifica el saldo disponible.', 'error');
     }
   }
 

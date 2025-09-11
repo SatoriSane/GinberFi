@@ -83,14 +83,14 @@ class ResumenManager {
         <div class="stat-card total-spent">
           <div class="stat-icon">💸</div>
           <div class="stat-content">
-            <div class="stat-value">${Utils.formatCurrency(stats.totalSpent)}</div>
+            <div class="stat-value">${Helpers.formatCurrency(stats.totalSpent)}</div>
             <div class="stat-label">Total Gastado</div>
           </div>
         </div>
         <div class="stat-card avg-daily">
           <div class="stat-icon">📅</div>
           <div class="stat-content">
-            <div class="stat-value">${Utils.formatCurrency(stats.avgDaily)}</div>
+            <div class="stat-value">${Helpers.formatCurrency(stats.avgDaily)}</div>
             <div class="stat-label">Promedio Diario</div>
           </div>
         </div>
@@ -328,7 +328,7 @@ class ResumenManager {
         type: 'info',
         icon: '💰',
         title: 'Día de Mayor Gasto',
-        description: `${Utils.formatDate(maxDay)}: ${Utils.formatCurrency(dailySpending[maxDay])}`
+        description: `${Helpers.formatDate(maxDay)}: ${Helpers.formatCurrency(dailySpending[maxDay])}`
       });
     }
 
@@ -438,25 +438,25 @@ class ResumenManager {
         <div class="category-breakdown-item">
           <div class="category-header">
             <span class="category-name">${category.name}</span>
-            <span class="category-total">${Utils.formatCurrency(category.total)}</span>
+            <span class="category-total">${Helpers.formatCurrency(category.total)}</span>
           </div>
           <div class="subcategories-list">
             ${Object.values(category.subcategories)
               .sort((a, b) => b.total - a.total)
               .map(sub => {
                 const percentage = sub.budget > 0 ? (sub.total / sub.budget) * 100 : 0;
-                const budgetColors = Utils.getProgressBarColor(Math.max(0, 100 - percentage));
+                const budgetColors = Helpers.getProgressBarColor(Math.max(0, 100 - percentage));
                 return `
                   <div class="subcategory-breakdown-item" style="border-left-color: ${budgetColors.border};">
                     <div class="subcategory-info">
                       <span class="subcategory-name">${sub.name}</span>
-                      <span class="subcategory-total">${Utils.formatCurrency(sub.total)}</span>
+                      <span class="subcategory-total">${Helpers.formatCurrency(sub.total)}</span>
                     </div>
                     <div class="subcategory-budget">
                       <div class="budget-bar">
                         <div class="budget-progress" style="width: ${Math.min(percentage, 100)}%; background-color: ${budgetColors.border};"></div>
                       </div>
-                      <span class="budget-text">${Utils.formatCurrency(sub.total)} / ${Utils.formatCurrency(sub.budget)}</span>
+                      <span class="budget-text">${Helpers.formatCurrency(sub.total)} / ${Helpers.formatCurrency(sub.budget)}</span>
                     </div>
                   </div>
                 `;
@@ -482,7 +482,7 @@ class ResumenManager {
               <div class="date-month">${localDate.toLocaleDateString('es-ES', { month: 'short' })}</div>
             </div>
             <div class="timeline-content">
-              <div class="timeline-total">${Utils.formatCurrency(timelineData[date])}</div>
+              <div class="timeline-total">${Helpers.formatCurrency(timelineData[date])}</div>
               <div class="timeline-expenses">
                 ${expenses
                   .filter(exp => exp.date.startsWith(date))
@@ -492,7 +492,7 @@ class ResumenManager {
                       <div class="timeline-expense">
                         <span class="expense-name">${exp.name}</span>
                         <span class="expense-category">${category ? category.name : 'Sin categoría'}</span>
-                        <span class="expense-amount">${Utils.formatCurrency(exp.amount)}</span>
+                        <span class="expense-amount">${Helpers.formatCurrency(exp.amount)}</span>
                       </div>
                     `;
                   }).join('')}
@@ -528,11 +528,11 @@ class ResumenManager {
         <div class="wallet-breakdown-item">
           <div class="wallet-header">
             <span class="wallet-name">${wallet.name}</span>
-            <span class="wallet-total">${Utils.formatCurrency(wallet.total, wallet.currency)}</span>
+            <span class="wallet-total">${Helpers.formatCurrency(wallet.total, wallet.currency)}</span>
           </div>
           <div class="wallet-stats">
             <span class="wallet-count">${wallet.count} transacciones</span>
-            <span class="wallet-avg">Promedio: ${Utils.formatCurrency(wallet.total / wallet.count, wallet.currency)}</span>
+            <span class="wallet-avg">Promedio: ${Helpers.formatCurrency(wallet.total / wallet.count, wallet.currency)}</span>
           </div>
         </div>
       `).join('');
@@ -664,7 +664,7 @@ class ResumenManager {
               label: (context) => {
                 const total = data.reduce((sum, val) => sum + val, 0);
                 const percentage = ((context.parsed / total) * 100).toFixed(1);
-                return `${context.label}: ${Utils.formatCurrency(context.parsed)} (${percentage}%)`;
+                return `${context.label}: ${Helpers.formatCurrency(context.parsed)} (${percentage}%)`;
               }
             }
           }
@@ -709,14 +709,14 @@ class ResumenManager {
           y: {
             beginAtZero: true,
             ticks: {
-              callback: (value) => Utils.formatCurrency(value)
+              callback: (value) => Helpers.formatCurrency(value)
             }
           }
         },
         plugins: {
           tooltip: {
             callbacks: {
-              label: (context) => `Gastos: ${Utils.formatCurrency(context.parsed.y)}`
+              label: (context) => `Gastos: ${Helpers.formatCurrency(context.parsed.y)}`
             }
           }
         }
@@ -759,14 +759,14 @@ class ResumenManager {
           y: {
             beginAtZero: true,
             ticks: {
-              callback: (value) => Utils.formatCurrency(value)
+              callback: (value) => Helpers.formatCurrency(value)
             }
           }
         },
         plugins: {
           tooltip: {
             callbacks: {
-              label: (context) => `${context.dataset.label}: ${Utils.formatCurrency(context.parsed.y)}`
+              label: (context) => `${context.dataset.label}: ${Helpers.formatCurrency(context.parsed.y)}`
             }
           }
         }

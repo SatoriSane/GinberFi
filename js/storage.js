@@ -107,8 +107,8 @@ class Storage {
         subcategory.categoryId = categoryId;
     
         // 🔹 Calcular fechas desde la frecuencia
-        subcategory.startDate = subcategory.startDate || getDefaultStartDate(subcategory.frequency);
-        subcategory.endDate = getEndDate(subcategory.startDate, subcategory.frequency);
+        subcategory.startDate = subcategory.startDate || Helpers.getDefaultStartDate(subcategory.frequency);
+        subcategory.endDate = Helpers.getEndDate(subcategory.startDate, subcategory.frequency);
     
         category.subcategories.push(subcategory);
         return this.saveCategories(categories);
@@ -263,7 +263,7 @@ class Storage {
               if (updates.startDate || updates.frequency) {
                 updatedSub.startDate = updates.startDate || updatedSub.startDate;
                 updatedSub.frequency = updates.frequency || updatedSub.frequency;
-                updatedSub.endDate = getEndDate(updatedSub.startDate, updatedSub.frequency);
+                updatedSub.endDate = Helpers.getEndDate(updatedSub.startDate, updatedSub.frequency);
               }
         
               category.subcategories[subIndex] = updatedSub;
@@ -331,6 +331,40 @@ class Storage {
           archived.push(...expenses);
           this.set('ginbertfi_historical_expenses', archived);
         }
+// Subcategory delete
+static deleteSubcategory(categoryId, subcategoryId, options = { action: 'delete', targetSubcategoryId: null }) {
+  const categories = this.getCategories();
+  const category = categories.find(cat => cat.id === categoryId);
+  if (!category) return false;
+
+  const subIndex = category.subcategories.findIndex(sub => sub.id === subcategoryId);
+  if (subIndex === -1) return false;
+
+  // Eliminar o mover gastos de la subcategoría
+  const expenses = this.getExpenses();
+  const affectedExpenses = expenses.filter(exp => exp.subcategoryId === subcategoryId);
+
+  if (affectedExpenses.length > 0) {
+    if (options.action === 'delete') {
+      // Eliminar todos los gastos asociados
+      const remainingExpenses = expenses.filter(exp => exp.subcategoryId !== subcategoryId);
+      this.saveExpenses(remainingExpenses);
+    } else if (options.action === 'move' && options.targetSubcategoryId) {
+      // Mover los gastos a otra subcategoría
+      affectedExpenses.forEach(exp => {
+        exp.subcategoryId = options.targetSubcategoryId;
+      });
+      this.saveExpenses(expenses);
+    }
+  }
+
+  // Eliminar la subcategoría de la categoría
+  category.subcategories.splice(subIndex, 1);
+  this.saveCategories(categories);
+
+  return true;
+}
+
         // Eliminar un gasto
 static deleteExpense(expenseId) {
   const expenses = this.getExpenses();
@@ -361,6 +395,51 @@ static deleteExpense(expenseId) {
 
   return true;
 }
+// Eliminar categoría
+static deleteCategory(categoryId, options = { action: 'delete', targetCategoryId: null }) {
+  let categories = this.getCategories();
+  const categoryIndex = categories.findIndex(cat => cat.id === categoryId);
+  if (categoryIndex === -1) return false;
+
+  const category = categories[categoryIndex];
+
+  // 🔹 Manejar subcategorías y gastos
+  const expenses = this.getExpenses();
+  let updatedExpenses = [...expenses];
+
+  if (category.subcategories && category.subcategories.length > 0) {
+    if (options.action === 'delete') {
+      // Eliminar todos los gastos de todas las subcategorías
+      updatedExpenses = updatedExpenses.filter(exp => exp.categoryId !== categoryId);
+    } else if (options.action === 'move' && options.targetCategoryId) {
+      // Mover subcategorías y gastos a otra categoría
+      const targetCategory = categories.find(c => c.id === options.targetCategoryId);
+      if (targetCategory) {
+        // Reasignar cada subcategoría y sus gastos
+        category.subcategories.forEach(sub => {
+          sub.categoryId = targetCategory.id;
+          targetCategory.subcategories.push(sub);
+
+          updatedExpenses.forEach(exp => {
+            if (exp.subcategoryId === sub.id) {
+              exp.categoryId = targetCategory.id;
+            }
+          });
+        });
+      }
+    }
+  }
+
+  // 🔹 Guardar gastos actualizados
+  this.saveExpenses(updatedExpenses);
+
+  // 🔹 Eliminar la categoría original
+  categories.splice(categoryIndex, 1);
+  this.saveCategories(categories);
+
+  return true;
+}
+
 
                   
   }

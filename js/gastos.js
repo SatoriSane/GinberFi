@@ -97,7 +97,7 @@ document.addEventListener('submit', (e) => {
       const freq = e.target.value;
       const startDateInput = document.getElementById('subcategoryStartDate');
       if (startDateInput) {
-        startDateInput.value = this.getDefaultStartDate(freq);
+        startDateInput.value = Helpers.getDefaultStartDate(freq);
       }
     });
   }
@@ -149,8 +149,8 @@ document.addEventListener('submit', (e) => {
       const totalBudget = this.getCategoryBudget(category);
       const totalSpent = this.getCategorySpent(category.id, expenses);
       const remaining = totalBudget - totalSpent;
-      const percentage = Utils.calculateProgress(totalSpent, totalBudget);
-      const budgetColors = Utils.getProgressBarColor(100 - percentage);
+      const percentage = Helpers.calculateProgress(totalSpent, totalBudget);
+      const budgetColors = Helpers.getProgressBarColor(100 - percentage);
 
       return `
         <div class="category-wrapper ${category.expanded ? 'expanded' : ''}" data-category-id="${category.id}">
@@ -161,7 +161,7 @@ document.addEventListener('submit', (e) => {
             </div>
             <div class="category-right">
               <div class="category-budget">
-                <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
+                <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
                 <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
               </div>
               <button class="add-subcategory-btn"
@@ -196,7 +196,7 @@ document.addEventListener('submit', (e) => {
           </div>
           <div class="category-right">
             <div class="category-budget">
-              <div class="budget-amount">${Utils.formatCurrency(totalSpent)}</div>
+              <div class="budget-amount">${Helpers.formatCurrency(totalSpent)}</div>
             </div>
           </div>
         </div>
@@ -206,11 +206,11 @@ document.addEventListener('submit', (e) => {
               <div class="expense-item unclassified-expense-item" data-expense-id="${expense.id}" title="Haz clic para clasificar este gasto">
                 <div class="expense-info">
                   <div class="expense-name">${expense.name}</div>
-                  <div class="expense-date">${Utils.formatDate(expense.date)}</div>
+                  <div class="expense-date">${Helpers.formatDate(expense.date)}</div>
                 </div>
                 <div class="expense-right">
                   <div class="expense-amount">
-                    -${Utils.formatCurrency(expense.amount)}
+                    -${Helpers.formatCurrency(expense.amount)}
                   </div>
                 </div>
               </div>
@@ -239,21 +239,21 @@ document.addEventListener('submit', (e) => {
           const subExpenses = this.getSubcategoryExpenses(sub.id, expenses);
           const spent = this.getSubcategorySpent(sub.id, expenses);
           const remaining = sub.budget - spent;
-          const percentage = Utils.calculateProgress(spent, sub.budget);
-          const budgetColors = Utils.getProgressBarColor(100 - percentage);
+          const percentage = Helpers.calculateProgress(spent, sub.budget);
+          const budgetColors = Helpers.getProgressBarColor(100 - percentage);
   
           // ✅ Formatear fecha de inicio
-          const formattedStart = sub.startDate ? Utils.formatDate(sub.startDate) : '---';
+          const formattedStart = sub.startDate ? Helpers.formatDate(sub.startDate) : '---';
   
           // Determinar fecha final segura
           let endDate = sub.endDate;
           if (!endDate || isNaN(new Date(endDate))) {
-            endDate = getEndDate(sub.startDate, sub.frequency);
+            endDate = Helpers.getEndDate(sub.startDate, sub.frequency);
           }
-          const formattedEnd = Utils.formatDate(endDate);
+          const formattedEnd = Helpers.formatDate(endDate);
 
           // Calcular tiempo restante para el reinicio
-          const remainingTime = this.getRemainingTime(endDate);
+          const remainingTime = Helpers.getRemainingTime(endDate);
 
           return `
             <div class="subcategory-wrapper ${sub.expanded ? 'expanded' : ''}" data-subcategory-id="${sub.id}">
@@ -266,7 +266,7 @@ document.addEventListener('submit', (e) => {
                 <div class="subcategory-right">
                   <div class="subcategory-budget">
                     <div class="budget-top">
-                      <div class="budget-amount">${Utils.formatCurrency(remaining)}</div>
+                      <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
                     </div>
                   </div>
   
@@ -327,11 +327,11 @@ document.addEventListener('submit', (e) => {
             <div class="expense-item" data-expense-id="${expense.id}">
               <div class="expense-info">
                 <div class="expense-name">${expense.name}</div>
-                <div class="expense-date">${Utils.formatDate(expense.date)}</div>
+                <div class="expense-date">${Helpers.formatDate(expense.date)}</div>
               </div>
               <div class="expense-right">
                 <div class="expense-amount">
-                  -${Utils.formatCurrency(expense.amount, wallet ? wallet.currency : 'BOB')}
+                  -${Helpers.formatCurrency(expense.amount, wallet ? wallet.currency : 'BOB')}
                 </div>
                 ${wallet ? `<div class="expense-wallet">${wallet.name}</div>` : ''}
               </div>
@@ -419,9 +419,8 @@ document.addEventListener('submit', (e) => {
   }
   
 
-  // --- El resto de tus funciones (toggle, helpers, etc.) ---
   
-  // ✅ CAMBIO: He movido los manejadores de modales y formularios aquí abajo para agrupar la lógica nueva
+  // 
   // ----------------------------------------------------
   // --- MODAL & FORM HANDLERS ---
   // ----------------------------------------------------
@@ -435,7 +434,7 @@ document.addEventListener('submit', (e) => {
   // 🚀 NUEVO: Modal para gasto rápido
   openQuickExpenseModal() {
     if (AppState.wallets.length === 0) {
-      Utils.showToast('Primero debes crear una wallet en la pestaña Wallets', 'warning');
+      Helpers.showToast('Primero debes crear una wallet en la pestaña Wallets', 'warning');
       return;
     }
     const modalData = ModalManager.createQuickExpenseModal(); // Necesitarás crear esta función en modals.js
@@ -457,7 +456,7 @@ document.addEventListener('submit', (e) => {
   }
   
   openEditSubcategoryModal(subcategoryId) {
-     let subcategory = null;
+    let subcategory = null;
     AppState.categories.forEach(cat => {
       const found = cat.subcategories.find(sub => sub.id === subcategoryId);
       if (found) subcategory = found;
@@ -467,6 +466,7 @@ document.addEventListener('submit', (e) => {
     const modalData = ModalManager.editSubcategoryModal(subcategory);
     window.appEvents.emit('openModal', modalData);
   }
+
   openEditExpenseModal(expenseId) {
     const expense = AppState.expenses.find(e => e.id === expenseId);
     if (!expense) return;
@@ -494,9 +494,6 @@ document.addEventListener('submit', (e) => {
     }
   }
   
-
-
-
 /**
  * Rellena el <select id="expenseSubcategory"> dentro del modal
  * de clasificación de gasto sin categoría.
@@ -557,17 +554,17 @@ fillSubcategorySelect() {
     // ... (sin cambios)
     const formData = new FormData(form);
     const categoryData = {
-      name: Utils.sanitizeInput(formData.get('name')),
-      description: Utils.sanitizeInput(formData.get('description') || ''),
+      name: Helpers.sanitizeInput(formData.get('name')),
+      description: Helpers.sanitizeInput(formData.get('description') || ''),
       expanded: false
     };
 
     if (Storage.addCategory(categoryData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Categoría creada exitosamente', 'success');
+      Helpers.showToast('Categoría creada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al crear la categoría', 'error');
+      Helpers.showToast('Error al crear la categoría', 'error');
     }
   }
 
@@ -575,7 +572,7 @@ fillSubcategorySelect() {
     // ... (sin cambios)
     const formData = new FormData(form);
     const subcategoryData = {
-      name: Utils.sanitizeInput(formData.get('name')),
+      name: Helpers.sanitizeInput(formData.get('name')),
       budget: parseFloat(formData.get('budget')),
       frequency: formData.get('frequency'),
       startDate: formData.get('startDate'), // guardar fecha de inicio
@@ -584,8 +581,8 @@ fillSubcategorySelect() {
   
     const categoryId = formData.get('categoryId');
   
-    if (!Utils.validateNumber(subcategoryData.budget)) {
-      Utils.showToast('El presupuesto debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(subcategoryData.budget)) {
+      Helpers.showToast('El presupuesto debe ser un número válido', 'error');
       return;
     }
   
@@ -600,9 +597,9 @@ fillSubcategorySelect() {
       
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Subcategoría creada exitosamente', 'success');
+      Helpers.showToast('Subcategoría creada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al crear la subcategoría', 'error');
+      Helpers.showToast('Error al crear la subcategoría', 'error');
     }
   }
   
@@ -610,23 +607,23 @@ fillSubcategorySelect() {
     // ... (sin cambios)
      const formData = new FormData(form);
     const updatedData = {
-      name: Utils.sanitizeInput(formData.get('name')),
+      name: Helpers.sanitizeInput(formData.get('name')),
       budget: parseFloat(formData.get('budget')),
       frequency: formData.get('frequency'),
       startDate: formData.get('startDate') // usar la fecha manual del formulario
     };
   
-    if (!Utils.validateNumber(updatedData.budget)) {
-      Utils.showToast('El presupuesto debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(updatedData.budget)) {
+      Helpers.showToast('El presupuesto debe ser un número válido', 'error');
       return;
     }
   
     if (Storage.updateSubcategory(categoryId, subcategoryId, updatedData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Subcategoría actualizada exitosamente', 'success');
+      Helpers.showToast('Subcategoría actualizada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al actualizar la subcategoría', 'error');
+      Helpers.showToast('Error al actualizar la subcategoría', 'error');
     }
   }
   
@@ -634,16 +631,16 @@ fillSubcategorySelect() {
     // ... (sin cambios)
      const formData = new FormData(form);
     const updatedData = {
-      name: Utils.sanitizeInput(formData.get('name')),
-      description: Utils.sanitizeInput(formData.get('description') || '')
+      name: Helpers.sanitizeInput(formData.get('name')),
+      description: Helpers.sanitizeInput(formData.get('description') || '')
     };
 
     if (Storage.updateCategory(categoryId, updatedData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Categoría actualizada exitosamente', 'success');
+      Helpers.showToast('Categoría actualizada exitosamente', 'success');
     } else {
-      Utils.showToast('Error al actualizar la categoría', 'error');
+      Helpers.showToast('Error al actualizar la categoría', 'error');
     }
   }
 
@@ -658,13 +655,13 @@ fillSubcategorySelect() {
     );
 
     if (!category) {
-      Utils.showToast('Debes seleccionar una subcategoría válida.', 'error');
+      Helpers.showToast('Debes seleccionar una subcategoría válida.', 'error');
       // No cerramos el modal aquí para que el usuario pueda corregir.
       return;
     }
     
     const updatedData = {
-      name: Utils.sanitizeInput(formData.get('name')),
+      name: Helpers.sanitizeInput(formData.get('name')),
       amount: parseFloat(formData.get('amount')),
       date: formData.get('date'),
       walletId: formData.get('walletId'),
@@ -672,17 +669,17 @@ fillSubcategorySelect() {
       categoryId: category.id // <- Guardamos la categoryId correcta
     };
   
-    if (!Utils.validateNumber(updatedData.amount)) {
-      Utils.showToast('El monto debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(updatedData.amount)) {
+      Helpers.showToast('El monto debe ser un número válido', 'error');
       return;
     }
   
     if (Storage.updateExpense(expenseId, updatedData)) {
         AppState.refreshData();
-        Utils.showToast('Gasto actualizado y clasificado exitosamente', 'success');
+        Helpers.showToast('Gasto actualizado y clasificado exitosamente', 'success');
         window.appEvents.emit('closeModal'); // Cierra solo en caso de éxito
     } else {
-        Utils.showToast('Error al actualizar el gasto', 'error');
+        Helpers.showToast('Error al actualizar el gasto', 'error');
         // No cerramos el modal aquí para que el usuario vea el error.
     }
 
@@ -698,12 +695,12 @@ fillSubcategorySelect() {
     );
     
     if (!category) { // Esto no debería pasar, pero por seguridad
-      Utils.showToast('Error: Subcategoría no encontrada.', 'error');
+      Helpers.showToast('Error: Subcategoría no encontrada.', 'error');
       return;
     }
 
     const expenseData = {
-      name: Utils.sanitizeInput(formData.get('name')),
+      name: Helpers.sanitizeInput(formData.get('name')),
       amount: parseFloat(formData.get('amount')),
       date: formData.get('date'),
       walletId: formData.get('walletId'),
@@ -711,14 +708,14 @@ fillSubcategorySelect() {
       categoryId: category.id // <- Guardamos la categoryId
     };
   
-    if (!Utils.validateNumber(expenseData.amount)) {
-      Utils.showToast('El monto debe ser un número válido', 'error');
+    if (!Helpers.validateNumber(expenseData.amount)) {
+      Helpers.showToast('El monto debe ser un número válido', 'error');
       return;
     }
   
     const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
     if (!wallet || wallet.balance < expenseData.amount) {
-      Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
+      Helpers.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
       return;
     }
   
@@ -731,10 +728,10 @@ fillSubcategorySelect() {
       Storage.saveCategories(AppState.categories);
   
       window.appEvents.emit('closeModal');
-      Utils.showToast('Gasto agregado exitosamente', 'success');
+      Helpers.showToast('Gasto agregado exitosamente', 'success');
       this.render();
     } else {
-      Utils.showToast('Error al agregar el gasto', 'error');
+      Helpers.showToast('Error al agregar el gasto', 'error');
     }
   }
 
@@ -742,7 +739,7 @@ fillSubcategorySelect() {
   handleCreateQuickExpense(form) {
     const formData = new FormData(form);
     const expenseData = {
-      name: Utils.sanitizeInput(formData.get('name')),
+      name: Helpers.sanitizeInput(formData.get('name')),
       amount: parseFloat(formData.get('amount')),
       date: new Date().toISOString().split('T')[0], // Fecha actual
       walletId: formData.get('walletId'),
@@ -750,23 +747,23 @@ fillSubcategorySelect() {
       subcategoryId: null
     };
 
-    if (!expenseData.name || !Utils.validateNumber(expenseData.amount)) {
-        Utils.showToast('Por favor, completa nombre y monto.', 'error');
+    if (!expenseData.name || !Helpers.validateNumber(expenseData.amount)) {
+        Helpers.showToast('Por favor, completa nombre y monto.', 'error');
         return;
     }
 
     const wallet = AppState.wallets.find(acc => acc.id === expenseData.walletId);
     if (!wallet || wallet.balance < expenseData.amount) {
-      Utils.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
+      Helpers.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
       return;
     }
 
     if (Storage.addExpense(expenseData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
-      Utils.showToast('Gasto rápido guardado. ¡Clasifícalo cuando puedas!', 'success');
+      Helpers.showToast('Gasto rápido guardado. ¡Clasifícalo cuando puedas!', 'success');
     } else {
-      Utils.showToast('Error al guardar el gasto rápido', 'error');
+      Helpers.showToast('Error al guardar el gasto rápido', 'error');
     }
   }
 
@@ -799,13 +796,12 @@ fillSubcategorySelect() {
     }
   }
   handleDeleteCategory(categoryId) {
-    // ... (sin cambios)
     if (confirm('¿Seguro que quieres eliminar esta categoría y todas sus subcategorías?')) {
       if (Storage.deleteCategory(categoryId)) {
         AppState.refreshData();
-        Utils.showToast('Categoría eliminada', 'success');
+        Helpers.showToast('Categoría eliminada', 'success');
       } else {
-        Utils.showToast('Error al eliminar la categoría', 'error');
+        Helpers.showToast('Error al eliminar la categoría', 'error');
       }
     }
   }
@@ -817,24 +813,18 @@ fillSubcategorySelect() {
       if (Storage.deleteExpense(expenseId)) {
         AppState.refreshData();
         window.appEvents.emit('closeModal');
-        Utils.showToast('Gasto eliminado exitosamente', 'success');
+        Helpers.showToast('Gasto eliminado exitosamente', 'success');
       } else {
-        Utils.showToast('Error al eliminar el gasto', 'error');
+        Helpers.showToast('Error al eliminar el gasto', 'error');
       }
     }
   }
 
-  handleDeleteSubcategory(categoryId, subcategoryId) {
-    // ... (sin cambios)
-     if (confirm('¿Seguro que quieres eliminar esta subcategoría?')) {
-      if (Storage.deleteSubcategory(categoryId, subcategoryId)) {
-        AppState.refreshData();
-        Utils.showToast('Subcategoría eliminada', 'success');
-      } else {
-        Utils.showToast('Error al eliminar la subcategoría', 'error');
-      }
-    }
-  }
+
+  
+  
+  
+  
   getCategoryExpenses(categoryId, expenses) {
     // ... (sin cambios)
     const category = AppState.categories.find(cat => cat.id === categoryId);
@@ -853,30 +843,7 @@ fillSubcategorySelect() {
     const categoryExpenses = this.getCategoryExpenses(categoryId, expenses);
     return categoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
-  getRemainingTime(endDateStr) {
-    // ... (sin cambios)
-    const now = new Date();
-    const endDate = new Date(endDateStr + 'T23:59:59.999');
 
-    const diffMs = endDate - now;
-
-    if (diffMs <= 0) {
-        return "Reiniciado";
-    }
-
-    const diffDays = diffMs / (1000 * 60 * 60 * 24);
-    if (diffDays >= 1) {
-        return `${Math.ceil(diffDays)} días`;
-    }
-
-    const diffHours = diffMs / (1000 * 60 * 60);
-    if (diffHours >= 1) {
-        return `${Math.ceil(diffHours)} horas`;
-    }
-
-    const diffMinutes = diffMs / (1000 * 60);
-    return `${Math.ceil(diffMinutes)} minutos`;
-  }
   getSubcategoryExpenses(subcategoryId, expenses) {
     // ... (sin cambios)
     let subcategory = null;
@@ -913,33 +880,7 @@ fillSubcategorySelect() {
     const subcategoryExpenses = this.getSubcategoryExpenses(subcategoryId, expenses);
     return subcategoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
-  getDefaultStartDate(frequency) {
-    // ... (sin cambios)
-    const today = new Date();
-    let startDate;
-  
-    switch (frequency) {
-      case 'semanal': {
-        const day = today.getDay(); 
-        const diff = (day === 0 ? -6 : 1 - day);
-        startDate = new Date(today);
-        startDate.setDate(today.getDate() + diff);
-        break;
-      }
-      case 'mensual':
-      case 'trimestral': {
-        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-        break;
-      }
-      case 'anual':
-        startDate = new Date(today.getFullYear(), 0, 1);
-        break;
-      default:
-        startDate = today;
-    }
-  
-    return startDate.toISOString().split('T')[0];
-  }
+
   resetSubcategoryBudget(categoryId, subcategoryId, allExpenses) {
     // ... (sin cambios)
     const sub = AppState.categories
@@ -975,13 +916,13 @@ fillSubcategorySelect() {
     if (category) {
         const subToUpdate = category.subcategories.find(s => s.id === subcategoryId);
         if (subToUpdate) {
-            const nextStartDate = getNextResetDate(subToUpdate.startDate, subToUpdate.frequency);
+            const nextStartDate = Helpers.getNextResetDate(subToUpdate.startDate, subToUpdate.frequency);
             const year = nextStartDate.getFullYear();
             const month = String(nextStartDate.getMonth() + 1).padStart(2, '0');
             const day = String(nextStartDate.getDate()).padStart(2, '0');
             
             subToUpdate.startDate = `${year}-${month}-${day}`;
-            subToUpdate.endDate = getEndDate(subToUpdate.startDate, subToUpdate.frequency);
+            subToUpdate.endDate = Helpers.getEndDate(subToUpdate.startDate, subToUpdate.frequency);
             Storage.saveCategories(categories);
             
         }
@@ -989,14 +930,13 @@ fillSubcategorySelect() {
   }
   
   checkAndResetBudgets() {
-    // ... (sin cambios)
-     const categories = Storage.getCategories();
+    const categories = Storage.getCategories();
     const allExpenses = Storage.getExpenses();
     let didReset = false;
 
     categories.forEach(category => {
         category.subcategories.forEach(sub => {
-            const resetDate = getNextResetDate(sub.startDate, sub.frequency);
+            const resetDate = Helpers.getNextResetDate(sub.startDate, sub.frequency);
             if (new Date() >= resetDate) {
                 this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
                 didReset = true;
@@ -1006,7 +946,7 @@ fillSubcategorySelect() {
 
     if (didReset) {
         AppState.refreshData();
-        Utils.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
+        Helpers.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
     }
   }
 }

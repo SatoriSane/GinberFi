@@ -298,3 +298,47 @@
 .btn-text-danger:hover {
   color: #b52b30;
 }
+/* Opciones de eliminación dentro del modal */
+.delete-options {
+  display: grid;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.delete-option {
+  background: var(--white);
+  border: 2px solid var(--pastel-blue);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-option h4 {
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-lg);
+  color: var(--dark-blue);
+}
+
+.delete-option p {
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+}
+
+.delete-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--dark-blue);
+}
+
+.delete-option.selected {
+  border-color: var(--dark-blue);
+  background: var(--pastel-blue);
+  box-shadow: var(--shadow-md);
+}
+
+.delete-option.selected h4,
+.delete-option.selected p {
+  color: var(--text-dark);
+}

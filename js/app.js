@@ -35,7 +35,7 @@ class GinbertFiApp {
       
     } catch (error) {
       console.error('Error initializing GinbertFi app:', error);
-      Utils.showToast('Error al inicializar la aplicación', 'error');
+      Helpers.showToast('Error al inicializar la aplicación', 'error');
     }
   }
 
@@ -57,13 +57,13 @@ class GinbertFiApp {
     // Global error handler
     window.addEventListener('error', (event) => {
       console.error('Global error:', event.error);
-      Utils.showToast('Ha ocurrido un error inesperado', 'error');
+      Helpers.showToast('Ha ocurrido un error inesperado', 'error');
     });
 
     // Unhandled promise rejection handler
     window.addEventListener('unhandledrejection', (event) => {
       console.error('Unhandled promise rejection:', event.reason);
-      Utils.showToast('Error en la aplicación', 'error');
+      Helpers.showToast('Error en la aplicación', 'error');
     });
   }
 

@@ -72,7 +72,7 @@ class Header {
     updateBalance() {
       const selectedWallet = AppState.selectedWallet;
       if (selectedWallet) {
-        this.balanceAmount.textContent = Utils.formatCurrency(selectedWallet.balance, selectedWallet.currency);
+        this.balanceAmount.textContent = Helpers.formatCurrency(selectedWallet.balance, selectedWallet.currency);
       } else {
         this.balanceAmount.textContent = '0.00 BOB';
       }
@@ -99,7 +99,7 @@ class Header {
             ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
           </div>
           <div class="wallet-balance">
-            ${Utils.formatCurrency(wallet.balance, wallet.currency)}
+            ${Helpers.formatCurrency(wallet.balance, wallet.currency)}
           </div>
         </div>
       `).join('');
