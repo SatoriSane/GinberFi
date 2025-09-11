@@ -331,6 +331,37 @@ class Storage {
           archived.push(...expenses);
           this.set('ginbertfi_historical_expenses', archived);
         }
+        // Eliminar un gasto
+static deleteExpense(expenseId) {
+  const expenses = this.getExpenses();
+  const expenseIndex = expenses.findIndex(exp => exp.id === expenseId);
+  if (expenseIndex === -1) return false;
+
+  const expense = expenses[expenseIndex];
+
+  // ✅ Restaurar el balance en la wallet asociada
+  const wallets = this.getWallets();
+  const wallet = wallets.find(w => w.id === expense.walletId);
+  if (wallet) {
+    wallet.balance += parseFloat(expense.amount); // devolvemos el gasto
+    this.saveWallets(wallets);
+  }
+
+  // ✅ Eliminar el gasto
+  expenses.splice(expenseIndex, 1);
+  this.saveExpenses(expenses);
+
+  // ✅ Eliminar transacción asociada
+  const transactions = this.get('ginbertfi_transactions') || [];
+  const txIndex = transactions.findIndex(tx => tx.id === 'exp-' + expenseId);
+  if (txIndex !== -1) {
+    transactions.splice(txIndex, 1);
+    this.set('ginbertfi_transactions', transactions);
+  }
+
+  return true;
+}
+
                   
   }
   
