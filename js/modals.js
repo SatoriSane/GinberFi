@@ -801,7 +801,7 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
     static createIncomeModal(walletId) {
       const wallet = AppState.wallets.find(acc => acc.id === walletId);
       const incomeSources = Storage.getIncomeSources();
-  
+    
       return {
         title: 'Agregar Ingreso',
         className: 'income-modal',
@@ -817,7 +817,7 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
             </div>
             <div class="form-group">
               <label>Fuente del dinero</label>
-              <div class="source-list">
+              <div class="source-list" id="sourceList">
                 ${incomeSources.map(source => `
                   <div class="source-item" data-source="${source}">${source}</div>
                 `).join('')}
@@ -841,9 +841,52 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
         footer: `
           <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
           <button type="submit" class="btn-primary" form="incomeForm">Agregar Ingreso</button>
-        `
+        `,
+        onShow: () => {
+          const sourceList = document.getElementById('sourceList');
+          const hiddenInput = document.getElementById('incomeSource');
+          const addBtn = document.getElementById('addSourceBtn');
+          const newSourceInput = document.getElementById('newSource');
+    
+          // Seleccionar fuente existente
+          sourceList.addEventListener('click', (e) => {
+            const item = e.target.closest('.source-item');
+            if (!item) return;
+    
+            // Quitar selección previa
+            sourceList.querySelectorAll('.source-item').forEach(el => el.classList.remove('selected'));
+            // Marcar nuevo
+            item.classList.add('selected');
+            hiddenInput.value = item.dataset.source;
+          });
+    
+          // Agregar nueva fuente
+          addBtn.addEventListener('click', () => {
+            const newSource = newSourceInput.value.trim();
+            if (!newSource) return;
+    
+            // Guardar en storage
+            Storage.addIncomeSource(newSource);
+    
+            // Crear item en la lista
+            const item = document.createElement('div');
+            item.className = 'source-item selected';
+            item.dataset.source = newSource;
+            item.textContent = newSource;
+    
+            // Quitar selección previa
+            sourceList.querySelectorAll('.source-item').forEach(el => el.classList.remove('selected'));
+            // Insertar y marcar como seleccionado
+            sourceList.appendChild(item);
+            hiddenInput.value = newSource;
+    
+            // Limpiar input
+            newSourceInput.value = '';
+          });
+        }
       };
     }
+    
   
     static createTransferModal(fromWalletId) {
       const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
