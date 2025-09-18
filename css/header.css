@@ -58,13 +58,13 @@
 .balance-dropdown {
   position: absolute;
   top: 100%;
-  right: var(--spacing-sm); /* versión móvil aplicada a todas */
-  left: var(--spacing-sm);  /* versión móvil aplicada a todas */
+  left: 2%;                       /* ocupar todo el ancho */
+  right: 2%;                      /* ocupar todo el ancho */
   background: var(--white);
-  border-radius: var(--radius-lg);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg); /* solo esquinas inferiores */
   box-shadow: var(--shadow-lg);
-  min-width: auto;           /* versión móvil aplicada a todas */
-  max-width: 90vw;
+  width: 96%;                   /* ancho completo */
+  max-width: none;               /* quitar límite de 90vw */
   z-index: 200;
   opacity: 0;
   visibility: hidden;
@@ -77,6 +77,7 @@
   visibility: visible;
   transform: translateY(0);
 }
+
 
 .wallets-list {
   padding: var(--spacing-md);
