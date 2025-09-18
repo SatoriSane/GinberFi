@@ -27,6 +27,9 @@ class GinbertFiApp {
       
       // Setup keyboard shortcuts
       this.setupKeyboardShortcuts();
+
+      // Setup reset app button
+      this.setupResetButton();
       
       // Mark as initialized
       this.isInitialized = true;
@@ -96,6 +99,34 @@ class GinbertFiApp {
         if (balanceDropdown && balanceDropdown.classList.contains('show')) {
           balanceDropdown.classList.remove('show');
           document.getElementById('balanceSelector').classList.remove('open');
+        }
+      }
+    });
+  }
+
+  setupResetButton() {
+    const resetBtn = document.getElementById('resetAppBtn');
+    if (!resetBtn) return;
+
+    resetBtn.addEventListener('click', () => {
+      if (confirm('⚠️ Esto eliminará TODOS tus datos y reiniciará la aplicación. ¿Continuar?')) {
+        try {
+          // Limpiar storage
+          localStorage.clear();
+          sessionStorage.clear();
+
+          // Limpiar estado global si existe
+          if (window.AppState) {
+            window.AppState.categories = [];
+            window.AppState.wallets = [];
+            window.AppState.expenses = [];
+          }
+
+          // Recargar la aplicación
+          location.reload();
+        } catch (err) {
+          console.error('Error al reiniciar la app:', err);
+          Helpers.showToast('No se pudo reiniciar la aplicación', 'error');
         }
       }
     });
