@@ -1,47 +1,41 @@
-// Huchas tab functionality
 class HuchasManager {
   constructor() {
     this.walletsContainer = document.getElementById('walletsContainer');
     this.emptywalletsState = document.getElementById('emptywalletsState');
-    this.addWalletBtn = document.getElementById('addWalletBtn');
-    this.addNewWalletFab = document.getElementById('addNewWalletFab');
+    this.addWalletBtn = document.getElementById('addWalletBtn'); // botón dentro del FAB
+    this.addNewWalletFab = document.getElementById('addNewWalletFab'); // FAB
+    this.firstWalletBtn = this.emptywalletsState.querySelector('#addWalletBtn'); // botón "Crear Primera Wallet"
     this.expandedwallets = new Set(); // Track which wallets have expanded transactions
-    
+
     this.init();
   }
 
   init() {
     this.setupEventListeners();
     this.render();
-    
-    // Listen for data updates
-    window.appEvents.on('dataUpdated', () => {
-      this.render();
-    });
-    
-    // Listen for tab changes
+
+    // Listeners globales de actualización y cambios de tab
+    window.appEvents.on('dataUpdated', () => this.render());
     window.appEvents.on('tabChanged', (tabName) => {
-      if (tabName === 'huchas') {
-        this.render();
-      }
+      if (tabName === 'huchas') this.render();
     });
+    window.appEvents.on('refreshWallets', () => this.render());
   }
 
   setupEventListeners() {
-    this.addWalletBtn.addEventListener('click', () => {
-      this.openCreateWalletModal();
-    });
+    // FAB para crear wallet
+    if (this.addNewWalletFab) {
+      this.addNewWalletFab.addEventListener('click', () => this.openCreateWalletModal());
+    }
 
-    this.addNewWalletFab.addEventListener('click', () => {
-      this.openCreateWalletModal();
-    });
+    // Botón "Crear Primera Wallet" (si existe)
+    if (this.firstWalletBtn) {
+      this.firstWalletBtn.addEventListener('click', () => this.openCreateWalletModal());
+    }
 
-    // Handle form submissions
+    // Form submissions de otros modales
     document.addEventListener('submit', (e) => {
-      if (e.target.id === 'walletForm') {
-        e.preventDefault();
-        this.handleCreateWallet(e.target);
-      } else if (e.target.id === 'incomeForm') {
+      if (e.target.id === 'incomeForm') {
         e.preventDefault();
         this.handleAddIncome(e.target);
       } else if (e.target.id === 'transferForm') {
@@ -52,25 +46,24 @@ class HuchasManager {
   }
 
   render() {
+    AppState.wallets = Storage.getWallets() || [];
     const wallets = AppState.wallets;
-    
-    if (wallets.length === 0) {
+
+    // Limpiar wallets previos, pero mantener nodo empty
+    while (this.walletsContainer.firstChild && this.walletsContainer.firstChild !== this.emptywalletsState) {
+      this.walletsContainer.removeChild(this.walletsContainer.firstChild);
+    }
+
+    if (!wallets.length) {
+      // Mostrar estado vacío
       this.emptywalletsState.style.display = 'block';
       this.addNewWalletFab.style.display = 'none';
-      // Clear any existing wallet elements except the empty state
-      this.walletsContainer.querySelectorAll('.wallet-card').forEach(el => el.remove());
     } else {
+      // Mostrar wallets
       this.emptywalletsState.style.display = 'none';
       this.addNewWalletFab.style.display = 'flex';
-      this.renderwallets(wallets);
-    }
-  }
 
-  renderwallets(wallets) {
-    this.walletsContainer.innerHTML = wallets.map(wallet => {
-      const transactionCount = this.getTransactionCount(wallet.id);
-      
-      return `
+      const walletsHtml = wallets.map(wallet => `
         <div class="wallet-card" data-wallet-id="${wallet.id}">
           <div class="wallet-header" data-tap-target="wallet">
             <div class="wallet-name-header">${wallet.name}</div>
@@ -80,26 +73,17 @@ class HuchasManager {
             <div class="balance-amount-large">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</div>
           </div>
           <div class="wallet-actions">
-            <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">
-              <span class="action-icon">🔁</span>
-              Transferir
-            </button>
-            <button class="action-btn add-income-btn" data-wallet-id="${wallet.id}">
-              <span class="action-icon">💰</span>
-              Ingresar
-            </button>
+            <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">🔁 Transferir</button>
+            <button class="action-btn add-income-btn" data-wallet-id="${wallet.id}">💰 Ingresar</button>
           </div>
         </div>
-      `;
-    }).join('');
+      `).join('');
 
-    this.attachWalletEventListeners();
+      this.walletsContainer.insertAdjacentHTML('afterbegin', walletsHtml);
+      this.attachWalletEventListeners();
+    }
   }
-
-  // Removed - no longer needed as we use modal for transactions
-
-  // Removed - transactions now shown in modal
-
+  
   getTransactionCount(walletId) {
     const transactions = Storage.get('ginbertfi_transactions') || [];
     return transactions.filter(t => t.walletId === walletId).length;
@@ -129,28 +113,51 @@ class HuchasManager {
       element.addEventListener('click', () => {
         const walletCard = element.closest('.wallet-card');
         const walletId = walletCard.dataset.walletId;
-        this.openTransactionsModal(walletId);
+        const wallet = AppState.wallets.find(w => w.id === walletId);
+        if (wallet) {
+          this.openTransactionsModal(wallet); // pasamos el objeto completo
+        }
       });
     });
+
   }
 
-  openTransactionsModal(walletId) {
-    const modalData = ModalManager.createTransactionsModal(walletId);
+  openTransactionsModal(wallet) {
+    const modalData = ModalManager.editWalletModal(wallet); // ahora acepta el objeto
     if (modalData) {
       window.appEvents.emit('openModal', modalData);
     }
   }
+  
 
   // Modal handlers
   openCreateWalletModal() {
     const modalData = ModalManager.createWalletModal();
     window.appEvents.emit('openModal', modalData);
-    
-    // Setup currency selection after modal is created
+  
+    // Setup currency selection después de abrir el modal
     setTimeout(() => {
       this.setupCurrencySelection();
+  
+      const form = document.getElementById('walletForm');
+      const cancelBtn = document.querySelector('.wallet-modal .btn-secondary');
+  
+      if (cancelBtn) {
+        cancelBtn.onclick = () => window.appEvents.emit('closeModal');
+      }
+  
+      if (form) {
+        form.onsubmit = (e) => {
+          e.preventDefault();
+          this.handleCreateWallet(form);
+        };
+      }
+  
     }, 100);
   }
+  
+  
+  
 
   openIncomeModal(walletId) {
     const modalData = ModalManager.createIncomeModal(walletId);

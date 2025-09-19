@@ -939,95 +939,144 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
     }
 
 
-    static createTransactionsModal(walletId) {
-      const wallet = AppState.wallets.find(acc => acc.id === walletId);
-      if (!wallet) return null;
-    
-      const transactions = Storage.get('ginbertfi_transactions') || [];
-      const walletTransactions = transactions
-        .filter(t => t.walletId === walletId)
+    static editWalletModal(wallet) {
+      const walletTransactions = (Storage.get('ginbertfi_transactions') || [])
+        .filter(t => t.walletId === wallet.id)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
     
-      // Generar el HTML
-      const body = `
-        <div class="wallet-summary">
-          <div class="wallet-balance">
-            <span class="balance-label">Saldo actual:</span>
-            <span class="balance-value">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</span>
-          </div>
-        </div>
-        <div class="transactions-list">
-          ${walletTransactions.length === 0 ? `
-            <div class="empty-transactions">
-              <p>No hay transacciones registradas</p>
-            </div>
-          ` : walletTransactions.map(transaction => `
-            <div class="transaction-item-modal ${transaction.type}" data-transaction-id="${transaction.id}">
-              <div class="transaction-main">
-                <div class="transaction-info">
-                  <div class="transaction-type">${this.getTransactionTypeLabel(transaction.type)}</div>
-                  ${transaction.description ? `<div class="transaction-description">${transaction.description}</div>` : ''}
-                  ${transaction.source ? `<div class="transaction-source">Fuente: ${transaction.source}</div>` : ''}
-                </div>
-                <div class="transaction-amount ${transaction.amount > 0 ? 'positive' : 'negative'}">
-                  ${transaction.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(transaction.amount), wallet.currency)}
-                </div>
-              </div>
-              <div class="transaction-date">${Helpers.formatDate(transaction.date)}</div>
-            </div>
-          `).join('')}
-        </div>
-      `;
+      // Función interna para etiquetas de tipo de transacción
+      const getTransactionTypeLabel = (type) => {
+        const labels = {
+          'income': 'Ingreso',
+          'expense': 'Gasto',
+          'transfer_in': 'Transferencia recibida',
+          'transfer_out': 'Transferencia enviada'
+        };
+        return labels[type] || type;
+      };
     
       return {
-        title: `Transacciones - ${wallet.name}`,
-        className: 'transactions-modal',
-        body,
-        footer: `
-          <button type="button" class="btn-primary" onclick="window.appEvents.emit('closeModal')">Cerrar</button>
+        title: `Wallet - ${wallet.name}`,
+        className: 'wallet-modal',
+        body: `
+          <form class="modal-form" id="editWalletForm">
+            <!-- Sección edición -->
+            <div id="editWalletSection">
+              <div class="wallet-summary">
+                <div class="wallet-balance">
+                  <span class="balance-label">Saldo actual:</span>
+                  <span class="balance-value">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</span>
+                </div>
+              </div>
+    
+              <div class="transactions-list">
+                ${walletTransactions.length === 0 ? `
+                  <div class="empty-transactions">
+                    <p>No hay transacciones registradas</p>
+                  </div>
+                ` : walletTransactions.map(tx => `
+                  <div class="transaction-item-modal ${tx.type}" data-transaction-id="${tx.id}">
+                    <div class="transaction-main">
+                      <div class="transaction-info">
+                        <div class="transaction-type">${getTransactionTypeLabel(tx.type)}</div>
+                        ${tx.description ? `<div class="transaction-description">${tx.description}</div>` : ''}
+                        ${tx.source ? `<div class="transaction-source">Fuente: ${tx.source}</div>` : ''}
+                      </div>
+                      <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
+                        ${tx.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(tx.amount), wallet.currency)}
+                      </div>
+                    </div>
+                    <div class="transaction-date">${Helpers.formatDate(tx.date)}</div>
+                  </div>
+                `).join('')}
+              </div>
+    
+              <div class="form-group delete-wallet">
+                <button type="button" class="btn-text-danger" id="triggerDeleteWalletBtn">
+                  🗑️ Eliminar wallet
+                </button>
+              </div>
+            </div>
+    
+            <!-- Sección eliminación -->
+            <div id="deleteWalletSection" style="display: none; margin-top: 1rem;">
+              ${walletTransactions.length ? `
+                <p>La wallet <strong>${wallet.name}</strong> contiene transacciones.</p>
+                <div class="delete-options">
+                  <div class="delete-option card-option" data-option="delete">
+                    <h4>🗑️ Eliminar todo</h4>
+                    <p>Se eliminarán la wallet y todas sus transacciones.</p>
+                  </div>
+                </div>
+              ` : `
+                <p>¿Deseas eliminar la wallet <strong>${wallet.name}</strong>?</p>
+              `}
+            </div>
+    
+            <input type="hidden" name="walletId" value="${wallet.id}">
+          </form>
         `,
-        onOpen: () => {
-          // ⚡ Enganchar evento después de que el modal está en el DOM
-          document.querySelectorAll('.transaction-item-modal').forEach(el => {
-            el.querySelector('.transaction-main').addEventListener('click', () => {
-              const transactionId = el.dataset.transactionId;
-              const tx = walletTransactions.find(t => t.id === transactionId);
-    
-              if (tx && tx.type === 'expense') {
-                // Buscar gasto en AppState
-                const expense = AppState.expenses.find(e => e.id === tx.id);
-    
-                if (expense) {
-                  const wallet   = AppState.wallets.find(w => w.id === expense.walletId);
-                  const currency = wallet ? wallet.currency : 'BOB';
-                  const isUnclassified = !expense.categoryId || expense.categoryId === 'unclassified';
-    
-                  const modalData = isUnclassified
-                    ? this.editExpenseModalUnclassified(expense, currency)
-                    : this.editExpenseModalClassified(expense, currency);
-    
-                  window.appEvents.emit('openModal', modalData);
-    
-                  if (isUnclassified) {
-                    setTimeout(() => {
-                      this.fillSubcategorySelect();
-    
-                      const cancelBtn = document.getElementById('cancelButton');
-                      if (cancelBtn) {
-                        cancelBtn.addEventListener('click', () => window.appEvents.emit('closeModal'));
-                      }
-                    }, 50);
-                  }
-    
-                } else {
-                  Helpers.showToast('No se encontró la información del gasto', 'error');
-                }
-              }
-            });
+        footer: `
+          <button type="button" class="btn-secondary" id="walletCancelBtn">Cancelar</button>
+          <button type="submit" class="btn-primary" form="editWalletForm" id="walletSubmitBtn" style="display: none;">Eliminar</button>
+        `,
+        onShow: (modal) => {
+          const editSection = modal.querySelector('#editWalletSection');
+          const deleteSection = modal.querySelector('#deleteWalletSection');
+          const modalTitle = modal.querySelector('.modal-title');
+          const submitBtn = modal.querySelector('#walletSubmitBtn');
+          const cancelBtn = modal.querySelector('#walletCancelBtn');
+          const triggerDeleteBtn = modal.querySelector('#triggerDeleteWalletBtn');
+        
+          // Cancelar → cerrar modal
+          cancelBtn.onclick = () => window.appEvents.emit('closeModal');
+        
+          // Activar modo eliminación
+          triggerDeleteBtn.onclick = () => {
+            editSection.style.display = 'none';
+            deleteSection.style.display = 'block';
+            submitBtn.style.display = 'inline-block';
+            modalTitle.textContent = 'Eliminar Wallet';
+        
+            // Limpiar listeners anteriores del submit
+            const newSubmitBtn = submitBtn.cloneNode(true);
+            submitBtn.replaceWith(newSubmitBtn);
+        
+            newSubmitBtn.onclick = (e) => {
+              e.preventDefault();
+        
+              // Eliminar wallet y sus transacciones
+              Storage.deleteWallet(wallet.id);
+        
+              // Actualizar AppState global
+              AppState.refreshData();
+        
+              Helpers.showToast('Wallet eliminada', 'success');
+              window.appEvents.emit('closeModal');
+        
+              // Emitir evento global para refrescar todas las pestañas
+              window.appEvents.emit('dataUpdated');
+            };
+          };
+        
+          // Opcional: click en transacciones
+          modal.querySelectorAll('.transaction-item-modal').forEach(el => {
+            el.querySelector('.transaction-main').onclick = () => {
+              const tx = (Storage.get('ginbertfi_transactions') || []).find(t => t.id === el.dataset.transactionId);
+              if (!tx) return;
+              // Aquí podrías abrir un modal de edición de transacción si quieres
+            };
           });
         }
+        
       };
     }
+    
+    
+    
+    
+    
+    
     
     
 

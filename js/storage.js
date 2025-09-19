@@ -440,6 +440,38 @@ static deleteCategory(categoryId, options = { action: 'delete', targetCategoryId
   return true;
 }
 
+// Eliminar wallet y sus transacciones
+static deleteWallet(walletId) {
+  // 1️⃣ Obtener wallets y buscar la que se va a eliminar
+  let wallets = this.getWallets();
+  const walletIndex = wallets.findIndex(w => w.id === walletId);
+  if (walletIndex === -1) return false;
+
+  const wallet = wallets[walletIndex];
+
+  // 2️⃣ Eliminar todas las transacciones asociadas a esta wallet
+  let transactions = this.get('ginbertfi_transactions') || [];
+  transactions = transactions.filter(tx => tx.walletId !== walletId);
+  this.set('ginbertfi_transactions', transactions);
+
+  // 3️⃣ Ajustar los gastos asociados (si quieres eliminarlos o moverlos a otra wallet, aquí los eliminamos)
+  let expenses = this.getExpenses() || [];
+  expenses = expenses.filter(exp => exp.walletId !== walletId);
+  this.saveExpenses(expenses);
+
+  // 4️⃣ Eliminar la wallet
+  wallets.splice(walletIndex, 1);
+  this.saveWallets(wallets);
+
+  // 5️⃣ Si la wallet eliminada estaba seleccionada, limpiar la selección
+  const selectedWallet = this.getSelectedWallet();
+  if (selectedWallet?.id === walletId) {
+    if (wallets.length > 0) this.setSelectedWallet(wallets[0].id);
+    else this.remove(this.keys.SELECTED_WALLET);
+  }
+
+  return true;
+}
 
                   
   }
