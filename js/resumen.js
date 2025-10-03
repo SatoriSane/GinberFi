@@ -64,106 +64,106 @@ class ResumenManager {
     const stats = this.calculateStats(periodData, wallets);
     
     return `
-      <div class="resumen-header">
+      <div class="resumen-header-section">
         <h2>Resumen de Gastos</h2>
-        <div class="period-controls">
-          <button class="period-btn ${this.currentPeriod === 'week' ? 'active' : ''}" data-period="week">Semana</button>
-          <button class="period-btn ${this.currentPeriod === 'month' ? 'active' : ''}" data-period="month">Mes</button>
-          <button class="period-btn ${this.currentPeriod === 'quarter' ? 'active' : ''}" data-period="quarter">Trimestre</button>
-          <button class="period-btn ${this.currentPeriod === 'year' ? 'active' : ''}" data-period="year">Año</button>
+        <div class="resumen-period-controls">
+          <button class="resumen-period-btn ${this.currentPeriod === 'week' ? 'active' : ''}" data-period="week">Semana</button>
+          <button class="resumen-period-btn ${this.currentPeriod === 'month' ? 'active' : ''}" data-period="month">Mes</button>
+          <button class="resumen-period-btn ${this.currentPeriod === 'quarter' ? 'active' : ''}" data-period="quarter">Trimestre</button>
+          <button class="resumen-period-btn ${this.currentPeriod === 'year' ? 'active' : ''}" data-period="year">Año</button>
         </div>
-        <div class="date-navigation">
-          <button class="nav-btn" id="prevPeriod">‹</button>
-          <span class="current-period-label">${this.getPeriodLabel()}</span>
-          <button class="nav-btn" id="nextPeriod">›</button>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card total-spent">
-          <div class="stat-icon">💸</div>
-          <div class="stat-content">
-            <div class="stat-value">${Helpers.formatCurrency(stats.totalSpent)}</div>
-            <div class="stat-label">Total Gastado</div>
-          </div>
-        </div>
-        <div class="stat-card avg-daily">
-          <div class="stat-icon">📅</div>
-          <div class="stat-content">
-            <div class="stat-value">${Helpers.formatCurrency(stats.avgDaily)}</div>
-            <div class="stat-label">Promedio Diario</div>
-          </div>
-        </div>
-        <div class="stat-card transactions">
-          <div class="stat-icon">🧾</div>
-          <div class="stat-content">
-            <div class="stat-value">${stats.transactionCount}</div>
-            <div class="stat-label">Transacciones</div>
-          </div>
-        </div>
-        <div class="stat-card top-category">
-          <div class="stat-icon">🏆</div>
-          <div class="stat-content">
-            <div class="stat-value">${stats.topCategory.name}</div>
-            <div class="stat-label">Categoría Principal</div>
-          </div>
+        <div class="resumen-date-navigation">
+          <button class="resumen-nav-btn" id="prevPeriod">‹</button>
+          <span class="resumen-current-period">${this.getPeriodLabel()}</span>
+          <button class="resumen-nav-btn" id="nextPeriod">›</button>
         </div>
       </div>
 
-      <div class="charts-container">
-        <div class="chart-section">
+      <div class="resumen-stats-grid">
+        <div class="resumen-stat-card total-spent">
+          <div class="resumen-stat-icon">💸</div>
+          <div class="resumen-stat-content">
+            <div class="resumen-stat-value">${Helpers.formatCurrency(stats.totalSpent)}</div>
+            <div class="resumen-stat-label">Total Gastado</div>
+          </div>
+        </div>
+        <div class="resumen-stat-card avg-daily">
+          <div class="resumen-stat-icon">📅</div>
+          <div class="resumen-stat-content">
+            <div class="resumen-stat-value">${Helpers.formatCurrency(stats.avgDaily)}</div>
+            <div class="resumen-stat-label">Promedio Diario</div>
+          </div>
+        </div>
+        <div class="resumen-stat-card transactions">
+          <div class="resumen-stat-icon">🧾</div>
+          <div class="resumen-stat-content">
+            <div class="resumen-stat-value">${stats.transactionCount}</div>
+            <div class="resumen-stat-label">Transacciones</div>
+          </div>
+        </div>
+        <div class="resumen-stat-card top-category">
+          <div class="resumen-stat-icon">🏆</div>
+          <div class="resumen-stat-content">
+            <div class="resumen-stat-value">${stats.topCategory.name}</div>
+            <div class="resumen-stat-label">Categoría Principal</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resumen-charts-container">
+        <div class="resumen-chart-section">
           <h3>Gastos por Categoría</h3>
-          <div class="chart-wrapper">
+          <div class="resumen-chart-wrapper">
             <canvas id="categoryChart"></canvas>
           </div>
         </div>
         
-        <div class="chart-section">
+        <div class="resumen-chart-section">
           <h3>Tendencia de Gastos</h3>
-          <div class="chart-wrapper">
+          <div class="resumen-chart-wrapper">
             <canvas id="trendChart"></canvas>
           </div>
         </div>
         
-        <div class="chart-section">
+        <div class="resumen-chart-section">
           <h3>Distribución por Wallet</h3>
-          <div class="chart-wrapper">
+          <div class="resumen-chart-wrapper">
             <canvas id="walletChart"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="insights-section">
+      <div class="resumen-insights-section">
         <h3>Análisis e Insights</h3>
-        <div class="insights-grid">
+        <div class="resumen-insights-grid">
           ${this.generateInsights(periodData, stats).map(insight => `
-            <div class="insight-card ${insight.type}">
-              <div class="insight-icon">${insight.icon}</div>
-              <div class="insight-content">
-                <div class="insight-title">${insight.title}</div>
-                <div class="insight-description">${insight.description}</div>
+            <div class="resumen-insight-card ${insight.type}">
+              <div class="resumen-insight-icon">${insight.icon}</div>
+              <div class="resumen-insight-content">
+                <div class="resumen-insight-title">${insight.title}</div>
+                <div class="resumen-insight-description">${insight.description}</div>
               </div>
             </div>
           `).join('')}
         </div>
       </div>
 
-      <div class="detailed-breakdown">
+      <div class="resumen-detailed-breakdown">
         <h3>Desglose Detallado</h3>
-        <div class="breakdown-tabs">
-          <button class="breakdown-tab active" data-tab="categories">Por Categorías</button>
-          <button class="breakdown-tab" data-tab="timeline">Línea de Tiempo</button>
-          <button class="breakdown-tab" data-tab="wallets">Por Wallets</button>
+        <div class="resumen-breakdown-tabs">
+          <button class="resumen-breakdown-tab active" data-tab="categories">Por Categorías</button>
+          <button class="resumen-breakdown-tab" data-tab="timeline">Línea de Tiempo</button>
+          <button class="resumen-breakdown-tab" data-tab="wallets">Por Wallets</button>
         </div>
         
-        <div class="breakdown-content">
-          <div class="breakdown-panel active" id="categoriesBreakdown">
+        <div class="resumen-breakdown-content">
+          <div class="resumen-breakdown-panel active" id="categoriesBreakdown">
             ${this.generateCategoriesBreakdown(periodData, categories)}
           </div>
-          <div class="breakdown-panel" id="timelineBreakdown">
+          <div class="resumen-breakdown-panel" id="timelineBreakdown">
             ${this.generateTimelineBreakdown(periodData)}
           </div>
-          <div class="breakdown-panel" id="walletsBreakdown">
+          <div class="resumen-breakdown-panel" id="walletsBreakdown">
             ${this.generateWalletsBreakdown(periodData, wallets)}
           </div>
         </div>
@@ -173,11 +173,11 @@ class ResumenManager {
 
   renderEmptyState() {
     this.container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📊</div>
+      <div class="resumen-empty-state">
+        <div class="resumen-empty-icon">📊</div>
         <h3>No hay datos para mostrar</h3>
         <p>Comienza agregando algunos gastos para ver tu resumen financiero</p>
-        <button class="btn-primary" onclick="window.appEvents.emit('tabChanged', 'gastos')">
+        <button class="resumen-btn-primary" onclick="window.appEvents.emit('tabChanged', 'gastos')">
           Ir a Gastos
         </button>
       </div>
@@ -435,28 +435,28 @@ class ResumenManager {
     return Object.values(categoryData)
       .sort((a, b) => b.total - a.total)
       .map(category => `
-        <div class="category-breakdown-item">
-          <div class="category-header">
-            <span class="category-name">${category.name}</span>
-            <span class="category-total">${Helpers.formatCurrency(category.total)}</span>
+        <div class="resumen-category-item">
+          <div class="resumen-category-header">
+            <span class="resumen-category-name">${category.name}</span>
+            <span class="resumen-category-total">${Helpers.formatCurrency(category.total)}</span>
           </div>
-          <div class="subcategories-list">
+          <div class="resumen-subcategories-list">
             ${Object.values(category.subcategories)
               .sort((a, b) => b.total - a.total)
               .map(sub => {
                 const percentage = sub.budget > 0 ? (sub.total / sub.budget) * 100 : 0;
                 const budgetColors = Helpers.getProgressBarColor(Math.max(0, 100 - percentage));
                 return `
-                  <div class="subcategory-breakdown-item" style="border-left-color: ${budgetColors.border};">
-                    <div class="subcategory-info">
-                      <span class="subcategory-name">${sub.name}</span>
-                      <span class="subcategory-total">${Helpers.formatCurrency(sub.total)}</span>
+                  <div class="resumen-subcategory-item" style="border-left-color: ${budgetColors.border};">
+                    <div class="resumen-subcategory-info">
+                      <span class="resumen-subcategory-name">${sub.name}</span>
+                      <span class="resumen-subcategory-total">${Helpers.formatCurrency(sub.total)}</span>
                     </div>
-                    <div class="subcategory-budget">
-                      <div class="budget-bar">
-                        <div class="budget-progress" style="width: ${Math.min(percentage, 100)}%; background-color: ${budgetColors.border};"></div>
+                    <div class="resumen-subcategory-budget">
+                      <div class="resumen-budget-bar">
+                        <div class="resumen-budget-progress" style="width: ${Math.min(percentage, 100)}%; background-color: ${budgetColors.border};"></div>
                       </div>
-                      <span class="budget-text">${Helpers.formatCurrency(sub.total)} / ${Helpers.formatCurrency(sub.budget)}</span>
+                      <span class="resumen-budget-text">${Helpers.formatCurrency(sub.total)} / ${Helpers.formatCurrency(sub.budget)}</span>
                     </div>
                   </div>
                 `;
@@ -470,29 +470,28 @@ class ResumenManager {
     const timelineData = this.groupExpensesByDay(expenses);
     
     return Object.keys(timelineData)
-      .sort((a, b) => new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) // 1. Ordena usando la convención T00:00:00
+      .sort((a, b) => new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00'))
       .map(date => {
-        // 2. Crea un objeto Date con la convención T00:00:00 para asegurar el día correcto
         const localDate = new Date(date + 'T00:00:00');
         
         return `
-          <div class="timeline-item">
-            <div class="timeline-date">
-              <div class="date-day">${localDate.getDate()}</div>
-              <div class="date-month">${localDate.toLocaleDateString('es-ES', { month: 'short' })}</div>
+          <div class="resumen-timeline-item">
+            <div class="resumen-timeline-date">
+              <div class="resumen-date-day">${localDate.getDate()}</div>
+              <div class="resumen-date-month">${localDate.toLocaleDateString('es-ES', { month: 'short' })}</div>
             </div>
-            <div class="timeline-content">
-              <div class="timeline-total">${Helpers.formatCurrency(timelineData[date])}</div>
-              <div class="timeline-expenses">
+            <div class="resumen-timeline-content">
+              <div class="resumen-timeline-total">${Helpers.formatCurrency(timelineData[date])}</div>
+              <div class="resumen-timeline-expenses">
                 ${expenses
                   .filter(exp => exp.date.startsWith(date))
                   .map(exp => {
                     const category = this.getCategoryForExpense(exp);
                     return `
-                      <div class="timeline-expense">
-                        <span class="expense-name">${exp.name}</span>
-                        <span class="expense-category">${category ? category.name : 'Sin categoría'}</span>
-                        <span class="expense-amount">${Helpers.formatCurrency(exp.amount)}</span>
+                      <div class="resumen-timeline-expense">
+                        <span class="resumen-expense-name">${exp.name}</span>
+                        <span class="resumen-expense-category">${category ? category.name : 'Sin categoría'}</span>
+                        <span class="resumen-expense-amount">${Helpers.formatCurrency(exp.amount)}</span>
                       </div>
                     `;
                   }).join('')}
@@ -525,14 +524,14 @@ class ResumenManager {
     return Object.values(walletData)
       .sort((a, b) => b.total - a.total)
       .map(wallet => `
-        <div class="wallet-breakdown-item">
-          <div class="wallet-header">
-            <span class="wallet-name">${wallet.name}</span>
-            <span class="wallet-total">${Helpers.formatCurrency(wallet.total, wallet.currency)}</span>
+        <div class="resumen-wallet-item">
+          <div class="resumen-wallet-header">
+            <span class="resumen-wallet-name">${wallet.name}</span>
+            <span class="resumen-wallet-total">${Helpers.formatCurrency(wallet.total, wallet.currency)}</span>
           </div>
-          <div class="wallet-stats">
-            <span class="wallet-count">${wallet.count} transacciones</span>
-            <span class="wallet-avg">Promedio: ${Helpers.formatCurrency(wallet.total / wallet.count, wallet.currency)}</span>
+          <div class="resumen-wallet-stats">
+            <span class="resumen-wallet-count">${wallet.count} transacciones</span>
+            <span class="resumen-wallet-avg">Promedio: ${Helpers.formatCurrency(wallet.total / wallet.count, wallet.currency)}</span>
           </div>
         </div>
       `).join('');
@@ -540,7 +539,7 @@ class ResumenManager {
 
   attachEventListeners() {
     // Period controls
-    this.container.querySelectorAll('.period-btn').forEach(btn => {
+    this.container.querySelectorAll('.resumen-period-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         this.currentPeriod = e.target.dataset.period;
         this.render();
@@ -564,7 +563,7 @@ class ResumenManager {
     }
 
     // Breakdown tabs
-    this.container.querySelectorAll('.breakdown-tab').forEach(tab => {
+    this.container.querySelectorAll('.resumen-breakdown-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         const tabName = e.target.dataset.tab;
         this.switchBreakdownTab(tabName);
@@ -596,12 +595,12 @@ class ResumenManager {
 
   switchBreakdownTab(tabName) {
     // Update tab buttons
-    this.container.querySelectorAll('.breakdown-tab').forEach(tab => {
+    this.container.querySelectorAll('.resumen-breakdown-tab').forEach(tab => {
       tab.classList.toggle('active', tab.dataset.tab === tabName);
     });
 
     // Update panels
-    this.container.querySelectorAll('.breakdown-panel').forEach(panel => {
+    this.container.querySelectorAll('.resumen-breakdown-panel').forEach(panel => {
       panel.classList.remove('active');
     });
     

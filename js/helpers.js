@@ -145,6 +145,13 @@ window.Helpers = {
         return str.toString().trim().replace(/[<>]/g, '');
     },
 
+    getCurrentLocalDateISO() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000; // offset en milisegundos
+        const localTime = new Date(now.getTime() - offset);
+        return localTime.toISOString();
+    },
+
     debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {

@@ -190,7 +190,7 @@ class Storage {
           amount: parseFloat(amount),
           source,
           description,
-          date: new Date().toISOString()
+          date: Helpers.getCurrentLocalDateISO()
         };
         
         const transactions = this.get('ginbertfi_transactions') || [];
@@ -214,7 +214,7 @@ class Storage {
         
         // Add transaction records
         const transactions = this.get('ginbertfi_transactions') || [];
-        const timestamp = new Date().toISOString();
+        const timestamp = Helpers.getCurrentLocalDateISO();
         
         transactions.push({
           id: Date.now().toString(),

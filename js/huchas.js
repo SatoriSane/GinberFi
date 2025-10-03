@@ -49,6 +49,12 @@ class HuchasManager {
     AppState.wallets = Storage.getWallets() || [];
     const wallets = AppState.wallets;
 
+    // Guardar estado de wallets expandidas antes de limpiar
+    const expandedWallets = new Set();
+    this.walletsContainer.querySelectorAll('.wallet-card:not(.collapsed)').forEach(card => {
+      expandedWallets.add(card.dataset.walletId);
+    });
+
     // Limpiar wallets previos, pero mantener nodo empty
     while (this.walletsContainer.firstChild && this.walletsContainer.firstChild !== this.emptywalletsState) {
       this.walletsContainer.removeChild(this.walletsContainer.firstChild);
@@ -63,21 +69,36 @@ class HuchasManager {
       this.emptywalletsState.style.display = 'none';
       this.addNewWalletFab.style.display = 'flex';
 
-      const walletsHtml = wallets.map(wallet => `
-        <div class="wallet-card" data-wallet-id="${wallet.id}">
-          <div class="wallet-header" data-tap-target="wallet">
-            <div class="wallet-name-header">${wallet.name}</div>
-            ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
+      const walletsHtml = wallets.map(wallet => {
+        const isExpanded = expandedWallets.has(wallet.id);
+        return `
+        <div class="wallet-card ${isExpanded ? '' : 'collapsed'}" data-wallet-id="${wallet.id}">
+          <div class="wallet-header" data-action="toggle">
+            <div class="wallet-header-content">
+              <div class="wallet-info">
+                <div class="wallet-name-header">${wallet.name}</div>
+                ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
+              </div>
+            </div>
+            <div class="wallet-balance-compact">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</div>
+            <div class="expand-indicator">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
           </div>
-          <div class="wallet-balance-display" data-tap-target="wallet">
-            <div class="balance-amount-large">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</div>
-          </div>
-          <div class="wallet-actions">
-            <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">🔁 Transferir</button>
-            <button class="action-btn add-income-btn" data-wallet-id="${wallet.id}">💰 Ingresar</button>
+          <div class="wallet-card-content">
+            <div class="recent-transactions">
+              ${this.getRecentTransactionsHTML(wallet.id, wallet.currency)}
+            </div>
+            <div class="wallet-actions">
+              <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">🔄 Transferir</button>
+              <button class="action-btn add-income-btn" data-wallet-id="${wallet.id}">💰 Ingresar</button>
+            </div>
           </div>
         </div>
-      `).join('');
+        `;
+      }).join('');
 
       this.walletsContainer.insertAdjacentHTML('afterbegin', walletsHtml);
       this.attachWalletEventListeners();
@@ -89,7 +110,94 @@ class HuchasManager {
     return transactions.filter(t => t.walletId === walletId).length;
   }
 
+  getWalletIcon(currency, purpose) {
+    // Iconos por moneda
+    const currencyIcons = {
+      'BOB': '🏛️',
+      'USD': '💵',
+      'EUR': '💶',
+      'BCH': '₿'
+    };
+
+    // Iconos por propósito
+    const purposeIcons = {
+      'ahorro': '🏦',
+      'gastos': '💳',
+      'emergencia': '🚨',
+      'vacaciones': '🏖️',
+      'casa': '🏠',
+      'auto': '🚗',
+      'educacion': '📚',
+      'salud': '🏥',
+      'inversion': '📈',
+      'negocio': '💼'
+    };
+
+    // Buscar por propósito primero
+    if (purpose) {
+      const purposeLower = purpose.toLowerCase();
+      for (const [key, icon] of Object.entries(purposeIcons)) {
+        if (purposeLower.includes(key)) {
+          return icon;
+        }
+      }
+    }
+
+    // Si no encuentra por propósito, usar icono de moneda
+    return currencyIcons[currency] || '💰';
+  }
+
+  getRecentTransactionsHTML(walletId, currency) {
+    const transactions = Storage.get('ginbertfi_transactions') || [];
+    const walletTransactions = transactions
+      .filter(t => t.walletId === walletId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 3); // Solo los últimos 3
+
+    if (walletTransactions.length === 0) {
+      return `
+        <div class="no-recent-transactions">
+          <p>No hay movimientos recientes</p>
+          <span>Usa los botones de abajo para empezar</span>
+        </div>
+      `;
+    }
+
+    const transactionsHTML = walletTransactions.map(tx => `
+      <div class="recent-transaction-item" data-wallet-id="${walletId}">
+        <div class="transaction-info">
+          <div class="transaction-type">${this.getTransactionTypeLabel(tx.type)}</div>
+          <div class="transaction-date">${Helpers.formatDate(tx.date)}</div>
+        </div>
+        <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
+          ${tx.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(tx.amount), currency)}
+        </div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="recent-transactions-header">
+        <span>Últimos movimientos</span>
+        <button class="view-all-btn" data-wallet-id="${walletId}">Ver todos</button>
+      </div>
+      <div class="recent-transactions-list">
+        ${transactionsHTML}
+      </div>
+    `;
+  }
+
   attachWalletEventListeners() {
+    // Toggle wallet expand/collapse
+    this.walletsContainer.querySelectorAll('[data-action="toggle"]').forEach(header => {
+      header.addEventListener('click', (e) => {
+        // Don't toggle if clicking on action buttons
+        if (!e.target.closest('.action-btn')) {
+          const walletCard = header.closest('.wallet-card');
+          walletCard.classList.toggle('collapsed');
+        }
+      });
+    });
+
     // Move money buttons
     this.walletsContainer.querySelectorAll('.move-money-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -108,27 +216,37 @@ class HuchasManager {
       });
     });
 
-    // Wallet tap to view transactions
-    this.walletsContainer.querySelectorAll('[data-tap-target="wallet"]').forEach(element => {
-      element.addEventListener('click', () => {
-        const walletCard = element.closest('.wallet-card');
-        const walletId = walletCard.dataset.walletId;
+    // View all transactions buttons
+    this.walletsContainer.querySelectorAll('.view-all-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const walletId = btn.dataset.walletId;
         const wallet = AppState.wallets.find(w => w.id === walletId);
         if (wallet) {
-          this.openTransactionsModal(wallet); // pasamos el objeto completo
+          this.openTransactionsModal(wallet);
         }
       });
     });
 
+    // Recent transaction items (click to open modal)
+    this.walletsContainer.querySelectorAll('.recent-transaction-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const walletId = item.dataset.walletId;
+        const wallet = AppState.wallets.find(w => w.id === walletId);
+        if (wallet) {
+          this.openTransactionsModal(wallet);
+        }
+      });
+    });
   }
 
   openTransactionsModal(wallet) {
-    const modalData = ModalManager.editWalletModal(wallet); // ahora acepta el objeto
+    const modalData = ModalManager.editWalletModal(wallet);
     if (modalData) {
       window.appEvents.emit('openModal', modalData);
     }
   }
-  
 
   // Modal handlers
   openCreateWalletModal() {
@@ -155,9 +273,6 @@ class HuchasManager {
   
     }, 100);
   }
-  
-  
-  
 
   openIncomeModal(walletId) {
     const modalData = ModalManager.createIncomeModal(walletId);
