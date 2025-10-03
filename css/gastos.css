@@ -1,40 +1,50 @@
 /* Gastos Tab Styles */
 .categories-container {
   padding: var(--spacing-sm) 0 0;
+  display: grid;
+  gap: var(--spacing-md);
 }
 
 .category-wrapper {
   position: relative;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0;
+  background: var(--white);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .category-wrapper:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .subcategories-container {
   padding: 0;
-  background: var(--soft-gray);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.8) 100%);
+  border-radius: 0 0 20px 20px;
   overflow: hidden;
   transition: all 0.3s ease;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .subcategory-wrapper {
   position: relative;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  margin: var(--spacing-xs) 0;
-  margin-left: var(--spacing-xs);
-  margin-right: 0;
+  margin: var(--spacing-sm) var(--spacing-xs) var(--spacing-sm) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-left: 3px solid rgba(66, 153, 225, 0.3);
 }
 
 .subcategory-wrapper:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 1);
 }
 
 .category-content,
@@ -47,31 +57,13 @@
   cursor: pointer;
   border: none;
   transition: all 0.3s ease;
-  border-radius: var(--radius-sm);
+  border-radius: 20px;
   width: 100%;
   box-sizing: border-box;
-  padding: var(--spacing-sm); /* versión móvil aplicada */
+  padding: var(--spacing-md);
+  background: transparent;
 }
 
-.category-content::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 1px solid currentColor;
-  border-radius: var(--radius-sm);
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-.subcategory-content::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 1px solid currentColor;
-  border-radius: var(--radius-lg);
-  opacity: 0.3;
-  pointer-events: none;
-}
 
 .category-left,
 .subcategory-left {
@@ -81,19 +73,27 @@
 }
 
 .category-arrow {
-  font-size: var(--font-size-sm);
-  margin-right: var(--spacing-xs);
+  width: 20px;
+  height: 20px;
+  margin-right: var(--spacing-sm);
   transition: transform 0.3s ease;
   color: var(--dark-blue);
   opacity: 0.7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .subcategory-arrow {
-  font-size: var(--font-size-xs);
-  margin-right: var(--spacing-xs);
+  width: 16px;
+  height: 16px;
+  margin-right: var(--spacing-sm);
   transition: transform 0.3s ease;
   color: var(--dark-blue);
   opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .category-wrapper.expanded .category-arrow,
@@ -151,34 +151,53 @@
   color: var(--text-light);
 }
 
-.add-subcategory-btn,
-.add-expense-btn {
+/* Botón para agregar subcategoría (discreto) */
+.add-subcategory-btn {
   background: rgba(0, 0, 0, 0.05);
+  color: var(--text-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: all 0.3s ease;
+  padding: 6px;
+  touch-action: manipulation;
+  font-size: var(--font-size-base);
+  min-width: 32px;
+  min-height: 32px;
+  opacity: 0.6;
+}
+
+.add-subcategory-btn:hover {
+  background: rgba(66, 153, 225, 0.1);
+  color: var(--dark-blue);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Botón para agregar gasto */
+.add-expense-btn {
+  background: rgba(66, 153, 225, 0.15);
   color: var(--dark-blue);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  transition: all 0.2s ease;
-  padding: 3px;
+  transition: all 0.3s ease;
+  padding: 8px;
   touch-action: manipulation;
-}
-
-.add-subcategory-btn {
-  padding: var(--spacing-sm);
   font-size: var(--font-size-lg);
-  min-width: 34px;
-  min-height: 34px;
-}
-
-.add-subcategory-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
+  min-width: 36px;
+  min-height: 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .add-expense-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+  background: rgba(66, 153, 225, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .budget-top {
@@ -206,20 +225,28 @@
 }
 
 .expenses-container {
-  padding: var(--spacing-xs);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--spacing-sm);
+  border-radius: 0 0 16px 16px;
 }
 
 .expense-item {
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.9);
   margin-bottom: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid var(--border-color);
-  box-shadow: none;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.expense-item:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .expense-info {
@@ -244,17 +271,110 @@
 
 .edit-category-btn,
 .edit-subcategory-btn {
-  background: none;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--dark-blue);
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  transition: background 0.2s ease;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  opacity: 0.7;
 }
 
 .edit-category-btn:hover,
 .edit-subcategory-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(66, 153, 225, 0.1);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Estado vacío mejorado */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+  background: linear-gradient(135deg, rgba(209, 250, 229, 0.3) 0%, rgba(191, 219, 254, 0.3) 100%);
+  border-radius: 20px;
+  margin: var(--spacing-md);
+  border: 2px dashed rgba(66, 153, 225, 0.3);
+}
+
+.empty-state p {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  color: var(--dark-blue);
+}
+
+.add-category-btn {
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-category-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Botón de añadir categoría discreto */
+.add-category-list-btn {
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text-light);
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: var(--spacing-md);
+  width: calc(100% - 2 * var(--spacing-md));
+  opacity: 0.7;
+}
+
+.add-category-list-btn:hover {
+  background: rgba(66, 153, 225, 0.05);
+  border-color: rgba(66, 153, 225, 0.2);
+  color: var(--dark-blue);
+  opacity: 1;
+}
+
+/* FAB principal para gastos */
+.fab {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fab:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.fab:active {
+  transform: translateY(-1px);
 }

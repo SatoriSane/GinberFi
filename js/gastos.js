@@ -156,7 +156,11 @@ document.addEventListener('submit', (e) => {
         <div class="category-wrapper ${category.expanded ? 'expanded' : ''}" data-category-id="${category.id}">
           <div class="category-content" data-toggle="category" style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
             <div class="category-left">
-              <span class="category-arrow">▶</span>
+              <div class="category-arrow">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
               <span class="category-name">${category.name}</span>
             </div>
             <div class="category-right">
@@ -191,7 +195,7 @@ document.addEventListener('submit', (e) => {
       <div class="category-wrapper expanded unclassified-category">
         <div class="category-content" style="background-color: #f5f5f5; border-color: #ddd;">
           <div class="category-left">
-            <span class="category-arrow"></span>
+            <div class="category-arrow"></div>
             <span class="category-name">Gastos sin Clasificar</span>
           </div>
           <div class="category-right">
@@ -260,7 +264,11 @@ document.addEventListener('submit', (e) => {
               <div class="subcategory-content" data-toggle="subcategory"
                    style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
                 <div class="subcategory-left">
-                  <span class="subcategory-arrow">▶</span>
+                  <div class="subcategory-arrow">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
                   <span class="subcategory-name">${sub.name}</span>
                 </div>
                 <div class="subcategory-right">
