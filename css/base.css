@@ -31,11 +31,10 @@
   --spacing-xl: 2rem;
   
   /* Border radius */
-  --radius-sm: 0.375rem;
+  --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
-  --radius-pill: 9999px;
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -113,6 +112,14 @@ body {
   background: linear-gradient(135deg, var(--light-green) 0%, var(--soft-gray) 100%);
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* Typography differentiation */
+.budget-amount {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.3px;
 }
 
 /* Layout */

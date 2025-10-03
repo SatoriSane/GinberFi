@@ -83,6 +83,29 @@ body.dark-theme .app-header {
   backdrop-filter: blur(10px);
 }
 
+body.dark-theme .balance-selector {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .balance-selector:hover {
+  background: rgba(30, 41, 59, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.dark-theme .wallet-name {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+body.dark-theme .balance-arrow {
+  color: var(--text-dark);
+}
+
 body.dark-theme .balance-dropdown {
   background: rgba(30, 41, 59, 1);
   border: 1px solid rgba(96, 165, 250, 0.2);

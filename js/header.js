@@ -3,6 +3,7 @@ class Header {
     constructor() {
       this.balanceSelector = document.getElementById('balanceSelector');
       this.balanceAmount = document.getElementById('balanceAmount');
+      this.currentWalletName = document.getElementById('currentWalletName');
       this.balanceDropdown = document.getElementById('balanceDropdown');
       this.walletsList = document.getElementById('walletsList');
       
@@ -67,8 +68,10 @@ class Header {
       const selectedWallet = AppState.selectedWallet;
       if (selectedWallet) {
         this.balanceAmount.textContent = Helpers.formatCurrency(selectedWallet.balance, selectedWallet.currency);
+        this.currentWalletName.textContent = selectedWallet.name;
       } else {
         this.balanceAmount.textContent = '0.00 BOB';
+        this.currentWalletName.textContent = 'Wallet por defecto';
       }
     }
   
