@@ -95,12 +95,6 @@ window.Helpers = {
         return Math.min((spent / total) * 100, 100);
     },
 
-    getProgressBarColor(percentage) {
-        // conserva compatibilidad con Helpers anterior y Utils
-        if (percentage > 75) return { background: '#e6ffe6', border: '#33cc33' };
-        if (percentage > 50) return { background: '#fff5e6', border: '#ffb84d' };
-        return { background: '#ffe6e6', border: '#ff4d4d' };
-    },
 
     formatCurrency(amount, currency = 'BOB') {
         const currencySymbols = {
@@ -193,10 +187,10 @@ window.Helpers = {
                     transition: transform 0.4s ease, opacity 0.4s ease;
                     opacity: 0;
                 }
-                .toast.toast-success { border-top: 4px solid var(--pastel-green); }
-                .toast.toast-error { border-top: 4px solid #EF4444; }
-                .toast.toast-warning { border-top: 4px solid #F59E0B; }
-                .toast.toast-info { border-top: 4px solid var(--pastel-blue); }
+                .toast.toast-success { border-top: 4px solid var(--color-success); }
+                .toast.toast-error { border-top: 4px solid var(--color-error); }
+                .toast.toast-warning { border-top: 4px solid var(--color-warning); }
+                .toast.toast-info { border-top: 4px solid var(--color-info); }
                 .toast.show {
                     transform: translate(-50%, 0); /* baja hacia el centro superior */
                     opacity: 1;

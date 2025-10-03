@@ -445,7 +445,7 @@ class ResumenManager {
               .sort((a, b) => b.total - a.total)
               .map(sub => {
                 const percentage = sub.budget > 0 ? (sub.total / sub.budget) * 100 : 0;
-                const budgetColors = Helpers.getProgressBarColor(Math.max(0, 100 - percentage));
+                const budgetColors = ThemeManager.getBudgetColors(percentage);
                 return `
                   <div class="resumen-subcategory-item" style="border-left-color: ${budgetColors.border};">
                     <div class="resumen-subcategory-info">
@@ -695,8 +695,8 @@ class ResumenManager {
         datasets: [{
           label: 'Gastos Diarios',
           data,
-          borderColor: '#4A90E2',
-          backgroundColor: 'rgba(74, 144, 226, 0.1)',
+          borderColor: ThemeManager.getChartColors().primary,
+          backgroundColor: ThemeManager.getChartColors().primaryAlpha,
           fill: true,
           tension: 0.4
         }]

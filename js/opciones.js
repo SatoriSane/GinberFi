@@ -28,6 +28,17 @@ class OpcionesManager {
           </div>
           <div class="modal-body">
             <div class="options-list">
+              <div class="option-item theme-toggle-item">
+                <div class="option-icon">🌙</div>
+                <div class="option-content">
+                  <div class="option-title">Modo Oscuro</div>
+                  <div class="option-description">Alternar entre tema claro y oscuro</div>
+                </div>
+                <div class="theme-toggle" onclick="OpcionesManager.toggleTheme(event)">
+                  <div class="toggle-slider ${localStorage.getItem('ginbertfi_theme') === 'dark' ? 'active' : ''}"></div>
+                </div>
+              </div>
+              
               <div class="option-item success" onclick="OpcionesManager.createBackup()">
                 <div class="option-icon">💾</div>
                 <div class="option-content">
@@ -81,6 +92,177 @@ class OpcionesManager {
         modal.remove();
       }, 300);
     }
+  }
+
+  static toggleTheme(event) {
+    // Prevenir que se cierre el modal
+    event.stopPropagation();
+    
+    const currentTheme = localStorage.getItem('ginbertfi_theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // Guardar preferencia
+    localStorage.setItem('ginbertfi_theme', newTheme);
+    
+    // Aplicar tema
+    this.applyTheme(newTheme);
+    
+    // Actualizar el toggle visualmente
+    const toggleSlider = event.target.closest('.theme-toggle').querySelector('.toggle-slider');
+    if (newTheme === 'dark') {
+      toggleSlider.classList.add('active');
+    } else {
+      toggleSlider.classList.remove('active');
+    }
+    
+    // Actualizar datos para refrescar colores dinámicos
+    if (window.appEvents) {
+      window.appEvents.emit('dataUpdated');
+    }
+  }
+
+  static applyTheme(theme) {
+    const head = document.head;
+    const existingDarkCSS = document.getElementById('dark-theme-css');
+    
+    // Limpiar temas existentes
+    document.body.classList.remove('dark-theme');
+    
+    if (theme === 'dark') {
+      // Agregar CSS oscuro si no existe
+      if (!existingDarkCSS) {
+        const darkCSS = document.createElement('link');
+        darkCSS.id = 'dark-theme-css';
+        darkCSS.rel = 'stylesheet';
+        darkCSS.href = 'css/base-dark.css';
+        head.appendChild(darkCSS);
+      }
+      document.body.classList.add('dark-theme');
+    } else {
+      // Tema light - remover CSS oscuro
+      if (existingDarkCSS) {
+        existingDarkCSS.remove();
+      }
+    }
+  }
+
+  static showDesignOptions() {
+    const currentTheme = localStorage.getItem('ginbertfi_theme') || 'light';
+    
+    const modalHTML = `
+      <div class="modal-overlay options-modal" id="designModal">
+        <div class="modal">
+          <div class="modal-header">
+            <h2 class="modal-title"> Opciones de dise o</h2>
+            <button class="modal-close" onclick="OpcionesManager.closeDesignModal()">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="design-options">
+              <div class="theme-option ${currentTheme === 'light' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('light')">
+                <div class="theme-preview light-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title"> Modo Claro</div>
+                  <div class="theme-description">Dise o cl sico con colores claros</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'dark' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('dark')">
+                <div class="theme-preview dark-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title"> Modo Oscuro</div>
+                  <div class="theme-description">Dise o elegante para ambientes con poca luz</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Cerrar modal principal
+    this.closeModal();
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    const modal = document.getElementById('designModal');
+    
+    setTimeout(() => {
+      modal.classList.add('show');
+    }, 10);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeDesignModal();
+      }
+    });
+  }
+
+  static closeDesignModal() {
+    const modal = document.getElementById('designModal');
+    if (modal) {
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.remove();
+      }, 300);
+    }
+  }
+
+  static setTheme(theme) {
+    // Guardar preferencia
+    localStorage.setItem('ginbertfi_theme', theme);
+    
+    // Aplicar tema
+    this.applyTheme(theme);
+    
+    // Actualizar datos para refrescar colores dinámicos
+    if (window.appEvents) {
+      window.appEvents.emit('dataUpdated');
+    }
+    
+    // Cerrar modal y mostrar confirmación
+    this.closeDesignModal();
+    this.showSuccessMessage('Tema aplicado', `Se ha cambiado al modo ${theme === 'dark' ? 'oscuro' : 'claro'}`);
+  }
+
+  static applyTheme(theme) {
+    const head = document.head;
+    const existingDarkCSS = document.getElementById('dark-theme-css');
+    
+    if (theme === 'dark') {
+      // Agregar CSS oscuro si no existe
+      if (!existingDarkCSS) {
+        const darkCSS = document.createElement('link');
+        darkCSS.id = 'dark-theme-css';
+        darkCSS.rel = 'stylesheet';
+        darkCSS.href = 'css/base-dark.css';
+        head.appendChild(darkCSS);
+      }
+      document.body.classList.add('dark-theme');
+    } else {
+      // Remover CSS oscuro
+      if (existingDarkCSS) {
+        existingDarkCSS.remove();
+      }
+      document.body.classList.remove('dark-theme');
+    }
+  }
+
+  static initializeTheme() {
+    const savedTheme = localStorage.getItem('ginbertfi_theme') || 'light';
+    this.applyTheme(savedTheme);
   }
 
   static createBackup() {
@@ -436,4 +618,6 @@ class OpcionesManager {
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
   new OpcionesManager();
+  // Aplicar tema guardado
+  OpcionesManager.initializeTheme();
 });

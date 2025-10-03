@@ -150,7 +150,7 @@ document.addEventListener('submit', (e) => {
       const totalSpent = this.getCategorySpent(category.id, expenses);
       const remaining = totalBudget - totalSpent;
       const percentage = Helpers.calculateProgress(totalSpent, totalBudget);
-      const budgetColors = Helpers.getProgressBarColor(100 - percentage);
+      const budgetColors = ThemeManager.getBudgetColors(percentage);
 
       return `
         <div class="category-wrapper ${category.expanded ? 'expanded' : ''}" data-category-id="${category.id}">
@@ -193,7 +193,7 @@ document.addEventListener('submit', (e) => {
 
     return `
       <div class="category-wrapper expanded unclassified-category">
-        <div class="category-content" style="background-color: #f5f5f5; border-color: #ddd;">
+        <div class="category-content" style="background-color: ${ThemeManager.getUnclassifiedColors().background}; border-color: ${ThemeManager.getUnclassifiedColors().border};">
           <div class="category-left">
             <div class="category-arrow"></div>
             <span class="category-name">Gastos sin Clasificar</span>
@@ -244,7 +244,7 @@ document.addEventListener('submit', (e) => {
           const spent = this.getSubcategorySpent(sub.id, expenses);
           const remaining = sub.budget - spent;
           const percentage = Helpers.calculateProgress(spent, sub.budget);
-          const budgetColors = Helpers.getProgressBarColor(100 - percentage);
+          const budgetColors = ThemeManager.getBudgetColors(percentage);
   
           // ✅ Formatear fecha de inicio
           const formattedStart = sub.startDate ? Helpers.formatDate(sub.startDate) : '---';
