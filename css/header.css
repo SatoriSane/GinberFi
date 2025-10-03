@@ -9,35 +9,36 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm) var(--spacing-md); /* versión móvil aplicada a todas */
+  padding: var(--spacing-sm) var(--spacing-md);
   max-width: 100%;
 }
 
 .app-name {
-  font-size: var(--font-size-xl); /* versión móvil aplicada a todas */
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--dark-blue);
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
+/* Selector de Balance - Estilo de Vidrio Esmerilado */
 .balance-selector {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.2); /* Fondo transparente para mostrar el header */
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-lg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.5); 
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6); 
   backdrop-filter: blur(10px);
 }
 
 .balance-selector:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.4); 
 }
 
 .balance-info {
@@ -48,20 +49,29 @@
   position: relative;
 }
 
-.wallet-name {
+/* Nombre de la Wallet - Alta Especificidad para asegurar color y peso */
+.balance-info .wallet-name { 
   font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--dark-blue);
+  font-weight: 700; /* Asegura Bold */
+  
+  /* Uso de !important para garantizar el color azul sobre cualquier conflicto */
+  color: var(--dark-blue) !important; 
+  
   line-height: 1.1;
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  /* Efecto de sombra para hacerlo flotar */
+  text-shadow: 
+    0 1px 1px rgba(0, 0, 0, 0.1),
+    0 0 4px rgba(255, 255, 255, 0.8);
 }
 
 .balance-amount {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 500; /* Lo bajé a 500 para que el nombre de la wallet (700) tenga jerarquía */
   color: var(--text-light);
   line-height: 1;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
@@ -83,13 +93,13 @@
 .balance-dropdown {
   position: absolute;
   top: 100%;
-  left: 2%;                       /* ocupar todo el ancho */
-  right: 2%;                      /* ocupar todo el ancho */
+  left: 2%;
+  right: 2%;
   background: var(--white);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg); /* solo esquinas inferiores */
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg); 
   box-shadow: var(--shadow-lg);
-  width: 96%;                   /* ancho completo */
-  max-width: none;               /* quitar límite de 90vw */
+  width: 96%;
+  max-width: none;
   z-index: 200;
   opacity: 0;
   visibility: hidden;
@@ -130,10 +140,7 @@
   font-weight: 600;
 }
 
-.wallet-name {
-  font-weight: 500;
-  color: var(--text-dark);
-}
+/* IMPORTANTE: El .wallet-name duplicado y menos específico ha sido eliminado de aquí */
 
 .wallet-balance {
   font-weight: 600;
@@ -164,10 +171,10 @@
   gap: var(--spacing-xs);
 }
 .dropdown-title img.icon {
-  width: 32px;       /* tamaño del icono */
+  width: 32px;
   height: 32px;
   margin-top: -7px;
-  margin-right: 0px; /* espacio entre icono y texto */
+  margin-right: 0px;
 }
 
 .empty-wallets-message {
