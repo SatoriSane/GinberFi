@@ -121,27 +121,22 @@
   margin-left: var(--spacing-xs);
 }
 
-.config-wallets-btn {
+/* Dropdown Header */
+.dropdown-header {
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid rgba(44, 82, 130, 0.1);
+  background: linear-gradient(135deg, rgba(209, 250, 229, 0.3) 0%, rgba(191, 219, 254, 0.3) 100%);
+}
+
+.dropdown-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--dark-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: var(--spacing-md);
-  background: var(--pastel-pink);
-  color: var(--dark-blue);
-  font-weight: 600;
-  border-top: 1px solid rgba(44, 82, 130, 0.1);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  transition: background-color 0.2s ease;
-}
-
-.config-wallets-btn:hover {
-  background: #FF9EDB;
-}
-
-.pig-icon {
-  margin-right: var(--spacing-sm);
-  font-size: var(--font-size-lg);
+  gap: var(--spacing-xs);
 }
 
 .empty-wallets-message {

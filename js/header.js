@@ -5,7 +5,6 @@ class Header {
       this.balanceAmount = document.getElementById('balanceAmount');
       this.balanceDropdown = document.getElementById('balanceDropdown');
       this.walletsList = document.getElementById('walletsList');
-      this.configwalletsBtn = document.getElementById('configwalletsBtn');
       
       this.init();
     }
@@ -42,11 +41,6 @@ class Header {
         }
       });
   
-      // Config wallets button
-      this.configwalletsBtn.addEventListener('click', () => {
-        window.appEvents.emit('switchTab', 'huchas');
-        this.closeDropdown();
-      });
     }
   
     toggleDropdown() {
@@ -85,7 +79,8 @@ class Header {
       if (wallets.length === 0) {
         this.walletsList.innerHTML = `
           <div class="empty-wallets-message">
-            No hay wallets creadas
+            No hay wallets disponibles.<br>
+            <small>Crea wallets desde la pestaña Huchas</small>
           </div>
         `;
         return;
