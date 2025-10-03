@@ -47,53 +47,132 @@
   background: var(--subcategory-bg-hover);
 }
 
-.category-content,
-.subcategory-content {
+/* LAYOUT OPTIMIZADO - Grid system con botón editar discreto */
+.category-content {
   position: relative;
   z-index: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--spacing-md);
   cursor: pointer;
   border: none;
   transition: all 0.3s ease;
-  border-radius: 20px;
   width: 100%;
   box-sizing: border-box;
-  padding: var(--spacing-md);
+  padding: var(--spacing-lg);
   background: transparent;
 }
 
-
-.category-left,
-.subcategory-left {
-  display: flex;
-  align-items: center;
-  flex: 1;
+/* Permitir overflow solo cuando se muestra el botón de editar */
+.category-wrapper.show-edit {
+  overflow: visible;
 }
 
+.subcategory-wrapper.show-edit {
+  overflow: visible;
+}
+
+.subcategory-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-sm);
+  background: transparent;
+}
+
+/* FLECHAS - Primera posición */
 .category-arrow {
+  order: 1;
   width: 20px;
   height: 20px;
-  margin-right: var(--spacing-sm);
   transition: transform 0.3s ease;
   color: var(--dark-blue);
   opacity: 0.7;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .subcategory-arrow {
+  order: 1;
   width: 16px;
   height: 16px;
-  margin-right: var(--spacing-sm);
   transition: transform 0.3s ease;
   color: var(--dark-blue);
   opacity: 0.6;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+/* NOMBRES - Segunda posición, tipografía consistente con huchas */
+.category-name {
+  order: 2;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark-blue);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.subcategory-name {
+  order: 2;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark-blue);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  opacity: 0.9;
+  min-width: 0;
+}
+
+/* PRESUPUESTOS - Tercera posición, tipografía consistente con huchas */
+.category-budget,
+.subcategory-budget {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.budget-amount {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--dark-blue);
+  white-space: nowrap;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.subcategory-budget .budget-amount {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.budget-percentage {
+  font-size: 12px;
+  opacity: 0.75;
+  color: var(--dark-blue);
+  line-height: 1.2;
 }
 
 .category-wrapper.expanded .category-arrow,
@@ -101,68 +180,24 @@
   transform: rotate(90deg);
 }
 
-.category-name {
-  font-size: var(--font-size-base); /* versión móvil aplicada */
-  font-weight: 700;
-  color: var(--dark-blue);
-}
-
-.subcategory-name {
-  font-size: var(--font-size-base); /* versión móvil aplicada */
-  font-weight: 500;
-  color: var(--dark-blue);
-}
-
-.category-right,
-.subcategory-right {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.expense-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0px;
-}
-
-.category-budget,
-.subcategory-budget {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-}
-
-.budget-amount {
-  font-size: var(--font-size-base); /* versión móvil aplicada */
-  font-weight: 700;
-  color: var(--dark-blue);
-}
-
-.subcategory-budget .budget-amount {
-  font-weight: 600;
-}
-
-.budget-percentage,
-.subcategory-budget .budget-percentage {
-  font-size: var(--font-size-xs);
-  color: var(--text-light);
-}
-
-/* Botón para agregar subcategoría (discreto) */
-.add-subcategory-btn {
-  background: var(--surface-hover);
-  color: var(--text-light);
+/* BOTONES PRINCIPALES - Cuarta posición */
+.add-subcategory-btn,
+.add-expense-btn {
+  order: 4;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   transition: all 0.3s ease;
-  padding: 6px;
   touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+.add-subcategory-btn {
+  background: var(--surface-hover);
+  color: var(--text-light);
+  padding: 6px;
   font-size: var(--font-size-base);
   min-width: 32px;
   min-height: 32px;
@@ -176,18 +211,10 @@
   transform: translateY(-1px);
 }
 
-/* Botón para agregar gasto */
 .add-expense-btn {
   background: var(--interactive-bg-hover);
   color: var(--dark-blue);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  transition: all 0.3s ease;
   padding: 8px;
-  touch-action: manipulation;
   font-size: var(--font-size-lg);
   min-width: 36px;
   min-height: 36px;
@@ -198,6 +225,52 @@
   background: var(--interactive-bg-active);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+/* BOTONES EDITAR - Lápiz muy sutil, sin interferir */
+.edit-category-btn,
+.edit-subcategory-btn {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 100;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* Solo mostrar cuando tiene la clase show-edit */
+.category-wrapper.show-edit .edit-category-btn,
+.subcategory-wrapper.show-edit .edit-subcategory-btn {
+  opacity: 0.6;
+  visibility: visible;
+}
+
+.edit-category-btn:hover,
+.edit-subcategory-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* ELEMENTOS LEGACY - Mantener compatibilidad */
+.expense-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0px;
 }
 
 .budget-top {

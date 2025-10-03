@@ -4,16 +4,15 @@ class GastosManager {
     this.categoriesContainer = document.getElementById('categoriesContainer');
     this.emptyCategoriesState = document.getElementById('emptyCategoriesState');
     this.addCategoryBtn = document.getElementById('addCategoryBtn');
-
-    // ✅ CAMBIO: IDs de los botones actualizados según el nuevo index.html
-    this.addQuickExpenseFab = document.getElementById('addQuickExpenseFab');
     this.addCategoryListBtn = document.getElementById('addCategoryListBtn');
-    
+    this.addQuickExpenseFab = document.getElementById('addQuickExpenseFab');
+
     this.init();
   }
 
   init() {
     this.setupEventListeners();
+    this.setupGlobalClickListener();
     this.checkAndResetBudgets();
     this.render();
     
@@ -51,47 +50,46 @@ class GastosManager {
         this.openCreateCategoryModal();
     });
 
-// Handle form submissions
-document.addEventListener('submit', (e) => {
-  e.preventDefault(); 
-  const form = e.target;
+    // Handle form submissions
+    document.addEventListener('submit', (e) => {
+      e.preventDefault(); 
+      const form = e.target;
 
-  switch (form.id) {
-    case 'categoryForm':
-      this.handleCreateCategory(form);
-      break;
-    case 'subcategoryForm':
-      this.handleCreateSubcategory(form);
-      break;
-    case 'editCategoryForm': {
-      const formData = new FormData(form);
-      const categoryId = formData.get('categoryId'); 
-      this.handleEditCategory(form, categoryId);
-      break;
-    }
-    case 'editSubcategoryForm': {
-      const formData = new FormData(form);
-      const categoryId = formData.get('categoryId');        
-      const subcategoryId = formData.get('subcategoryId');  
-      this.handleEditSubcategory(form, categoryId, subcategoryId);
-      break;
-    }
-    case 'editExpenseForm':
-      this.handleEditExpense(form);
-      break;
-    case 'expenseForm':
-      this.handleCreateExpense(form);
-      break;
-    // 🚀 NUEVO: Manejador para el formulario de gasto rápido
-    case 'quickExpenseForm':
-      this.handleCreateQuickExpense(form);
-      window.appEvents.emit('closeModal'); // 🔥 cerrar modal después de guardar
-      break;
-    default:
-      console.warn('Formulario no manejado:', form.id);
-  }
-});
-
+      switch (form.id) {
+        case 'categoryForm':
+          this.handleCreateCategory(form);
+          break;
+        case 'subcategoryForm':
+          this.handleCreateSubcategory(form);
+          break;
+        case 'editCategoryForm': {
+          const formData = new FormData(form);
+          const categoryId = formData.get('categoryId'); 
+          this.handleEditCategory(form, categoryId);
+          break;
+        }
+        case 'editSubcategoryForm': {
+          const formData = new FormData(form);
+          const categoryId = formData.get('categoryId');        
+          const subcategoryId = formData.get('subcategoryId');  
+          this.handleEditSubcategory(form, categoryId, subcategoryId);
+          break;
+        }
+        case 'editExpenseForm':
+          this.handleEditExpense(form);
+          break;
+        case 'expenseForm':
+          this.handleCreateExpense(form);
+          break;
+        // 🚀 NUEVO: Manejador para el formulario de gasto rápido
+        case 'quickExpenseForm':
+          this.handleCreateQuickExpense(form);
+          window.appEvents.emit('closeModal'); // 🔥 cerrar modal después de guardar
+          break;
+        default:
+          console.warn('Formulario no manejado:', form.id);
+      }
+    });
 
     document.getElementById('subcategoryFrequency')?.addEventListener('change', (e) => {
       const freq = e.target.value;
@@ -111,13 +109,9 @@ document.addEventListener('submit', (e) => {
     // 🚀 NUEVO: Obtenemos los gastos sin clasificar
     const unclassifiedExpenses = AppState.expenses.filter(e => e.categoryId === 'unclassified');
 
-    // ✅ CAMBIO: La lógica de visibilidad ahora considera los gastos sin clasificar
-    // Limpiamos el contenido anterior, pero mantenemos el nodo del estado vacío
-    while (this.categoriesContainer.firstChild && this.categoriesContainer.firstChild !== this.emptyCategoriesState) {
-        this.categoriesContainer.removeChild(this.categoriesContainer.firstChild);
-    }
-
     if (categories.length === 0 && unclassifiedExpenses.length === 0) {
+        this.categoriesContainer.innerHTML = '';
+        this.categoriesContainer.appendChild(this.emptyCategoriesState);
         this.emptyCategoriesState.style.display = 'block';
         this.addCategoryListBtn.style.display = 'none';
     } else {
@@ -132,8 +126,16 @@ document.addEventListener('submit', (e) => {
             finalHtml += this.renderCategories(categories);
         }
         
-        // Insertamos el nuevo contenido ANTES del nodo de estado vacío
-        this.categoriesContainer.insertAdjacentHTML('afterbegin', finalHtml);
+        // Agregar el estado vacío al final del HTML
+        finalHtml += this.emptyCategoriesState.outerHTML;
+        
+        // Reemplazar todo el contenido
+        this.categoriesContainer.innerHTML = finalHtml;
+        
+        // Recuperar la referencia al estado vacío
+        this.emptyCategoriesState = this.categoriesContainer.querySelector('#emptyCategoriesState');
+        
+        console.log('HTML insertado, adjuntando event listeners...');
         this.attachCategoryEventListeners();
     }
     
@@ -155,29 +157,30 @@ document.addEventListener('submit', (e) => {
       return `
         <div class="category-wrapper ${category.expanded ? 'expanded' : ''}" data-category-id="${category.id}">
           <div class="category-content" data-toggle="category" style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
-            <div class="category-left">
-              <div class="category-arrow">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <span class="category-name">${category.name}</span>
+            <div class="category-arrow">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
-            <div class="category-right">
-              <div class="category-budget">
-                <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
-                <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
-              </div>
-              <button class="add-subcategory-btn"
-                      data-category-id="${category.id}"
-                      data-category-name="${category.name}"
-                      aria-label="Añadir subcategoría"
-                      title="Añadir subcategoría">+</button>
-              <button class="edit-category-btn"
-                      data-category-id="${category.id}"
-                      aria-label="Opciones"
-                      title="Opciones">⋮</button>
+            <span class="category-name">${category.name}</span>
+            <div class="category-budget">
+              <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
+              <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
             </div>
+            <button class="add-subcategory-btn"
+                    data-category-id="${category.id}"
+                    data-category-name="${category.name}"
+                    aria-label="Añadir subcategoría"
+                    title="Añadir subcategoría">+</button>
+            <button class="edit-category-btn"
+                    data-category-id="${category.id}"
+                    aria-label="Editar categoría"
+                    title="Editar categoría">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
           ${category.expanded ? this.renderSubcategories(category, expenses) : ''}
         </div>
@@ -263,37 +266,34 @@ document.addEventListener('submit', (e) => {
             <div class="subcategory-wrapper ${sub.expanded ? 'expanded' : ''}" data-subcategory-id="${sub.id}">
               <div class="subcategory-content" data-toggle="subcategory"
                    style="background-color: ${budgetColors.background}; border-color: ${budgetColors.border};">
-                <div class="subcategory-left">
-                  <div class="subcategory-arrow">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                  <span class="subcategory-name">${sub.name}</span>
+                <div class="subcategory-arrow">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
-                <div class="subcategory-right">
-                  <div class="subcategory-budget">
-                    <div class="budget-top">
-                      <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
-                    </div>
-                  </div>
-  
-                  <button class="add-expense-btn"
-                          data-subcategory-id="${sub.id}"
-                          data-subcategory-name="${sub.name}"
-                          data-remaining-budget="${remaining}"
-                          aria-label="Gastar"
-                          title="Gastar">
-                    <span class="nav-icon">
-                      <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
-                    </span>
-                  </button>
-  
-                  <button class="edit-subcategory-btn"
-                          data-subcategory-id="${sub.id}"
-                          aria-label="Opciones"
-                          title="Opciones">⋮</button>
+                <span class="subcategory-name">${sub.name}</span>
+                <div class="subcategory-budget">
+                  <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
                 </div>
+                <button class="add-expense-btn"
+                        data-subcategory-id="${sub.id}"
+                        data-subcategory-name="${sub.name}"
+                        data-remaining-budget="${remaining}"
+                        aria-label="Gastar"
+                        title="Gastar">
+                  <span class="nav-icon">
+                    <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
+                  </span>
+                </button>
+                <button class="edit-subcategory-btn"
+                        data-subcategory-id="${sub.id}"
+                        aria-label="Editar subcategoría"
+                        title="Editar subcategoría">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
               </div>
   
               ${sub.expanded ? `
@@ -351,32 +351,78 @@ document.addEventListener('submit', (e) => {
   }
   
   attachCategoryEventListeners() {
+    // Debug: Verificar el HTML generado
+    console.log('HTML del contenedor:', this.categoriesContainer.innerHTML.substring(0, 500));
+    
     // Category toggle
-    this.categoriesContainer.querySelectorAll('[data-toggle="category"]').forEach(element => {
+    const categoryElements = this.categoriesContainer.querySelectorAll('[data-toggle="category"]');
+    console.log('Encontrados elementos de categoría:', categoryElements.length, categoryElements);
+    
+    // Debug: Verificar todos los elementos con data-toggle
+    const allToggleElements = this.categoriesContainer.querySelectorAll('[data-toggle]');
+    console.log('Todos los elementos con data-toggle:', allToggleElements.length, allToggleElements);
+    
+    categoryElements.forEach(element => {
       element.addEventListener('click', (e) => {
         if (
           e.target.classList.contains('add-subcategory-btn') ||
           e.target.classList.contains('edit-category-btn')
         ) return;
         
-        const categoryId = element.closest('.category-wrapper').dataset.categoryId;
+        const categoryWrapper = element.closest('.category-wrapper');
+        const categoryId = categoryWrapper.dataset.categoryId;
+        
+        console.log('Toggle categoría:', categoryId, 'Wrapper:', categoryWrapper);
         this.toggleCategory(categoryId);
+        
+        // Mostrar botón de editar después del toggle y re-render
+        setTimeout(() => {
+          // Buscar el nuevo elemento después del re-render
+          const newCategoryWrapper = this.categoriesContainer.querySelector(`[data-category-id="${categoryId}"]`);
+          console.log('Después del toggle - nuevo wrapper:', newCategoryWrapper);
+          console.log('Después del toggle - expanded:', newCategoryWrapper?.classList.contains('expanded'));
+          
+          if (newCategoryWrapper && newCategoryWrapper.classList.contains('expanded')) {
+            this.showEditButton(newCategoryWrapper);
+          } else {
+            this.hideAllEditButtons();
+          }
+        }, 100);
       });
     });
   
     // Subcategory toggle
-    this.categoriesContainer.querySelectorAll('[data-toggle="subcategory"]').forEach(element => {
+    const subcategoryElements = this.categoriesContainer.querySelectorAll('[data-toggle="subcategory"]');
+    console.log('Encontrados elementos de subcategoría:', subcategoryElements.length, subcategoryElements);
+    subcategoryElements.forEach(element => {
       element.addEventListener('click', (e) => {
         if (
           e.target.classList.contains('add-expense-btn') ||
           e.target.classList.contains('edit-subcategory-btn')
         ) return;
         
-        const subcategoryId = element.closest('.subcategory-wrapper').dataset.subcategoryId;
+        const subcategoryWrapper = element.closest('.subcategory-wrapper');
+        const subcategoryId = subcategoryWrapper.dataset.subcategoryId;
+        
+        console.log('Toggle subcategoría:', subcategoryId, 'Wrapper:', subcategoryWrapper);
         this.toggleSubcategory(subcategoryId);
+        
+        // Mostrar botón de editar después del toggle y re-render
+        setTimeout(() => {
+          // Buscar el nuevo elemento después del re-render
+          const newSubcategoryWrapper = this.categoriesContainer.querySelector(`[data-subcategory-id="${subcategoryId}"]`);
+          console.log('Después del toggle - nuevo subcategory wrapper:', newSubcategoryWrapper);
+          console.log('Después del toggle subcategoría - expanded:', newSubcategoryWrapper?.classList.contains('expanded'));
+          
+          if (newSubcategoryWrapper && newSubcategoryWrapper.classList.contains('expanded')) {
+            this.showEditButton(newSubcategoryWrapper);
+          } else {
+            this.hideAllEditButtons();
+          }
+        }, 100);
       });
     });
-  
+
     // Add subcategory buttons
     this.categoriesContainer.querySelectorAll('.add-subcategory-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -393,6 +439,15 @@ document.addEventListener('submit', (e) => {
         e.stopPropagation();
         const categoryId = btn.dataset.categoryId;
         this.openEditCategoryModal(categoryId);
+      });
+    });
+
+    // Edit subcategory buttons
+    this.categoriesContainer.querySelectorAll('.edit-subcategory-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const subcategoryId = btn.dataset.subcategoryId;
+        this.openEditSubcategoryModal(subcategoryId);
       });
     });
   
@@ -953,6 +1008,47 @@ fillSubcategorySelect() {
         AppState.refreshData();
         Helpers.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
     }
+  }
+
+  // Función para ocultar todos los botones de editar
+  hideAllEditButtons() {
+    // Ocultar botones de gastos
+    document.querySelectorAll('.category-wrapper').forEach(wrapper => {
+      wrapper.classList.remove('show-edit');
+    });
+    document.querySelectorAll('.subcategory-wrapper').forEach(wrapper => {
+      wrapper.classList.remove('show-edit');
+    });
+    // Ocultar botones de wallets
+    document.querySelectorAll('.wallet-card').forEach(card => {
+      card.classList.remove('show-edit');
+    });
+  }
+
+  // Función para mostrar solo un botón de editar
+  showEditButton(element) {
+    this.hideAllEditButtons();
+    element.classList.add('show-edit');
+    console.log('Mostrando botón de editar en:', element.className, element);
+  }
+
+  // Event listener global para ocultar botones al hacer click fuera
+  setupGlobalClickListener() {
+    document.addEventListener('click', (e) => {
+      // Si el click es en un botón de editar, no hacer nada (se maneja en su propio listener)
+      if (e.target.closest('.edit-category-btn') || 
+          e.target.closest('.edit-subcategory-btn') || 
+          e.target.closest('.edit-wallet-btn')) {
+        return;
+      }
+      
+      // Si el click no es en un toggle de categoría/subcategoría/wallet, ocultar todos los botones
+      if (!e.target.closest('[data-toggle="category"]') && 
+          !e.target.closest('[data-toggle="subcategory"]') &&
+          !e.target.closest('[data-action="toggle"]')) {
+        this.hideAllEditButtons();
+      }
+    });
   }
 }
 

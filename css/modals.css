@@ -181,53 +181,6 @@
 }
 
 .input-with-currency input {
-  flex: 1;
-}
-
-/* Wallet creation modal */
-.wallet-modal .currency-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* versión móvil aplicada */
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-sm);
-}
-
-.currency-option {
-  padding: var(--spacing-sm);
-  border: 2px solid var(--pastel-blue);
-  border-radius: var(--radius-md);
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: var(--white);
-}
-
-.currency-option:hover {
-  border-color: var(--dark-blue);
-  background: var(--light-green);
-}
-
-.currency-option.selected {
-  border-color: var(--dark-blue);
-  background: var(--pastel-green);
-  font-weight: 600;
-}
-
-.currency-code {
-  font-weight: 600;
-  color: var(--dark-blue);
-  margin-bottom: var(--spacing-xs);
-}
-
-.currency-name {
-  font-size: var(--font-size-xs);
-  color: var(--text-light);
-}
-
-/* Income source modal */
-.income-source-modal .source-list {
-  max-height: 200px; /* versión móvil aplicada */
-  overflow-y: auto;
   border: 2px solid var(--pastel-blue);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-md);
