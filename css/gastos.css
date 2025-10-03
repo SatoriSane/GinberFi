@@ -62,6 +62,7 @@
   box-sizing: border-box;
   padding: var(--spacing-lg);
   background: transparent;
+  border-radius: 20px; 
 }
 
 /* Permitir overflow solo cuando se muestra el botón de editar */
@@ -71,6 +72,11 @@
 
 .subcategory-wrapper.show-edit {
   overflow: visible;
+}
+.subcategory-wrapper.show-edit .subcategory-content,
+.category-wrapper.show-edit .category-content {
+    /* CLAVE: Si la capa de color tiene overflow: hidden en algún estado, la siguiente regla lo arregla */
+    overflow: visible !important; 
 }
 
 .subcategory-content {
@@ -230,11 +236,12 @@
 /* BOTONES EDITAR - Lápiz muy sutil, sin interferir */
 .edit-category-btn,
 .edit-subcategory-btn {
+  /* La posición debe ser relativa al elemento que tiene border-radius, que es .category-wrapper */
   position: absolute;
-  top: -6px;
-  left: -6px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  top: -8px; 
+  left: -8px;
+  background: var(--white); /* Usar el color del fondo de la tarjeta */
+  border: 1px solid var(--border-light); /* Usar el borde de la tarjeta */
   border-radius: var(--radius-sm);
   color: var(--text-light);
   cursor: pointer;
@@ -242,14 +249,14 @@
   transition: all 0.2s ease;
   opacity: 0;
   visibility: hidden;
-  z-index: 100;
+  z-index: 500; /* CLAVE: Alto Z-Index */
   width: 28px;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); 
 }
-
 
 /* Solo mostrar cuando tiene la clase show-edit */
 .category-wrapper.show-edit .edit-category-btn,

@@ -351,77 +351,73 @@ class GastosManager {
   }
   
   attachCategoryEventListeners() {
-    // Debug: Verificar el HTML generado
-    console.log('HTML del contenedor:', this.categoriesContainer.innerHTML.substring(0, 500));
     
-    // Category toggle
-    const categoryElements = this.categoriesContainer.querySelectorAll('[data-toggle="category"]');
-    console.log('Encontrados elementos de categoría:', categoryElements.length, categoryElements);
-    
-    // Debug: Verificar todos los elementos con data-toggle
-    const allToggleElements = this.categoriesContainer.querySelectorAll('[data-toggle]');
-    console.log('Todos los elementos con data-toggle:', allToggleElements.length, allToggleElements);
-    
-    categoryElements.forEach(element => {
-      element.addEventListener('click', (e) => {
-        if (
-          e.target.classList.contains('add-subcategory-btn') ||
-          e.target.classList.contains('edit-category-btn')
-        ) return;
-        
-        const categoryWrapper = element.closest('.category-wrapper');
-        const categoryId = categoryWrapper.dataset.categoryId;
-        
-        console.log('Toggle categoría:', categoryId, 'Wrapper:', categoryWrapper);
-        this.toggleCategory(categoryId);
-        
-        // Mostrar botón de editar después del toggle y re-render
-        setTimeout(() => {
-          // Buscar el nuevo elemento después del re-render
-          const newCategoryWrapper = this.categoriesContainer.querySelector(`[data-category-id="${categoryId}"]`);
-          console.log('Después del toggle - nuevo wrapper:', newCategoryWrapper);
-          console.log('Después del toggle - expanded:', newCategoryWrapper?.classList.contains('expanded'));
-          
-          if (newCategoryWrapper && newCategoryWrapper.classList.contains('expanded')) {
-            this.showEditButton(newCategoryWrapper);
-          } else {
-            this.hideAllEditButtons();
-          }
-        }, 100);
-      });
-    });
+      // 1. Category toggle (Categorías)
+      this.categoriesContainer.querySelectorAll('[data-toggle="category"]').forEach(element => {
+          element.addEventListener('click', (e) => {
+              if (
+                  e.target.closest('.add-subcategory-btn') ||
+                  e.target.closest('.edit-category-btn')
+              ) return;
   
-    // Subcategory toggle
-    const subcategoryElements = this.categoriesContainer.querySelectorAll('[data-toggle="subcategory"]');
-    console.log('Encontrados elementos de subcategoría:', subcategoryElements.length, subcategoryElements);
-    subcategoryElements.forEach(element => {
-      element.addEventListener('click', (e) => {
-        if (
-          e.target.classList.contains('add-expense-btn') ||
-          e.target.classList.contains('edit-subcategory-btn')
-        ) return;
-        
-        const subcategoryWrapper = element.closest('.subcategory-wrapper');
-        const subcategoryId = subcategoryWrapper.dataset.subcategoryId;
-        
-        console.log('Toggle subcategoría:', subcategoryId, 'Wrapper:', subcategoryWrapper);
-        this.toggleSubcategory(subcategoryId);
-        
-        // Mostrar botón de editar después del toggle y re-render
-        setTimeout(() => {
-          // Buscar el nuevo elemento después del re-render
-          const newSubcategoryWrapper = this.categoriesContainer.querySelector(`[data-subcategory-id="${subcategoryId}"]`);
-          console.log('Después del toggle - nuevo subcategory wrapper:', newSubcategoryWrapper);
-          console.log('Después del toggle subcategoría - expanded:', newSubcategoryWrapper?.classList.contains('expanded'));
-          
-          if (newSubcategoryWrapper && newSubcategoryWrapper.classList.contains('expanded')) {
-            this.showEditButton(newSubcategoryWrapper);
-          } else {
-            this.hideAllEditButtons();
-          }
-        }, 100);
+              const categoryWrapper = element.closest('.category-wrapper');
+              const categoryId = categoryWrapper.dataset.categoryId;
+              
+              // 🚨 CLAVE: 
+              // 1. Ocultamos todos (Deselección).
+              this.hideAllEditButtons(); 
+              
+              // 2. Si la categoría estaba visible antes de ocultarla (doble clic), 
+              // no hacemos el toggle de expansión/colapso.
+              // Si la categoría NO estaba visible (primer clic), sí hacemos el toggle.
+              const wasSelected = categoryWrapper.classList.contains('show-edit');
+  
+              // Solo hacemos el toggle de expansión si no estaba previamente seleccionado.
+              // Esto evita que el doble clic colapse/expanda de nuevo inmediatamente.
+              if (!wasSelected) {
+                  this.toggleCategory(categoryId); // Esta función debe llamar a this.render()
+                  
+                  // 3. Después de que se re-renderice (asumimos que toggleCategory es rápido o asíncrono)
+                  // Usamos un pequeño delay para asegurar que el DOM se actualice con el render.
+                  setTimeout(() => {
+                      const newWrapper = this.categoriesContainer.querySelector(`[data-category-id="${categoryId}"]`);
+                      // Solo mostramos el botón si la tarjeta está expandida (se colapsa con el segundo clic)
+                      if (newWrapper && newWrapper.classList.contains('expanded')) {
+                          this.showEditButton(newWrapper);
+                      }
+                  }, 100);
+              }
+          });
       });
-    });
+  
+      // 2. Subcategory toggle (Subcategorías)
+      this.categoriesContainer.querySelectorAll('[data-toggle="subcategory"]').forEach(element => {
+          element.addEventListener('click', (e) => {
+              if (
+                  e.target.closest('.add-expense-btn') ||
+                  e.target.closest('.edit-subcategory-btn')
+              ) return;
+  
+              const subcategoryWrapper = element.closest('.subcategory-wrapper');
+              const subcategoryId = subcategoryWrapper.dataset.subcategoryId;
+              
+              // 🚨 CLAVE: 
+              this.hideAllEditButtons();
+              
+              const wasSelected = subcategoryWrapper.classList.contains('show-edit');
+  
+              if (!wasSelected) {
+                  this.toggleSubcategory(subcategoryId); // Esta función debe llamar a this.render()
+                  
+                  setTimeout(() => {
+                      const newWrapper = this.categoriesContainer.querySelector(`[data-subcategory-id="${subcategoryId}"]`);
+                      if (newWrapper && newWrapper.classList.contains('expanded')) {
+                          this.showEditButton(newWrapper);
+                      }
+                  }, 100);
+              }
+          });
+      });
 
     // Add subcategory buttons
     this.categoriesContainer.querySelectorAll('.add-subcategory-btn').forEach(btn => {
@@ -459,15 +455,6 @@ class GastosManager {
         const subcategoryName = btn.dataset.subcategoryName;
         const remainingBudget = parseFloat(btn.dataset.remainingBudget);
         this.openCreateExpenseModal(subcategoryId, subcategoryName, remainingBudget);
-      });
-    });
-  
-    // Edit subcategory buttons
-    this.categoriesContainer.querySelectorAll('.edit-subcategory-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const subcategoryId = btn.dataset.subcategoryId;
-        this.openEditSubcategoryModal(subcategoryId);
       });
     });
   
@@ -1035,17 +1022,23 @@ fillSubcategorySelect() {
   // Event listener global para ocultar botones al hacer click fuera
   setupGlobalClickListener() {
     document.addEventListener('click', (e) => {
-      // Si el click es en un botón de editar, no hacer nada (se maneja en su propio listener)
-      if (e.target.closest('.edit-category-btn') || 
-          e.target.closest('.edit-subcategory-btn') || 
-          e.target.closest('.edit-wallet-btn')) {
+      // 1. Si el click fue dentro de un elemento interactivo (que ya tiene su propia lógica), NO HACER NADA.
+      if (
+        e.target.closest('.edit-category-btn') || 
+        e.target.closest('.edit-subcategory-btn') || 
+        e.target.closest('.edit-wallet-btn') ||
+        // Si fue un click para seleccionar/deseleccionar (toggle), dejar que el otro listener lo maneje
+        e.target.closest('[data-toggle="category"]') || 
+        e.target.closest('[data-toggle="subcategory"]') ||
+        e.target.closest('[data-action="toggle"]') 
+      ) {
         return;
       }
       
-      // Si el click no es en un toggle de categoría/subcategoría/wallet, ocultar todos los botones
-      if (!e.target.closest('[data-toggle="category"]') && 
-          !e.target.closest('[data-toggle="subcategory"]') &&
-          !e.target.closest('[data-action="toggle"]')) {
+      // 2. Si el click fue en el "fondo" (fuera de cualquier tarjeta/wrapper), OCULTAR TODOS.
+      if (!e.target.closest('.category-wrapper') && 
+          !e.target.closest('.subcategory-wrapper') &&
+          !e.target.closest('.wallet-card')) {
         this.hideAllEditButtons();
       }
     });
