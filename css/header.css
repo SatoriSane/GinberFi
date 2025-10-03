@@ -138,6 +138,12 @@
   align-items: center;
   gap: var(--spacing-xs);
 }
+.dropdown-title img.icon {
+  width: 32px;       /* tamaño del icono */
+  height: 32px;
+  margin-top: -7px;
+  margin-right: 0px; /* espacio entre icono y texto */
+}
 
 .empty-wallets-message {
   text-align: center;

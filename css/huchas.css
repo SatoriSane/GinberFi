@@ -213,6 +213,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  min-height: 40px;
 }
 
 .recent-transaction-item:hover {
@@ -225,22 +226,32 @@
   margin-bottom: 0;
 }
 
-.transaction-info {
+.transaction-left {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+}
+
+.transaction-date {
+  font-size: 10px;
+  color: var(--text-light);
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .transaction-type {
   font-size: 13px;
   font-weight: 600;
   color: var(--dark-blue);
-}
-
-.transaction-date {
-  font-size: 11px;
-  color: var(--text-light);
-  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .transaction-amount {

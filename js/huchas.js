@@ -104,48 +104,6 @@ class HuchasManager {
       this.attachWalletEventListeners();
     }
   }
-  
-  getTransactionCount(walletId) {
-    const transactions = Storage.get('ginbertfi_transactions') || [];
-    return transactions.filter(t => t.walletId === walletId).length;
-  }
-
-  getWalletIcon(currency, purpose) {
-    // Iconos por moneda
-    const currencyIcons = {
-      'BOB': '🏛️',
-      'USD': '💵',
-      'EUR': '💶',
-      'BCH': '₿'
-    };
-
-    // Iconos por propósito
-    const purposeIcons = {
-      'ahorro': '🏦',
-      'gastos': '💳',
-      'emergencia': '🚨',
-      'vacaciones': '🏖️',
-      'casa': '🏠',
-      'auto': '🚗',
-      'educacion': '📚',
-      'salud': '🏥',
-      'inversion': '📈',
-      'negocio': '💼'
-    };
-
-    // Buscar por propósito primero
-    if (purpose) {
-      const purposeLower = purpose.toLowerCase();
-      for (const [key, icon] of Object.entries(purposeIcons)) {
-        if (purposeLower.includes(key)) {
-          return icon;
-        }
-      }
-    }
-
-    // Si no encuentra por propósito, usar icono de moneda
-    return currencyIcons[currency] || '💰';
-  }
 
   getRecentTransactionsHTML(walletId, currency) {
     const transactions = Storage.get('ginbertfi_transactions') || [];
@@ -165,9 +123,9 @@ class HuchasManager {
 
     const transactionsHTML = walletTransactions.map(tx => `
       <div class="recent-transaction-item" data-wallet-id="${walletId}">
-        <div class="transaction-info">
-          <div class="transaction-type">${this.getTransactionTypeLabel(tx.type)}</div>
-          <div class="transaction-date">${Helpers.formatDate(tx.date)}</div>
+        <div class="transaction-left">
+          <span class="transaction-date">${Helpers.formatDate(tx.date)}</span>
+          <span class="transaction-type">${this.getTransactionTypeLabel(tx.type)}</span>
         </div>
         <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
           ${tx.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(tx.amount), currency)}
@@ -435,15 +393,6 @@ class HuchasManager {
   }
 
   // Helper methods
-  getCurrencyName(currency) {
-    const currencyNames = {
-      'BOB': 'Boliviano',
-      'USD': 'Dólar Estadounidense',
-      'EUR': 'Euro',
-      'BCH': 'Bitcoin Cash'
-    };
-    return currencyNames[currency] || currency;
-  }
 
   getTransactionTypeLabel(type) {
     const labels = {
