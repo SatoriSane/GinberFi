@@ -5,22 +5,6 @@
   gap: var(--spacing-md);
 }
 
-/* Wallet Grid Layout */
-@media (min-width: 768px) {
-  .wallets-container {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    padding: var(--spacing-md);
-  }
-}
-
-@media (min-width: 1200px) {
-  .wallets-container {
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-}
-
 .wallet-card {
   background: var(--white);
   border-radius: 20px;
@@ -30,11 +14,6 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
-}
-
-/* Permitir overflow solo cuando se muestra el botón de editar */
-.wallet-card.show-edit {
-  overflow: visible;
 }
 
 .wallet-card::before {
@@ -81,40 +60,6 @@
   gap: 16px;
 }
 
-/* BOTÓN EDITAR WALLET - Lápiz muy sutil, sin interferir */
-.edit-wallet-btn {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--radius-sm);
-  color: var(--text-light);
-  cursor: pointer;
-  padding: 4px;
-  transition: all 0.2s ease;
-  opacity: 0;
-  visibility: hidden;
-  z-index: 100;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Solo mostrar cuando tiene la clase show-edit */
-.wallet-card.show-edit .edit-wallet-btn {
-  opacity: 0.6;
-  visibility: visible;
-}
-
-.edit-wallet-btn:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(0, 0, 0, 0.15);
-}
-
 .wallet-card.collapsed .wallet-header:active {
   background: linear-gradient(135deg, #A8D6E0, #B8D6B9);
 }
@@ -138,10 +83,9 @@
   font-size: 17px;
   font-weight: 700;
   color: var(--dark-blue);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
 }
 
 .wallet-purpose {
@@ -153,6 +97,48 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
+}
+
+/* BOTÓN EDITAR WALLET - Inline después del nombre */
+.edit-wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 3px;
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  width: 22px;
+  height: 22px;
+  margin-left: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.edit-wallet-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.wallet-card.show-edit .edit-wallet-btn {
+  opacity: 0.7;
+  visibility: visible;
+}
+
+.edit-wallet-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: scale(1.1);
+}
+
+.edit-wallet-btn:active {
+  transform: scale(0.95);
 }
 
 .wallet-balance-compact {
@@ -312,12 +298,10 @@
 
 .recent-transaction-item .transaction-amount.positive {
   color: #16a34a;
-  background: rgba(34, 197, 94, 0.12);
 }
 
 .recent-transaction-item .transaction-amount.negative {
   color: #dc2626;
-  background: rgba(239, 68, 68, 0.12);
 }
 
 .no-recent-transactions {
@@ -406,7 +390,6 @@
 .action-icon {
   font-size: var(--font-size-base);
 }
-
 
 /* Wallet Creation Form */
 .create-wallet-section {
@@ -507,7 +490,6 @@
     font-size: 10px;
   }
   
-  /* Transacciones aún más compactas en móviles pequeños */
   .recent-transactions-list {
     padding: 4px 8px 6px 8px;
     max-height: 150px;

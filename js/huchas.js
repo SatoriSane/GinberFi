@@ -2,10 +2,10 @@ class HuchasManager {
   constructor() {
     this.walletsContainer = document.getElementById('walletsContainer');
     this.emptywalletsState = document.getElementById('emptywalletsState');
-    this.addWalletBtn = document.getElementById('addWalletBtn'); // botón dentro del FAB
-    this.addNewWalletFab = document.getElementById('addNewWalletFab'); // FAB
-    this.firstWalletBtn = this.emptywalletsState.querySelector('#addWalletBtn'); // botón "Crear Primera Wallet"
-    this.expandedwallets = new Set(); // Track which wallets have expanded transactions
+    this.addWalletBtn = document.getElementById('addWalletBtn');
+    this.addNewWalletFab = document.getElementById('addNewWalletFab');
+    this.firstWalletBtn = this.emptywalletsState.querySelector('#addWalletBtn');
+    this.expandedwallets = new Set();
 
     this.init();
   }
@@ -15,7 +15,6 @@ class HuchasManager {
     this.setupGlobalClickListener();
     this.render();
 
-    // Listeners globales de actualización y cambios de tab
     window.appEvents.on('dataUpdated', () => this.render());
     window.appEvents.on('tabChanged', (tabName) => {
       if (tabName === 'huchas') this.render();
@@ -24,17 +23,14 @@ class HuchasManager {
   }
 
   setupEventListeners() {
-    // FAB para crear wallet
     if (this.addNewWalletFab) {
       this.addNewWalletFab.addEventListener('click', () => this.openCreateWalletModal());
     }
 
-    // Botón "Crear Primera Wallet" (si existe)
     if (this.firstWalletBtn) {
       this.firstWalletBtn.addEventListener('click', () => this.openCreateWalletModal());
     }
 
-    // Form submissions de otros modales
     document.addEventListener('submit', (e) => {
       if (e.target.id === 'incomeForm') {
         e.preventDefault();
@@ -50,23 +46,19 @@ class HuchasManager {
     AppState.wallets = Storage.getWallets() || [];
     const wallets = AppState.wallets;
 
-    // Guardar estado de wallets expandidas antes de limpiar
     const expandedWallets = new Set();
     this.walletsContainer.querySelectorAll('.wallet-card:not(.collapsed)').forEach(card => {
       expandedWallets.add(card.dataset.walletId);
     });
 
-    // Limpiar wallets previos, pero mantener nodo empty
     while (this.walletsContainer.firstChild && this.walletsContainer.firstChild !== this.emptywalletsState) {
       this.walletsContainer.removeChild(this.walletsContainer.firstChild);
     }
 
     if (!wallets.length) {
-      // Mostrar estado vacío
       this.emptywalletsState.style.display = 'block';
       this.addNewWalletFab.style.display = 'none';
     } else {
-      // Mostrar wallets
       this.emptywalletsState.style.display = 'none';
       this.addNewWalletFab.style.display = 'flex';
 
@@ -76,10 +68,21 @@ class HuchasManager {
         <div class="wallet-card ${isExpanded ? 'expanded' : 'collapsed'}" data-wallet-id="${wallet.id}">
           <div class="wallet-header" data-action="toggle">
             <div class="wallet-header-content">
-              <div class="wallet-info">
-                <div class="wallet-name-header">${wallet.name}</div>
-                ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
+            <div class="wallet-info">
+              <div class="wallet-name-header">
+                ${wallet.name}
+                <button class="edit-wallet-btn"
+                        data-wallet-id="${wallet.id}"
+                        aria-label="Editar wallet"
+                        title="Editar wallet">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
               </div>
+              ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
+            </div>
             </div>
             <div class="wallet-balance-compact">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</div>
             <div class="expand-indicator">
@@ -87,15 +90,6 @@ class HuchasManager {
                 <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <button class="edit-wallet-btn"
-                    data-wallet-id="${wallet.id}"
-                    aria-label="Editar wallet"
-                    title="Editar wallet">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
           </div>
           <div class="wallet-card-content">
             <div class="recent-transactions">
@@ -120,7 +114,7 @@ class HuchasManager {
     const walletTransactions = transactions
       .filter(t => t.walletId === walletId)
       .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 3); // Solo los últimos 3
+      .slice(0, 3);
 
     if (walletTransactions.length === 0) {
       return `
@@ -132,7 +126,6 @@ class HuchasManager {
     }
 
     const transactionsHTML = walletTransactions.map(tx => {
-      // Formato de fecha compacto: "3 nov"
       const date = new Date(tx.date);
       const day = date.getDate();
       const month = date.toLocaleDateString('es-ES', { month: 'short' });
@@ -163,24 +156,19 @@ class HuchasManager {
   }
 
   attachWalletEventListeners() {
-    // Toggle wallet expand/collapse
     this.walletsContainer.querySelectorAll('[data-action="toggle"]').forEach(header => {
       header.addEventListener('click', (e) => {
-        // Don't toggle if clicking on action buttons or edit button
         if (!e.target.closest('.action-btn') && !e.target.closest('.edit-wallet-btn')) {
           const walletCard = header.closest('.wallet-card');
           const wasCollapsed = walletCard.classList.contains('collapsed');
           
           walletCard.classList.toggle('collapsed');
           
-          // Mostrar botón de editar después del toggle
           setTimeout(() => {
             if (wasCollapsed) {
-              // Se expandió
               walletCard.classList.add('expanded');
               this.showEditButton(walletCard);
             } else {
-              // Se colapsó
               walletCard.classList.remove('expanded');
               this.hideAllEditButtons();
             }
@@ -189,7 +177,6 @@ class HuchasManager {
       });
     });
 
-    // Edit wallet buttons
     this.walletsContainer.querySelectorAll('.edit-wallet-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -198,7 +185,6 @@ class HuchasManager {
       });
     });
 
-    // Move money buttons
     this.walletsContainer.querySelectorAll('.move-money-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -207,7 +193,6 @@ class HuchasManager {
       });
     });
 
-    // Add income buttons
     this.walletsContainer.querySelectorAll('.add-income-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -216,7 +201,6 @@ class HuchasManager {
       });
     });
 
-    // View all transactions buttons
     this.walletsContainer.querySelectorAll('.view-all-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -228,7 +212,6 @@ class HuchasManager {
       });
     });
 
-    // Recent transaction items (click to open modal)
     this.walletsContainer.querySelectorAll('.recent-transaction-item').forEach(item => {
       item.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -248,12 +231,10 @@ class HuchasManager {
     }
   }
 
-  // Modal handlers
   openCreateWalletModal() {
     const modalData = ModalManager.createWalletModal();
     window.appEvents.emit('openModal', modalData);
   
-    // Setup currency selection después de abrir el modal
     setTimeout(() => {
       this.setupCurrencySelection();
   
@@ -270,7 +251,6 @@ class HuchasManager {
           this.handleCreateWallet(form);
         };
       }
-  
     }, 100);
   }
 
@@ -278,7 +258,6 @@ class HuchasManager {
     const modalData = ModalManager.createIncomeModal(walletId);
     window.appEvents.emit('openModal', modalData);
     
-    // Setup income source selection after modal is created
     setTimeout(() => {
       this.setupIncomeSourceSelection();
     }, 100);
@@ -301,13 +280,9 @@ class HuchasManager {
     
     currencyOptions.forEach(option => {
       option.addEventListener('click', () => {
-        // Remove selected class from all options
         currencyOptions.forEach(opt => opt.classList.remove('selected'));
-        
-        // Add selected class to clicked option
         option.classList.add('selected');
         
-        // Update hidden input
         if (currencyInput) {
           currencyInput.value = option.dataset.currency;
         }
@@ -321,23 +296,17 @@ class HuchasManager {
     const newSourceInput = document.getElementById('newSource');
     const addSourceBtn = document.getElementById('addSourceBtn');
     
-    // Handle source selection
     sourceItems.forEach(item => {
       item.addEventListener('click', () => {
-        // Remove selected class from all items
         sourceItems.forEach(i => i.classList.remove('selected'));
-        
-        // Add selected class to clicked item
         item.classList.add('selected');
         
-        // Update hidden input
         if (sourceInput) {
           sourceInput.value = item.dataset.source;
         }
       });
     });
     
-    // Handle adding new source
     if (addSourceBtn && newSourceInput && sourceInput) {
       addSourceBtn.addEventListener('click', () => {
         const newSource = Helpers.sanitizeInput(newSourceInput.value);
@@ -358,7 +327,6 @@ class HuchasManager {
     }
   }
 
-  // Form handlers
   handleCreateWallet(form) {
     const formData = new FormData(form);
     const walletData = {
@@ -434,8 +402,6 @@ class HuchasManager {
     }
   }
 
-  // Helper methods
-
   getTransactionTypeLabel(type) {
     const labels = {
       'income': 'Ingreso',
@@ -446,13 +412,10 @@ class HuchasManager {
     return labels[type] || type;
   }
 
-  // Función para ocultar todos los botones de editar
   hideAllEditButtons() {
-    // Ocultar botones de wallets
     document.querySelectorAll('.wallet-card').forEach(card => {
       card.classList.remove('show-edit');
     });
-    // Ocultar botones de gastos
     document.querySelectorAll('.category-wrapper').forEach(wrapper => {
       wrapper.classList.remove('show-edit');
     });
@@ -461,24 +424,19 @@ class HuchasManager {
     });
   }
 
-  // Función para mostrar solo un botón de editar
   showEditButton(element) {
     this.hideAllEditButtons();
     element.classList.add('show-edit');
-    console.log('Mostrando botón de editar en wallet:', element.className, element);
   }
 
-  // Event listener global para ocultar botones al hacer click fuera
   setupGlobalClickListener() {
     document.addEventListener('click', (e) => {
-      // Si el click no es en una wallet card, ocultar botones
       if (!e.target.closest('.wallet-card')) {
         this.hideAllEditButtons();
       }
     });
   }
 
-  // Función para editar wallet
   openEditWalletModal(walletId) {
     const wallet = AppState.wallets.find(w => w.id === walletId);
     if (!wallet) {
@@ -490,14 +448,12 @@ class HuchasManager {
     window.appEvents.emit('openModal', modalConfig);
   }
 
-  // Función para mostrar todas las transacciones de una wallet
   openTransactionsModal(wallet) {
     const modalConfig = ModalManager.walletTransactionsModal(wallet);
     window.appEvents.emit('openModal', modalConfig);
   }
 }
 
-// Initialize huchas manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   new HuchasManager();
 });
