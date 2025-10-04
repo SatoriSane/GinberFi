@@ -1218,8 +1218,7 @@ static createWalletModal() {
 static createQuickExpenseModal() {
   const wallets = AppState.wallets;
   // Obtenemos la wallet activa para preseleccionarla y hacer el proceso más rápido
-  const activeWalletId = Storage.get('ginbertfi_activeWalletId') || (wallets.length > 0 ? wallets[0].id : '');
-
+  const activeWalletId = AppState.selectedWallet ? AppState.selectedWallet.id : (wallets.length > 0 ? wallets[0].id : '');
   // Generamos las opciones para el selector de wallets
   const walletOptions = wallets.map(wallet => 
       `<option value="${wallet.id}" ${wallet.id === activeWalletId ? 'selected' : ''}>
