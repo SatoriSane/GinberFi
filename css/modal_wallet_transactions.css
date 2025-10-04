@@ -33,31 +33,14 @@
   .wallet-transactions-modal .wallet-balance {
     font-weight: 600;
     color: #333;
+    font-size: var(--font-size-base);
   }
   
   .wallet-transactions-modal .transactions-count {
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     color: #666;
   }
-  
-  .wallet-transactions-modal .balance-label, 
-  .wallet-transactions-modal .count-label {
-    font-size: var(--font-size-sm);
-    color: var(--text-light);
-    font-weight: 500;
-  }
-  
-  .wallet-transactions-modal .balance-value {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    color: var(--dark-blue);
-  }
-  
-  .wallet-transactions-modal .count-value {
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    color: var(--dark-blue);
-  }
+
   
   /* Grupos por fecha */
   .wallet-transactions-modal .transaction-date-group {

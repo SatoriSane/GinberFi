@@ -403,3 +403,19 @@ body.dark-theme .budget-amount {
 body.dark-theme .budget-percentage {
   color: #94A3B8;
 }
+body.dark-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.dark-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.dark-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.dark-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
