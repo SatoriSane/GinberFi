@@ -749,54 +749,55 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
   };
 }
 
-    static createWalletModal() {
-      const currencies = [
-        { code: 'BOB', name: 'Boliviano' },
-        { code: 'USD', name: 'Dólar' },
-        { code: 'EUR', name: 'Euro' },
-        { code: 'BCH', name: 'Bitcoin Cash' }
-      ];
-  
-      return {
-        title: 'Nueva Wallet',
-        className: 'wallet-modal',
-        body: `
-          <form class="modal-form" id="walletForm">
-            <div class="form-group">
-              <label for="walletName">Nombre de la wallet/wallet</label>
-              <input type="text" id="walletName" name="name" required 
-                     placeholder="ej: Wallet Corriente">
-            </div>
-            <div class="form-group">
-              <label for="walletCurrency">Moneda</label>
-              <div class="currency-grid">
-                ${currencies.map((currency, index) => `
-                  <div class="currency-option ${index === 0 ? 'selected' : ''}" data-currency="${currency.code}">
-                    <div class="currency-code">${currency.code}</div>
-                    <div class="currency-name">${currency.name}</div>
-                  </div>
-                `).join('')}
+static createWalletModal() {
+  const currencies = [
+    { code: 'BOB', name: 'Boliviano' },
+    { code: 'USD', name: 'Dólar' },
+    { code: 'EUR', name: 'Euro' },
+    { code: 'BCH', name: 'Bitcoin Cash' }
+  ];
+
+  return {
+    title: 'Nueva Wallet',
+    className: 'wallet-modal',
+    body: `
+      <form class="modal-form" id="walletForm">
+        <div class="form-group">
+          <label for="walletName">Nombre de la wallet</label>
+          <input type="text" id="walletName" name="name" required 
+                 placeholder="ej: Wallet Corriente">
+        </div>
+        <div class="form-group">
+          <label for="walletCurrency">Moneda</label>
+          <div class="currency-grid">
+            ${currencies.map((currency, index) => `
+              <div class="currency-option ${index === 0 ? 'selected' : ''}" data-currency="${currency.code}">
+                <div class="currency-code">${currency.code}</div>
+                <div class="currency-name">${currency.name}</div>
               </div>
-              <input type="hidden" id="walletCurrency" name="currency" value="BOB">
-            </div>
-            <div class="form-group">
-              <label for="walletBalance">Cantidad inicial</label>
-              <input type="number" id="walletBalance" name="balance" required 
-                     placeholder="0.00" step="0.01" min="0">
-            </div>
-            <div class="form-group">
-              <label for="walletPurpose">Propósito (opcional)</label>
-              <input type="text" id="walletPurpose" name="purpose" 
-                     placeholder="ej: Gastos diarios">
-            </div>
-          </form>
-        `,
-        footer: `
-          <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-          <button type="submit" class="btn-primary" form="walletForm">Crear Wallet</button>
-        `
-      };
-    }
+            `).join('')}
+          </div>
+          <input type="hidden" id="walletCurrency" name="currency" value="BOB">
+        </div>
+        <div class="form-group">
+          <label for="walletBalance">Cantidad inicial</label>
+          <input type="number" id="walletBalance" name="balance" required 
+                 placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label for="walletDescription">Descripción (opcional)</label>
+          <input type="text" id="walletDescription" name="description" 
+                 placeholder="ej: Gastos diarios">
+        </div>
+      </form>
+    `,
+    footer: `
+      <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+      <button type="submit" class="btn-primary" form="walletForm">Crear Wallet</button>
+    `
+  };
+}
+
   
     static createIncomeModal(walletId) {
       const wallet = AppState.wallets.find(acc => acc.id === walletId);
@@ -956,16 +957,26 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
                   <span class="balance-value">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</span>
                 </div>
               </div>
-
+    
               <div class="form-group">
                 <label for="walletName">Nombre de la wallet:</label>
                 <input type="text" 
                        id="walletName" 
-                       name="walletName" 
+                       name="name" 
                        value="${wallet.name}" 
                        required 
                        maxlength="50"
                        class="form-input">
+              </div>
+    
+              <div class="form-group">
+                <label for="walletDescription">Descripción:</label>
+                <textarea id="walletDescription" 
+                          name="description" 
+                          maxlength="200"
+                          class="form-input"
+                          rows="3"
+                          placeholder="Ej: Ahorros para vacaciones...">${wallet.description || ''}</textarea>
               </div>
     
               <div class="form-group delete-wallet">
@@ -1007,36 +1018,38 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
           const cancelBtn = modal.querySelector('#walletCancelBtn');
           const triggerDeleteBtn = modal.querySelector('#triggerDeleteWalletBtn');
           const walletNameInput = modal.querySelector('#walletName');
+          const walletDescInput = modal.querySelector('#walletDescription');
           const form = modal.querySelector('#editWalletForm');
         
           // Cancelar → cerrar modal
           cancelBtn.onclick = () => window.appEvents.emit('closeModal');
-
+    
           // Enfocar el input del nombre
           walletNameInput.focus();
           walletNameInput.select();
         
-          // Guardar cambios del nombre
+          // Guardar cambios
           form.onsubmit = (e) => {
             e.preventDefault();
             
             const newName = walletNameInput.value.trim();
+            const newDesc = walletDescInput.value.trim();
+    
             if (!newName) {
               Helpers.showToast('El nombre no puede estar vacío', 'error');
               return;
             }
-
+    
             // Actualizar wallet
-            const success = Storage.updateWallet(wallet.id, { name: newName });
+            const success = Storage.updateWallet(wallet.id, { 
+              name: newName,
+              description: newDesc 
+            });
             
             if (success) {
-              // Actualizar AppState global
               AppState.refreshData();
-              
               Helpers.showToast('Wallet actualizada', 'success');
               window.appEvents.emit('closeModal');
-              
-              // Emitir evento global para refrescar todas las pestañas
               window.appEvents.emit('dataUpdated');
             } else {
               Helpers.showToast('Error al actualizar la wallet', 'error');
@@ -1051,26 +1064,22 @@ static editExpenseModalUnclassified(expense, currency = 'BOB') {
             deleteBtn.style.display = 'inline-block';
             modalTitle.textContent = 'Eliminar Wallet';
           };
-
+    
           // Confirmar eliminación
           deleteBtn.onclick = (e) => {
             e.preventDefault();
       
-            // Eliminar wallet y sus transacciones
             Storage.deleteWallet(wallet.id);
-      
-            // Actualizar AppState global
             AppState.refreshData();
-      
             Helpers.showToast('Wallet eliminada', 'success');
             window.appEvents.emit('closeModal');
-      
-            // Emitir evento global para refreshar todas las pestañas
             window.appEvents.emit('dataUpdated');
           };
         }
       };
     }
+    
+    
 
     static walletTransactionsModal(wallet) {
       const walletTransactions = (Storage.get('ginbertfi_transactions') || [])

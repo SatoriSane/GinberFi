@@ -43,6 +43,7 @@ class HuchasManager {
   }
 
   render() {
+    
     AppState.wallets = Storage.getWallets() || [];
     const wallets = AppState.wallets;
 
@@ -81,8 +82,7 @@ class HuchasManager {
                   </svg>
                 </button>
               </div>
-              ${wallet.purpose ? `<div class="wallet-purpose">${wallet.purpose}</div>` : ''}
-            </div>
+${wallet.description ? `<div class="wallet-description">${wallet.description}</div>` : ''}            </div>
             </div>
             <div class="wallet-balance-compact">${Helpers.formatCurrency(wallet.balance, wallet.currency)}</div>
             <div class="expand-indicator">
@@ -333,8 +333,7 @@ class HuchasManager {
       name: Helpers.sanitizeInput(formData.get('name')),
       currency: formData.get('currency'),
       balance: parseFloat(formData.get('balance')),
-      purpose: Helpers.sanitizeInput(formData.get('purpose') || '')
-    };
+      description: Helpers.sanitizeInput(formData.get('description') || '')    };
 
     if (!Helpers.validateNumber(walletData.balance)) {
       Helpers.showToast('El saldo inicial debe ser un número válido', 'error');
