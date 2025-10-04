@@ -57,7 +57,7 @@
   transition: all 0.3s ease;
   position: relative;
   min-height: 80px;
-  gap: 16px;
+  gap: 0px;
 }
 
 .wallet-card.collapsed .wallet-header:active {

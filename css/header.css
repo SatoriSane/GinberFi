@@ -55,9 +55,9 @@
   font-weight: 700; /* Asegura Bold */
   color: var(--dark-blue) !important; 
   line-height: 1.1;
-  max-width: 225px;
+  max-width: 235px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
   white-space: nowrap;
 
   /* Efecto de sombra para hacerlo flotar */
