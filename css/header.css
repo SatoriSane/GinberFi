@@ -58,7 +58,7 @@
   color: var(--dark-blue) !important; 
   
   line-height: 1.1;
-  max-width: 120px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
