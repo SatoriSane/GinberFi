@@ -794,7 +794,26 @@ static createWalletModal() {
     footer: `
       <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
       <button type="submit" class="btn-primary" form="walletForm">Crear Wallet</button>
-    `
+    `,
+    onShow: (modal) => {
+      // Configurar la selección de monedas
+      const currencyOptions = modal.querySelectorAll('.currency-option');
+      const currencyInput = modal.querySelector('#walletCurrency');
+      
+      currencyOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          // Remover selección previa
+          currencyOptions.forEach(opt => opt.classList.remove('selected'));
+          // Seleccionar la nueva opción
+          option.classList.add('selected');
+          
+          // Actualizar el input hidden
+          if (currencyInput) {
+            currencyInput.value = option.dataset.currency;
+          }
+        });
+      });
+    }
   };
 }
 

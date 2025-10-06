@@ -295,3 +295,53 @@
 .delete-option.selected p {
   color: var(--text-dark);
 }
+
+/* Currency selection styles */
+.currency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.currency-option {
+  background: var(--white);
+  border: 2px solid var(--pastel-blue);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.currency-option:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--dark-blue);
+}
+
+.currency-option.selected {
+  border-color: var(--dark-blue);
+  background: var(--pastel-blue);
+  box-shadow: var(--shadow-sm);
+}
+
+.currency-code {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--dark-blue);
+}
+
+.currency-name {
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.currency-option.selected .currency-code,
+.currency-option.selected .currency-name {
+  color: var(--dark-blue);
+}
