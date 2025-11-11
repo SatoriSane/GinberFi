@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GinbertFi</title>
+    
+    <meta name="theme-color" content="#4A90E2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="GinbertFi">
+    <link rel="manifest" href="manifest.json">
+    
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/gastos.css">
+    <link rel="stylesheet" href="css/huchas.css">
+    <link rel="stylesheet" href="css/resumen.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/modal_opciones.css">
+    <link rel="stylesheet" href="css/modal_wallet_transactions.css">
+</head>
+<body>
+    <header role="banner" class="app-header">
+        <div class="header-content">
+            <h1 class="app-name">GinbertFi</h1>
+            <div class="balance-selector" id="balanceSelector">
+                <div class="balance-info">
+                    <span class="wallet-name" id="currentWalletName">Wallet por defecto</span>
+                    <span class="balance-amount" id="balanceAmount">0.00 BOB</span>
+                </div>
+                <span class="balance-arrow">▼</span>
+            </div>
+        </div>
+        
+        <div class="balance-dropdown" id="balanceDropdown">
+            <div class="dropdown-header">
+                <span class="dropdown-title">
+                    <img src="rank-piggy.png" alt="Hucha" class="icon" />
+                    Wallet por defecto
+                  </span>
+                              </div>
+            <div class="wallets-list" id="walletsList"></div>
+            <button class="options-btn" id="optionsBtn">
+                ⚙️ Opciones
+            </button>
+        </div>
+        
+    </header>
+
+    <main class="app-main">
+        <div class="tab-content active" id="gastosTab">
+            <div class="categories-container" id="categoriesContainer">
+                <div class="empty-state" id="emptyCategoriesState">
+                    <p>No hay categorías creadas</p>
+                    <button class="add-category-btn" id="addCategoryBtn">Crear Primera Categoría</button>
+                </div>
+                </div>
+
+            <button class="add-category-list-btn" id="addCategoryListBtn">+ Añadir categoría</button>
+
+            <button class="fab" id="addQuickExpenseFab">+</button>
+        </div>
+
+        <div class="tab-content" id="huchasTab">
+            <div class="wallets-container" id="walletsContainer">
+                <div class="empty-state" id="emptywalletsState">
+                    <p>No hay wallets creadas</p>
+                    <button class="add-wallet-btn" id="addWalletBtn">Crear Primera Wallet</button>
+                </div>
+            </div>
+            <button class="fab" id="addNewWalletFab">+</button>
+        </div>
+
+        <div class="tab-content" id="resumenTab">
+            <div id="resumenContainer"></div>
+        </div>
+    </main>
+
+    <nav role="tablist" class="app-navigation">
+        <button role="tab" class="nav-tab" data-tab="huchas" id="huchasNavBtn">
+            <span class="nav-icon">🐷</span>
+            <span class="nav-label">Wallets</span>
+        </button>
+        <button role="tab" class="nav-tab active" data-tab="gastos" id="gastosNavBtn">
+            <span class="nav-icon dollar-svg">
+              <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
+            </span>
+            <span class="nav-label">Gastos</span>
+          </button>
+        <button role="tab" class="nav-tab" data-tab="resumen" id="resumenNavBtn">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Resumen</span>
+        </button>
+    </nav>
+
+    <div class="modals-container" id="modalsContainer"></div>
+
+    <script src="js/base.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/gastos.js"></script>
+    <script src="js/huchas.js"></script>
+    <script src="js/resumen.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/opciones.js"></script>
+    <script src="js/app.js"></script>
+    
+</body>
+</html>
