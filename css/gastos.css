@@ -44,6 +44,7 @@
   background: var(--subcategory-bg);
   border: 1px solid var(--border-light);
   border-left: 3px solid var(--subcategory-border-accent);
+  padding:0;
 }
 
 .subcategory-wrapper:hover {
@@ -74,6 +75,7 @@
   background: transparent;
   border-radius: 0px;
   text-transform: uppercase;
+  
 }
 
 .subcategory-content {
@@ -88,7 +90,7 @@
   transition: all 0.3s ease;
   width: 100%;
   box-sizing: border-box;
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding:  0;
   background: transparent;
   border-radius: var(--radius-lg);
 }
