@@ -148,9 +148,11 @@ class GastosManager {
     // ✅ CAMBIO: La función ahora devuelve el string HTML en lugar de modificar el DOM directamente
     return categories.map(category => {
       const categoryExpenses = this.getCategoryExpenses(category.id, expenses);
-      const totalBudget = this.getCategoryBudget(category);
+      const available = this.getCategoryBudget(category); // Ya es la suma de presupuestos disponibles
       const totalSpent = this.getCategorySpent(category.id, expenses);
-      const remaining = totalBudget - totalSpent;
+      
+      // Calcular el presupuesto total original de todas las subcategorías
+      const totalBudget = category.subcategories.reduce((sum, sub) => sum + (sub.budget || 0), 0);
       const percentage = Helpers.calculateProgress(totalSpent, totalBudget);
       const budgetColors = ThemeManager.getBudgetColors(percentage);
 
@@ -164,7 +166,7 @@ class GastosManager {
             </div>
             <span class="category-name">${category.name}</span>
             <div class="category-budget">
-              <div class="budget-amount">${Helpers.formatCurrency(remaining)}</div>
+              <div class="budget-amount">${Helpers.formatCurrency(available)}</div>
               <div class="budget-percentage">(${(100 - percentage).toFixed(1)}%)</div>
             </div>
             <button class="add-subcategory-btn"
@@ -881,9 +883,15 @@ fillSubcategorySelect() {
     return expenses.filter(expense => subcategoryIds.includes(expense.subcategoryId));
   }
   getCategoryBudget(category) {
-    // ... (sin cambios)
+    // Suma de los presupuestos DISPONIBLES de cada subcategoría
     if (!category.subcategories) return 0;
-    return category.subcategories.reduce((total, sub) => total + (sub.budget || 0), 0);
+    
+    const expenses = AppState.expenses;
+    return category.subcategories.reduce((total, sub) => {
+      const spent = this.getSubcategorySpent(sub.id, expenses);
+      const available = sub.budget - spent;
+      return total + available;
+    }, 0);
   }
   getCategorySpent(categoryId, expenses) {
     // ... (sin cambios)
