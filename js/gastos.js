@@ -147,7 +147,6 @@ class GastosManager {
     const expenses = AppState.expenses;
     // ✅ CAMBIO: La función ahora devuelve el string HTML en lugar de modificar el DOM directamente
     return categories.map(category => {
-      const categoryExpenses = this.getCategoryExpenses(category.id, expenses);
       const available = this.getCategoryBudget(category); // Ya es la suma de presupuestos disponibles
       const totalSpent = this.getCategorySpent(category.id, expenses);
       
@@ -870,18 +869,6 @@ fillSubcategorySelect() {
   }
 
 
-  
-  
-  
-  
-  getCategoryExpenses(categoryId, expenses) {
-    // ... (sin cambios)
-    const category = AppState.categories.find(cat => cat.id === categoryId);
-    if (!category || !category.subcategories) return [];
-    
-    const subcategoryIds = category.subcategories.map(sub => sub.id);
-    return expenses.filter(expense => subcategoryIds.includes(expense.subcategoryId));
-  }
   getCategoryBudget(category) {
     // Suma de los presupuestos DISPONIBLES de cada subcategoría
     if (!category.subcategories) return 0;
@@ -894,9 +881,14 @@ fillSubcategorySelect() {
     }, 0);
   }
   getCategorySpent(categoryId, expenses) {
-    // ... (sin cambios)
-    const categoryExpenses = this.getCategoryExpenses(categoryId, expenses);
-    return categoryExpenses.reduce((total, expense) => total + expense.amount, 0);
+    // Suma de los gastos de cada subcategoría DENTRO de su período actual
+    const category = AppState.categories.find(cat => cat.id === categoryId);
+    if (!category || !category.subcategories) return 0;
+    
+    return category.subcategories.reduce((total, sub) => {
+      const spent = this.getSubcategorySpent(sub.id, expenses);
+      return total + spent;
+    }, 0);
   }
 
   getSubcategoryExpenses(subcategoryId, expenses) {
