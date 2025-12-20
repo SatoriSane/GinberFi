@@ -448,10 +448,10 @@ class GastosManager {
 
     // Edit subcategory buttons
     this.categoriesContainer.querySelectorAll('.edit-subcategory-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const subcategoryId = btn.dataset.subcategoryId;
-        this.openEditSubcategoryModal(subcategoryId);
+        await this.openEditSubcategoryModal(subcategoryId);
       });
     });
   

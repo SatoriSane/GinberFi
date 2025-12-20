@@ -584,22 +584,46 @@ class OpcionesManager {
 
   static async executeReset() {
     try {
-      // Limpiar localStorage (tema, preferencias, etc.)
-      const keysToRemove = [
-        'ginbertfi_wallets',
-        'ginbertfi_categories', 
-        'ginbertfi_expenses',
-        'ginbertfi_transactions',
-        'ginbertfi_historical_expenses',
-        'ginbertfi_income_sources',
-        'ginbertfi_selected_wallet'
-      ];
-
-      keysToRemove.forEach(key => {
-        localStorage.removeItem(key);
+      console.log('🗑️ Iniciando limpieza completa de la aplicación...');
+      
+      // 1. Limpiar localStorage COMPLETO
+      console.log('Limpiando localStorage...');
+      localStorage.clear();
+      
+      // 2. Limpiar sessionStorage
+      console.log('Limpiando sessionStorage...');
+      sessionStorage.clear();
+      
+      // 3. Limpiar todas las cookies del dominio
+      console.log('Limpiando cookies...');
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
-
-      // Limpiar IndexedDB
+      
+      // 4. Limpiar todo el cache del navegador
+      console.log('Limpiando cache...');
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(
+          cacheNames.map(cacheName => caches.delete(cacheName))
+        );
+        console.log(`✓ ${cacheNames.length} caches eliminados`);
+      }
+      
+      // 5. Desregistrar Service Workers
+      console.log('Desregistrando Service Workers...');
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(
+          registrations.map(registration => registration.unregister())
+        );
+        console.log(`✓ ${registrations.length} Service Workers desregistrados`);
+      }
+      
+      // 6. Limpiar IndexedDB
+      console.log('Limpiando IndexedDB...');
       if (DBConfig.isSupported()) {
         // Cerrar conexión si existe
         if (DBConfig._dbInstance) {
@@ -610,13 +634,30 @@ class OpcionesManager {
         const dbName = DBConfig.DB_NAME;
         const deleteRequest = indexedDB.deleteDatabase(dbName);
         
-        deleteRequest.onsuccess = () => {
-          console.log('IndexedDB eliminada correctamente');
+        deleteRequest.onsuccess = async () => {
+          console.log('✓ IndexedDB eliminada correctamente');
+          
+          // 7. Limpiar cualquier otra base de datos IndexedDB que pueda existir
+          if (window.indexedDB.databases) {
+            const databases = await window.indexedDB.databases();
+            for (const db of databases) {
+              if (db.name && db.name.includes('ginbert')) {
+                indexedDB.deleteDatabase(db.name);
+                console.log(`✓ Base de datos adicional eliminada: ${db.name}`);
+              }
+            }
+          }
+          
+          console.log('✅ Limpieza completa finalizada');
           this.closeResetModal();
-          this.showSuccessMessage('Aplicación reiniciada', 'Todos los datos han sido eliminados. La aplicación se recargará.');
+          this.showSuccessMessage(
+            'Aplicación reiniciada', 
+            'Todos los datos, cache, cookies y almacenamiento han sido eliminados. La aplicación se recargará.'
+          );
           
           setTimeout(() => {
-            window.location.reload();
+            // Forzar recarga completa sin cache
+            window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
           }, 2000);
         };
         
@@ -626,11 +667,16 @@ class OpcionesManager {
         };
       } else {
         // Si no hay IndexedDB, solo recargar
+        console.log('✅ Limpieza completa finalizada (sin IndexedDB)');
         this.closeResetModal();
-        this.showSuccessMessage('Aplicación reiniciada', 'Todos los datos han sido eliminados. La aplicación se recargará.');
+        this.showSuccessMessage(
+          'Aplicación reiniciada', 
+          'Todos los datos, cache y cookies han sido eliminados. La aplicación se recargará.'
+        );
         
         setTimeout(() => {
-          window.location.reload();
+          // Forzar recarga completa sin cache
+          window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
         }, 2000);
       }
       

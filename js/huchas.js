@@ -105,7 +105,9 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       }).join('');
 
       this.walletsContainer.insertAdjacentHTML('afterbegin', walletsHtml);
-      this.attachWalletEventListeners();
+      
+      // Attach event listeners for wallet cards (toggle, edit, actions)
+      this.attachWalletCardListeners();
       
       // Load transactions asynchronously
       for (const wallet of wallets) {
@@ -115,6 +117,9 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
           container.innerHTML = transactionsHTML;
         }
       }
+      
+      // Attach event listeners for transaction buttons (view-all, transaction items)
+      this.attachTransactionListeners();
     }
   }
 
@@ -165,7 +170,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     `;
   }
 
-  attachWalletEventListeners() {
+  // Event listeners for wallet card elements (exist from the start)
+  attachWalletCardListeners() {
     this.walletsContainer.querySelectorAll('[data-action="toggle"]').forEach(header => {
       header.addEventListener('click', (e) => {
         if (!e.target.closest('.action-btn') && !e.target.closest('.edit-wallet-btn')) {
@@ -188,10 +194,10 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     });
 
     this.walletsContainer.querySelectorAll('.edit-wallet-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const walletId = btn.dataset.walletId;
-        this.openEditWalletModal(walletId);
+        await this.openEditWalletModal(walletId);
       });
     });
 
@@ -204,31 +210,34 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     });
 
     this.walletsContainer.querySelectorAll('.add-income-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const walletId = btn.dataset.walletId;
-        this.openIncomeModal(walletId);
+        await this.openIncomeModal(walletId);
       });
     });
+  }
 
+  // Event listeners for transaction elements (created after async load)
+  attachTransactionListeners() {
     this.walletsContainer.querySelectorAll('.view-all-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const walletId = btn.dataset.walletId;
         const wallet = AppState.wallets.find(w => w.id === walletId);
         if (wallet) {
-          this.openTransactionsModal(wallet);
+          await this.openTransactionsModal(wallet);
         }
       });
     });
 
     this.walletsContainer.querySelectorAll('.recent-transaction-item').forEach(item => {
-      item.addEventListener('click', (e) => {
+      item.addEventListener('click', async (e) => {
         e.stopPropagation();
         const walletId = item.dataset.walletId;
         const wallet = AppState.wallets.find(w => w.id === walletId);
         if (wallet) {
-          this.openTransactionsModal(wallet);
+          await this.openTransactionsModal(wallet);
         }
       });
     });
