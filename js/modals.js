@@ -1125,8 +1125,10 @@ static createWalletModal() {
       // Agrupar transacciones por fecha específica
       const groupedTransactions = {};
       walletTransactions.forEach(tx => {
-        const date = new Date(tx.date);
-        const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        // Parsear fecha en hora local para evitar problemas de zona horaria
+        const parts = tx.date.slice(0, 10).split('-');
+        const date = new Date(parts[0], parts[1] - 1, parts[2]);
+        const dateKey = tx.date.slice(0, 10); // YYYY-MM-DD
         const dateName = date.toLocaleDateString('es-ES', { 
           weekday: 'long', 
           year: 'numeric', 

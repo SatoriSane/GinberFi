@@ -141,10 +141,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }
 
     const transactionsHTML = walletTransactions.map(tx => {
-      const date = new Date(tx.date);
-      const day = date.getDate();
-      const month = date.toLocaleDateString('es-ES', { month: 'short' });
-      const compactDate = `${day} ${month}`;
+      // Usar Helpers.formatDate para parsear correctamente en hora local
+      const compactDate = Helpers.formatDate(tx.date);
       
       return `
         <div class="recent-transaction-item" data-wallet-id="${walletId}">
