@@ -13,8 +13,15 @@ class GastosManager {
   init() {
     this.setupEventListeners();
     this.setupGlobalClickListener();
-    this.checkAndResetBudgets();
+    
+    // Render initially (will show empty state if no data yet)
     this.render();
+    
+    // Listen for app initialization
+    window.appEvents.on('appInitialized', () => {
+      this.checkAndResetBudgets();
+      this.render();
+    });
     
     // Listen for data updates
     window.appEvents.on('dataUpdated', () => {
@@ -51,39 +58,39 @@ class GastosManager {
     });
 
     // Handle form submissions
-    document.addEventListener('submit', (e) => {
+    document.addEventListener('submit', async (e) => {
       e.preventDefault(); 
       const form = e.target;
 
       switch (form.id) {
         case 'categoryForm':
-          this.handleCreateCategory(form);
+          await this.handleCreateCategory(form);
           break;
         case 'subcategoryForm':
-          this.handleCreateSubcategory(form);
+          await this.handleCreateSubcategory(form);
           break;
         case 'editCategoryForm': {
           const formData = new FormData(form);
           const categoryId = formData.get('categoryId'); 
-          this.handleEditCategory(form, categoryId);
+          await this.handleEditCategory(form, categoryId);
           break;
         }
         case 'editSubcategoryForm': {
           const formData = new FormData(form);
           const categoryId = formData.get('categoryId');        
           const subcategoryId = formData.get('subcategoryId');  
-          this.handleEditSubcategory(form, categoryId, subcategoryId);
+          await this.handleEditSubcategory(form, categoryId, subcategoryId);
           break;
         }
         case 'editExpenseForm':
-          this.handleEditExpense(form);
+          await this.handleEditExpense(form);
           break;
         case 'expenseForm':
-          this.handleCreateExpense(form);
+          await this.handleCreateExpense(form);
           break;
         // 🚀 NUEVO: Manejador para el formulario de gasto rápido
         case 'quickExpenseForm':
-          this.handleCreateQuickExpense(form);
+          await this.handleCreateQuickExpense(form);
           window.appEvents.emit('closeModal'); // 🔥 cerrar modal después de guardar
           break;
         default:
@@ -503,7 +510,7 @@ class GastosManager {
     window.appEvents.emit('openModal', modalData);
   }
   
-  openEditSubcategoryModal(subcategoryId) {
+  async openEditSubcategoryModal(subcategoryId) {
     let subcategory = null;
     AppState.categories.forEach(cat => {
       const found = cat.subcategories.find(sub => sub.id === subcategoryId);
@@ -511,7 +518,7 @@ class GastosManager {
     });
     if (!subcategory) return;
   
-    const modalData = ModalManager.editSubcategoryModal(subcategory);
+    const modalData = await ModalManager.editSubcategoryModal(subcategory);
     window.appEvents.emit('openModal', modalData);
   }
 
@@ -598,7 +605,7 @@ fillSubcategorySelect() {
   }
 
   // Form handlers
-  handleCreateCategory(form) {
+  async handleCreateCategory(form) {
     // ... (sin cambios)
     const formData = new FormData(form);
     const categoryData = {
@@ -607,7 +614,7 @@ fillSubcategorySelect() {
       expanded: false
     };
 
-    if (Storage.addCategory(categoryData)) {
+    if (await Storage.addCategory(categoryData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Categoría creada exitosamente', 'success');
@@ -616,7 +623,7 @@ fillSubcategorySelect() {
     }
   }
 
-  handleCreateSubcategory(form) {
+  async handleCreateSubcategory(form) {
     // ... (sin cambios)
     const formData = new FormData(form);
     const subcategoryData = {
@@ -634,13 +641,13 @@ fillSubcategorySelect() {
       return;
     }
   
-    if (Storage.addSubcategory(categoryId, subcategoryData)) {
+    if (await Storage.addSubcategory(categoryId, subcategoryData)) {
       // Expandir la categoría para mostrar la nueva subcategoría
-      const categories = Storage.getCategories();
+      const categories = await Storage.getCategories();
       const category = categories.find(cat => cat.id === categoryId);
       if (category) {
         category.expanded = true;
-        Storage.saveCategories(categories);
+        await Storage.saveCategories(categories);
       }
       
       AppState.refreshData();
@@ -651,7 +658,7 @@ fillSubcategorySelect() {
     }
   }
   
-  handleEditSubcategory(form, categoryId, subcategoryId) {
+  async handleEditSubcategory(form, categoryId, subcategoryId) {
     // ... (sin cambios)
      const formData = new FormData(form);
     const updatedData = {
@@ -666,7 +673,7 @@ fillSubcategorySelect() {
       return;
     }
   
-    if (Storage.updateSubcategory(categoryId, subcategoryId, updatedData)) {
+    if (await Storage.updateSubcategory(categoryId, subcategoryId, updatedData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Subcategoría actualizada exitosamente', 'success');
@@ -675,7 +682,7 @@ fillSubcategorySelect() {
     }
   }
   
-  handleEditCategory(form, categoryId) {
+  async handleEditCategory(form, categoryId) {
     // ... (sin cambios)
      const formData = new FormData(form);
     const updatedData = {
@@ -683,7 +690,7 @@ fillSubcategorySelect() {
       description: Helpers.sanitizeInput(formData.get('description') || '')
     };
 
-    if (Storage.updateCategory(categoryId, updatedData)) {
+    if (await Storage.updateCategory(categoryId, updatedData)) {
       AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Categoría actualizada exitosamente', 'success');
@@ -692,7 +699,7 @@ fillSubcategorySelect() {
     }
   }
 
-  handleEditExpense(form) {
+  async handleEditExpense(form) {
     // ✅ CAMBIO: Al editar un gasto, buscamos la nueva categoryId a partir de la subcategoría
     const formData = new FormData(form);
     const expenseId = formData.get('expenseId');
@@ -722,7 +729,7 @@ fillSubcategorySelect() {
       return;
     }
   
-    if (Storage.updateExpense(expenseId, updatedData)) {
+    if (await Storage.updateExpense(expenseId, updatedData)) {
         AppState.refreshData();
         Helpers.showToast('Gasto actualizado y clasificado exitosamente', 'success');
         window.appEvents.emit('closeModal'); // Cierra solo en caso de éxito
@@ -733,7 +740,7 @@ fillSubcategorySelect() {
 
   }
   
-  handleCreateExpense(form) {
+  async handleCreateExpense(form) {
     // ✅ CAMBIO: Añadimos la categoryId al crear un gasto normal
     const formData = new FormData(form);
     const subcategoryId = formData.get('subcategoryId');
@@ -767,13 +774,13 @@ fillSubcategorySelect() {
       return;
     }
   
-    if (Storage.addExpense(expenseData)) {
-      AppState.refreshData();
+    if (await Storage.addExpense(expenseData)) {
+      await AppState.refreshData();
       const cat = AppState.categories.find(c => c.id === category.id);
       const sub = cat.subcategories.find(s => s.id === subcategoryId);
       if (cat) cat.expanded = true;
       if (sub) sub.expanded = true;
-      Storage.saveCategories(AppState.categories);
+      await Storage.saveCategories(AppState.categories);
   
       window.appEvents.emit('closeModal');
       Helpers.showToast('Gasto agregado exitosamente', 'success');
@@ -784,7 +791,7 @@ fillSubcategorySelect() {
   }
 
   // 🚀 NUEVO: Manejador para guardar un gasto rápido
-  handleCreateQuickExpense(form) {
+  async handleCreateQuickExpense(form) {
     const formData = new FormData(form);
     const expenseData = {
       name: Helpers.sanitizeInput(formData.get('name')),
@@ -806,8 +813,8 @@ fillSubcategorySelect() {
       return;
     }
 
-    if (Storage.addExpense(expenseData)) {
-      AppState.refreshData();
+    if (await Storage.addExpense(expenseData)) {
+      await AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Gasto rápido guardado. ¡Clasifícalo cuando puedas!', 'success');
     } else {
@@ -816,18 +823,18 @@ fillSubcategorySelect() {
   }
 
   // --- Dejo el resto de tus funciones de helpers y reinicio intactas ---
-  toggleCategory(categoryId) {
+  async toggleCategory(categoryId) {
     // ... (sin cambios)
      const categories = AppState.categories;
     const category = categories.find(cat => cat.id === categoryId);
     if (category) {
       category.expanded = !category.expanded;
-      Storage.saveCategories(categories);
+      await Storage.saveCategories(categories);
       this.render();
     }
   }
 
-  toggleSubcategory(subcategoryId) {
+  async toggleSubcategory(subcategoryId) {
     // ... (sin cambios)
      const categories = AppState.categories;
     let subcategory = null;
@@ -839,14 +846,14 @@ fillSubcategorySelect() {
     
     if (subcategory) {
       subcategory.expanded = !subcategory.expanded;
-      Storage.saveCategories(categories);
+      await Storage.saveCategories(categories);
       this.render();
     }
   }
-  handleDeleteCategory(categoryId) {
+  async handleDeleteCategory(categoryId) {
     if (confirm('¿Seguro que quieres eliminar esta categoría y todas sus subcategorías?')) {
-      if (Storage.deleteCategory(categoryId)) {
-        AppState.refreshData();
+      if (await Storage.deleteCategory(categoryId)) {
+        await AppState.refreshData();
         Helpers.showToast('Categoría eliminada', 'success');
       } else {
         Helpers.showToast('Error al eliminar la categoría', 'error');
@@ -855,11 +862,11 @@ fillSubcategorySelect() {
   }
 
 
-  handleDeleteExpense(expenseId) {
+  async handleDeleteExpense(expenseId) {
     if (!expenseId) return;
     if (confirm('¿Seguro que quieres eliminar este gasto?')) {
-      if (Storage.deleteExpense(expenseId)) {
-        AppState.refreshData();
+      if (await Storage.deleteExpense(expenseId)) {
+        await AppState.refreshData();
         window.appEvents.emit('closeModal');
         Helpers.showToast('Gasto eliminado exitosamente', 'success');
       } else {
@@ -928,10 +935,9 @@ fillSubcategorySelect() {
     return subcategoryExpenses.reduce((total, expense) => total + expense.amount, 0);
   }
 
-  resetSubcategoryBudget(categoryId, subcategoryId, allExpenses) {
-    // ... (sin cambios)
+  async resetSubcategoryBudget(categoryId, subcategoryId, allExpenses) {
     const sub = AppState.categories
-      .flatMap(cat => cat.subcategories)
+      .flatMap(cat => cat.subcategories || [])
       .find(s => s.id === subcategoryId);
 
     if (!sub) return;
@@ -951,14 +957,14 @@ fillSubcategorySelect() {
             periodStart: periodStart.toISOString(),
             periodEnd: periodEnd.toISOString()
         }));
-        Storage.archiveExpenses(enrichedExpenses);
+        await Storage.archiveExpenses(enrichedExpenses);
 
         const expenseIdsToArchive = new Set(expensesToArchive.map(e => e.id));
         const remaining = allExpenses.filter(e => !expenseIdsToArchive.has(e.id));
-        Storage.saveExpenses(remaining);
+        await Storage.saveExpenses(remaining);
     }
 
-    const categories = Storage.getCategories();
+    const categories = await Storage.getCategories();
     const category = categories.find(cat => cat.id === categoryId);
     if (category) {
         const subToUpdate = category.subcategories.find(s => s.id === subcategoryId);
@@ -970,30 +976,33 @@ fillSubcategorySelect() {
             
             subToUpdate.startDate = `${year}-${month}-${day}`;
             subToUpdate.endDate = Helpers.getEndDate(subToUpdate.startDate, subToUpdate.frequency);
-            Storage.saveCategories(categories);
-            
+            await Storage.saveCategories(categories);
         }
     }
   }
   
-  checkAndResetBudgets() {
-    const categories = Storage.getCategories();
-    const allExpenses = Storage.getExpenses();
+  async checkAndResetBudgets() {
+    const categories = await Storage.getCategories();
+    const allExpenses = await Storage.getExpenses();
     let didReset = false;
 
-    categories.forEach(category => {
-        category.subcategories.forEach(sub => {
+    if (Array.isArray(categories)) {
+      for (const category of categories) {
+        if (category.subcategories && Array.isArray(category.subcategories)) {
+          for (const sub of category.subcategories) {
             const resetDate = Helpers.getNextResetDate(sub.startDate, sub.frequency);
             if (new Date() >= resetDate) {
-                this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
-                didReset = true;
+              await this.resetSubcategoryBudget(category.id, sub.id, allExpenses);
+              didReset = true;
             }
-        });
-    });
+          }
+        }
+      }
+    }
 
     if (didReset) {
-        AppState.refreshData();
-        Helpers.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
+      await AppState.refreshData();
+      Helpers.showToast('Algunas subcategorías fueron reiniciadas automáticamente', 'info');
     }
   }
 

@@ -42,9 +42,9 @@ class HuchasManager {
     });
   }
 
-  render() {
+  async render() {
     
-    AppState.wallets = Storage.getWallets() || [];
+    AppState.wallets = await Storage.getWallets() || [];
     const wallets = AppState.wallets;
 
     const expandedWallets = new Set();
@@ -92,8 +92,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
             </div>
           </div>
           <div class="wallet-card-content">
-            <div class="recent-transactions">
-              ${this.getRecentTransactionsHTML(wallet.id, wallet.currency)}
+            <div class="recent-transactions" data-wallet-id="${wallet.id}">
+              <p>Cargando transacciones...</p>
             </div>
             <div class="wallet-actions">
               <button class="action-btn move-money-btn" data-wallet-id="${wallet.id}">🔄 Transferir</button>
@@ -106,11 +106,21 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
 
       this.walletsContainer.insertAdjacentHTML('afterbegin', walletsHtml);
       this.attachWalletEventListeners();
+      
+      // Load transactions asynchronously
+      for (const wallet of wallets) {
+        const transactionsHTML = await this.getRecentTransactionsHTML(wallet.id, wallet.currency);
+        const container = this.walletsContainer.querySelector(`.recent-transactions[data-wallet-id="${wallet.id}"]`);
+        if (container) {
+          container.innerHTML = transactionsHTML;
+        }
+      }
     }
   }
 
-  getRecentTransactionsHTML(walletId, currency) {
-    const transactions = Storage.get('ginbertfi_transactions') || [];
+  async getRecentTransactionsHTML(walletId, currency) {
+    const transactionRepo = new TransactionRepository();
+    const transactions = await transactionRepo.getByWalletId(walletId) || [];
     const walletTransactions = transactions
       .filter(t => t.walletId === walletId)
       .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -224,8 +234,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     });
   }
 
-  openTransactionsModal(wallet) {
-    const modalData = ModalManager.editWalletModal(wallet);
+  async openTransactionsModal(wallet) {
+    const modalData = await ModalManager.walletTransactionsModal(wallet);
     if (modalData) {
       window.appEvents.emit('openModal', modalData);
     }
@@ -254,8 +264,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }, 100);
   }
 
-  openIncomeModal(walletId) {
-    const modalData = ModalManager.createIncomeModal(walletId);
+  async openIncomeModal(walletId) {
+    const modalData = await ModalManager.createIncomeModal(walletId);
     window.appEvents.emit('openModal', modalData);
     
     setTimeout(() => {
@@ -308,10 +318,10 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     });
     
     if (addSourceBtn && newSourceInput && sourceInput) {
-      addSourceBtn.addEventListener('click', () => {
+      addSourceBtn.addEventListener('click', async () => {
         const newSource = Helpers.sanitizeInput(newSourceInput.value);
         if (newSource) {
-          Storage.addIncomeSource(newSource);
+          await Storage.addIncomeSource(newSource);
           sourceInput.value = newSource;
           newSourceInput.value = '';
           Helpers.showToast('Nueva fuente agregada', 'success');
@@ -327,7 +337,7 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }
   }
 
-  handleCreateWallet(form) {
+  async handleCreateWallet(form) {
     const formData = new FormData(form);
     const walletData = {
       name: Helpers.sanitizeInput(formData.get('name')),
@@ -340,8 +350,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       return;
     }
 
-    if (Storage.addWallet(walletData)) {
-      AppState.refreshData();
+    if (await Storage.addWallet(walletData)) {
+      await AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Wallet creada exitosamente', 'success');
     } else {
@@ -349,7 +359,7 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }
   }
 
-  handleAddIncome(form) {
+  async handleAddIncome(form) {
     const formData = new FormData(form);
     const walletId = formData.get('walletId');
     const amount = parseFloat(formData.get('amount'));
@@ -366,8 +376,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       return;
     }
 
-    if (Storage.addIncome(walletId, amount, source, description)) {
-      AppState.refreshData();
+    if (await Storage.addIncome(walletId, amount, source, description)) {
+      await AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Ingreso agregado exitosamente', 'success');
     } else {
@@ -375,7 +385,7 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }
   }
 
-  handleTransferMoney(form) {
+  async handleTransferMoney(form) {
     const formData = new FormData(form);
     const fromWalletId = formData.get('fromWalletId');
     const toWalletId = formData.get('toWalletId');
@@ -392,8 +402,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       return;
     }
 
-    if (Storage.transferMoney(fromWalletId, toWalletId, amount, description)) {
-      AppState.refreshData();
+    if (await Storage.transferMoney(fromWalletId, toWalletId, amount, description)) {
+      await AppState.refreshData();
       window.appEvents.emit('closeModal');
       Helpers.showToast('Transferencia realizada exitosamente', 'success');
     } else {
@@ -436,19 +446,19 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     });
   }
 
-  openEditWalletModal(walletId) {
+  async openEditWalletModal(walletId) {
     const wallet = AppState.wallets.find(w => w.id === walletId);
     if (!wallet) {
       Helpers.showToast('Wallet no encontrada', 'error');
       return;
     }
     
-    const modalConfig = ModalManager.editWalletModal(wallet);
+    const modalConfig = await ModalManager.editWalletModal(wallet);
     window.appEvents.emit('openModal', modalConfig);
   }
 
-  openTransactionsModal(wallet) {
-    const modalConfig = ModalManager.walletTransactionsModal(wallet);
+  async openTransactionsModal(wallet) {
+    const modalConfig = await ModalManager.walletTransactionsModal(wallet);
     window.appEvents.emit('openModal', modalConfig);
   }
 }

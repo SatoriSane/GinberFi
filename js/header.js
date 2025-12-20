@@ -21,9 +21,9 @@ class Header {
       });
       
       // Listen for wallet selection
-      window.appEvents.on('walletselected', (walletId) => {
-        Storage.setSelectedWallet(walletId);
-        AppState.refreshData();
+      window.appEvents.on('walletselected', async (walletId) => {
+        await Storage.setSelectedWallet(walletId);
+        await AppState.refreshData();
         this.closeDropdown();
       });
     }

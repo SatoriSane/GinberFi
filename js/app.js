@@ -16,8 +16,15 @@ class GinbertFiApp {
         });
       }
 
-      // Initialize app state
-      AppState.init();
+      // Initialize IndexedDB storage
+      console.log('Initializing IndexedDB...');
+      const dbInitialized = await Storage.init();
+      if (!dbInitialized) {
+        console.warn('IndexedDB initialization failed, some features may not work');
+      }
+
+      // Initialize app state (wait for data to load)
+      await AppState.init();
       
       // Register service worker for PWA functionality
       this.registerServiceWorker();
@@ -35,6 +42,9 @@ class GinbertFiApp {
       this.isInitialized = true;
       
       console.log('GinbertFi app initialized successfully');
+      
+      // Emit event to notify all managers that app is ready
+      window.appEvents.emit('appInitialized');
       
     } catch (error) {
       console.error('Error initializing GinbertFi app:', error);
@@ -108,12 +118,36 @@ class GinbertFiApp {
     const resetBtn = document.getElementById('resetAppBtn');
     if (!resetBtn) return;
 
-    resetBtn.addEventListener('click', () => {
+    resetBtn.addEventListener('click', async () => {
       if (confirm('⚠️ Esto eliminará TODOS tus datos y reiniciará la aplicación. ¿Continuar?')) {
         try {
-          // Limpiar storage
+          // Limpiar localStorage y sessionStorage
           localStorage.clear();
           sessionStorage.clear();
+
+          // Limpiar IndexedDB
+          if (DBConfig.isSupported()) {
+            // Cerrar conexión si existe
+            if (DBConfig._dbInstance) {
+              DBConfig._dbInstance.close();
+              DBConfig._dbInstance = null;
+            }
+            
+            const dbName = DBConfig.DB_NAME;
+            const deleteRequest = indexedDB.deleteDatabase(dbName);
+            
+            deleteRequest.onsuccess = () => {
+              console.log('IndexedDB deleted successfully');
+              location.reload();
+            };
+            
+            deleteRequest.onerror = () => {
+              console.error('Error deleting IndexedDB');
+              location.reload();
+            };
+          } else {
+            location.reload();
+          }
 
           // Limpiar estado global si existe
           if (window.AppState) {
@@ -121,9 +155,6 @@ class GinbertFiApp {
             window.AppState.wallets = [];
             window.AppState.expenses = [];
           }
-
-          // Recargar la aplicación
-          location.reload();
         } catch (err) {
           console.error('Error al reiniciar la app:', err);
           Helpers.showToast('No se pudo reiniciar la aplicación', 'error');

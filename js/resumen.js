@@ -30,10 +30,10 @@ class ResumenManager {
     // Period change listeners will be added dynamically when controls are rendered
   }
 
-  render() {
+  async render() {
     if (!this.container) return;
 
-    const expenses = this.getAllExpenses();
+    const expenses = await this.getAllExpenses();
     const categories = AppState.categories;
     const wallets = AppState.wallets;
 
@@ -42,24 +42,26 @@ class ResumenManager {
       return;
     }
 
-    this.container.innerHTML = this.generateHTML(expenses, categories, wallets);
+    this.container.innerHTML = await this.generateHTML(expenses, categories, wallets);
     this.attachEventListeners();
     this.renderCharts(expenses, categories, wallets);
   }
 
-  getAllExpenses() {
+  async getAllExpenses() {
     // Get current active expenses
-    const activeExpenses = AppState.expenses || [];
+    const activeExpenses = Array.isArray(AppState.expenses) ? AppState.expenses : [];
     
     // Get historical expenses
-    const historicalExpenses = Storage.get('ginbertfi_historical_expenses') || [];
+    const historicalRepo = new BaseRepository(DBConfig.STORES.HISTORICAL_EXPENSES);
+    const historicalExpenses = await historicalRepo.getAll();
+    const historicalArray = Array.isArray(historicalExpenses) ? historicalExpenses : [];
     
     // Combine and sort by date
-    return [...activeExpenses, ...historicalExpenses]
+    return [...activeExpenses, ...historicalArray]
       .sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  generateHTML(expenses, categories, wallets) {
+  async generateHTML(expenses, categories, wallets) {
     const periodData = this.getFilteredData(expenses);
     const stats = this.calculateStats(periodData, wallets);
     
@@ -136,7 +138,7 @@ class ResumenManager {
       <div class="resumen-insights-section">
         <h3>Análisis e Insights</h3>
         <div class="resumen-insights-grid">
-          ${this.generateInsights(periodData, stats).map(insight => `
+          ${(await this.generateInsights(periodData, stats)).map(insight => `
             <div class="resumen-insight-card ${insight.type}">
               <div class="resumen-insight-icon">${insight.icon}</div>
               <div class="resumen-insight-content">
@@ -185,6 +187,12 @@ class ResumenManager {
   }
 
   getFilteredData(expenses) {
+    // Validar que expenses sea un array
+    if (!Array.isArray(expenses)) {
+      console.warn('getFilteredData: expenses is not an array', expenses);
+      return [];
+    }
+    
     const { start, end } = this.getPeriodRange();
     
     return expenses.filter(expense => {
@@ -298,11 +306,11 @@ class ResumenManager {
     return null;
   }
 
-  generateInsights(expenses, stats) {
+  async generateInsights(expenses, stats) {
     const insights = [];
 
     // Spending trend insight
-    const previousPeriodExpenses = this.getPreviousPeriodExpenses();
+    const previousPeriodExpenses = await this.getPreviousPeriodExpenses();
     const currentTotal = stats.totalSpent;
     const previousTotal = previousPeriodExpenses.reduce((sum, exp) => sum + exp.amount, 0);
     
@@ -346,7 +354,7 @@ class ResumenManager {
     return insights;
   }
 
-  getPreviousPeriodExpenses() {
+  async getPreviousPeriodExpenses() {
     const previousDate = new Date(this.currentDate);
     
     switch (this.currentPeriod) {
@@ -366,13 +374,20 @@ class ResumenManager {
 
     const originalDate = this.currentDate;
     this.currentDate = previousDate;
-    const expenses = this.getFilteredData(this.getAllExpenses());
+    const allExpenses = await this.getAllExpenses();
+    const expenses = this.getFilteredData(allExpenses);
     this.currentDate = originalDate;
     
     return expenses;
   }
 
   groupExpensesByDay(expenses) {
+    // Validar que expenses sea un array
+    if (!Array.isArray(expenses)) {
+      console.warn('groupExpensesByDay: expenses is not an array', expenses);
+      return {};
+    }
+    
     const dailySpending = {};
     expenses.forEach(expense => {
       const day = expense.date.split('T')[0];
@@ -382,6 +397,12 @@ class ResumenManager {
   }
 
   calculateBudgetPerformance(expenses) {
+    // Validar que expenses sea un array
+    if (!Array.isArray(expenses)) {
+      console.warn('calculateBudgetPerformance: expenses is not an array', expenses);
+      return { overBudgetCount: 0 };
+    }
+    
     let overBudgetCount = 0;
     
     AppState.categories.forEach(category => {
@@ -467,6 +488,12 @@ class ResumenManager {
   }
 
   generateTimelineBreakdown(expenses) {
+    // Validar que expenses sea un array
+    if (!Array.isArray(expenses)) {
+      console.warn('generateTimelineBreakdown: expenses is not an array', expenses);
+      return '';
+    }
+    
     const timelineData = this.groupExpensesByDay(expenses);
     
     return Object.keys(timelineData)

@@ -265,20 +265,40 @@ class OpcionesManager {
     this.applyTheme(savedTheme);
   }
 
-  static createBackup() {
+  static async createBackup() {
     try {
-      // Recopilar todos los datos de la aplicación
+      // Recopilar todos los datos de IndexedDB
+      const wallets = await Storage.getWallets();
+      const categories = await Storage.getCategories();
+      const expenses = await Storage.getExpenses();
+      
+      // Obtener transacciones
+      const transactionRepo = new TransactionRepository();
+      const transactions = await transactionRepo.getAll();
+      
+      // Obtener gastos históricos
+      const historicalRepo = new BaseRepository(DBConfig.STORES.HISTORICAL_EXPENSES);
+      const historicalExpenses = await historicalRepo.getAll();
+      
+      // Obtener fuentes de ingreso
+      const incomeRepo = new BaseRepository(DBConfig.STORES.INCOME_SOURCES);
+      const incomeSources = await incomeRepo.getAll();
+      
+      // Obtener wallet seleccionada (solo el ID)
+      const selectedWallet = await Storage.getSelectedWallet();
+      const selectedWalletId = selectedWallet ? selectedWallet.id : null;
+      
       const backupData = {
         version: '1.0',
         timestamp: new Date().toISOString(),
         data: {
-          wallets: Storage.get('ginbertfi_wallets') || [],
-          categories: Storage.get('ginbertfi_categories') || [],
-          expenses: Storage.get('ginbertfi_expenses') || [],
-          transactions: Storage.get('ginbertfi_transactions') || [],
-          historicalExpenses: Storage.get('ginbertfi_historical_expenses') || [],
-          incomeSources: Storage.get('ginbertfi_income_sources') || [],
-          selectedWallet: Storage.get('ginbertfi_selected_wallet') || null
+          wallets: wallets || [],
+          categories: categories || [],
+          expenses: expenses || [],
+          transactions: transactions || [],
+          historicalExpenses: historicalExpenses || [],
+          incomeSources: incomeSources ? incomeSources.map(s => s.name || s.id || s) : [],
+          selectedWallet: selectedWalletId
         }
       };
 
@@ -390,6 +410,9 @@ class OpcionesManager {
   static showRestoreConfirmation(backupData) {
     this.closeRestoreModal();
     
+    // Almacenar temporalmente los datos del backup
+    this._pendingBackupData = backupData;
+    
     const modalHTML = `
       <div class="modal-overlay options-modal" id="confirmRestoreModal">
         <div class="modal">
@@ -404,8 +427,8 @@ class OpcionesManager {
                 <small>Fecha del respaldo: ${new Date(backupData.timestamp).toLocaleString()}</small>
               </div>
               <div class="confirmation-actions">
-                <button class="btn-cancel" onclick="OpcionesManager.closeConfirmRestoreModal()">Cancelar</button>
-                <button class="btn-confirm" onclick="OpcionesManager.executeRestore(${JSON.stringify(backupData).replace(/"/g, '&quot;')})">Restaurar</button>
+                <button class="btn-cancel" id="cancelRestoreBtn">Cancelar</button>
+                <button class="btn-confirm" id="confirmRestoreBtn">Restaurar</button>
               </div>
             </div>
           </div>
@@ -415,6 +438,15 @@ class OpcionesManager {
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     const modal = document.getElementById('confirmRestoreModal');
+    
+    // Agregar event listeners
+    document.getElementById('cancelRestoreBtn').addEventListener('click', () => {
+      this.closeConfirmRestoreModal();
+    });
+    
+    document.getElementById('confirmRestoreBtn').addEventListener('click', async () => {
+      await this.executeRestore(this._pendingBackupData);
+    });
     
     setTimeout(() => {
       modal.classList.add('show');
@@ -431,22 +463,57 @@ class OpcionesManager {
     }
   }
 
-  static executeRestore(backupData) {
+  static async executeRestore(backupData) {
     try {
       // Limpiar datos actuales y restaurar
       const data = backupData.data;
       
-      // Restaurar cada tipo de dato
-      Storage.set('ginbertfi_wallets', data.wallets || []);
-      Storage.set('ginbertfi_categories', data.categories || []);
-      Storage.set('ginbertfi_expenses', data.expenses || []);
-      Storage.set('ginbertfi_transactions', data.transactions || []);
-      Storage.set('ginbertfi_historical_expenses', data.historicalExpenses || []);
-      Storage.set('ginbertfi_income_sources', data.incomeSources || []);
+      // Restaurar cada tipo de dato usando IndexedDB
+      await Storage.saveWallets(data.wallets || []);
+      await Storage.saveCategories(data.categories || []);
+      await Storage.saveExpenses(data.expenses || []);
       
-      if (data.selectedWallet) {
-        Storage.set('ginbertfi_selected_wallet', data.selectedWallet);
+      // Restaurar transacciones
+      const transactionRepo = new TransactionRepository();
+      await transactionRepo.clear();
+      if (data.transactions && data.transactions.length > 0) {
+        for (const transaction of data.transactions) {
+          await transactionRepo.add(transaction);
+        }
       }
+      
+      // Restaurar gastos históricos
+      const historicalRepo = new BaseRepository(DBConfig.STORES.HISTORICAL_EXPENSES);
+      await historicalRepo.clear();
+      if (data.historicalExpenses && data.historicalExpenses.length > 0) {
+        for (const expense of data.historicalExpenses) {
+          await historicalRepo.add(expense);
+        }
+      }
+      
+      // Restaurar fuentes de ingreso
+      const incomeRepo = new BaseRepository(DBConfig.STORES.INCOME_SOURCES);
+      await incomeRepo.clear();
+      if (data.incomeSources && data.incomeSources.length > 0) {
+        for (const source of data.incomeSources) {
+          await incomeRepo.add({ id: source, name: source });
+        }
+      }
+      
+      // Restaurar wallet seleccionada
+      if (data.selectedWallet) {
+        // Asegurarse de que sea solo el ID, no el objeto completo
+        const walletId = typeof data.selectedWallet === 'string' 
+          ? data.selectedWallet 
+          : data.selectedWallet.id;
+        
+        if (walletId) {
+          await Storage.setSelectedWallet(walletId);
+        }
+      }
+
+      // Refrescar AppState antes de recargar
+      await AppState.refreshData();
 
       this.closeConfirmRestoreModal();
       this.showSuccessMessage('Datos restaurados', 'La aplicación se recargará para aplicar los cambios');

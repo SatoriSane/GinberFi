@@ -250,9 +250,9 @@ window.Helpers = {
     // ------------------------------
     // 💾 Helpers de almacenamiento
     // ------------------------------
-    archiveExpenses(expenses) {
+    async archiveExpenses(expenses) {
         if (!Storage || !expenses?.length) return;
-        Storage.archiveExpenses(expenses);
+        await Storage.archiveExpenses(expenses);
     },
     /**
  * Construye un <select> con todas las subcategorías, agrupadas por categoría.

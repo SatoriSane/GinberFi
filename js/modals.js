@@ -221,12 +221,12 @@ static createSubcategoryModal(categoryId) {
 
 
 
-static editSubcategoryModal(subcategory) {
+static async editSubcategoryModal(subcategory) {
   const defaultStartDate = subcategory.startDate || Helpers.getDefaultStartDate(subcategory.frequency);
   const defaultEndDate = Helpers.getEndDate(defaultStartDate, subcategory.frequency);
 
   const category = AppState.categories.find(c => c.id === subcategory.categoryId);
-  const expenses = Storage.getExpenses();
+  const expenses = await Storage.getExpenses();
   const hasExpenses = expenses.some(exp => exp.subcategoryId === subcategory.id);
 
   const modalConfig = {
@@ -326,16 +326,16 @@ static editSubcategoryModal(subcategory) {
       updateInfo();
 
       // Guardar cambios de edición
-      function saveEdit(e) {
+      async function saveEdit(e) {
         e.preventDefault();
         const formData = new FormData(modal.querySelector('#editSubcategoryForm'));
-        Storage.updateSubcategory(formData.get('categoryId'), formData.get('subcategoryId'), {
+        await Storage.updateSubcategory(formData.get('categoryId'), formData.get('subcategoryId'), {
           name: formData.get('name'),
           budget: parseFloat(formData.get('budget')),
           frequency: formData.get('frequency'),
           startDate: formData.get('startDate')
         });
-        AppState.refreshData();
+        await AppState.refreshData();
         Helpers.showToast('Subcategoría actualizada', 'success');
         window.appEvents.emit('closeModal');
       }
@@ -818,9 +818,9 @@ static createWalletModal() {
 }
 
   
-    static createIncomeModal(walletId) {
+    static async createIncomeModal(walletId) {
       const wallet = AppState.wallets.find(acc => acc.id === walletId);
-      const incomeSources = Storage.getIncomeSources();
+      const incomeSources = await Storage.getIncomeSources();
     
       return {
         title: 'Agregar Ingreso',
@@ -959,8 +959,11 @@ static createWalletModal() {
     }
 
 
-    static editWalletModal(wallet) {
-      const walletTransactions = (Storage.get('ginbertfi_transactions') || [])
+    static async editWalletModal(wallet) {
+      // Obtener transacciones de IndexedDB
+      const transactionRepo = new TransactionRepository();
+      const allTransactions = await transactionRepo.getAll();
+      const walletTransactions = (allTransactions || [])
         .filter(t => t.walletId === wallet.id);
     
       return {
@@ -1028,17 +1031,17 @@ static createWalletModal() {
           <button type="submit" class="btn-primary" form="editWalletForm" id="walletSaveBtn">Guardar</button>
           <button type="button" class="btn-danger" id="walletDeleteBtn" style="display: none;">Eliminar</button>
         `,
-        onShow: (modal) => {
+        onShow: async (modal) => {
           const editSection = modal.querySelector('#editWalletSection');
           const deleteSection = modal.querySelector('#deleteWalletSection');
           const modalTitle = modal.querySelector('.modal-title');
-          const saveBtn = modal.querySelector('#walletSaveBtn');
-          const deleteBtn = modal.querySelector('#walletDeleteBtn');
-          const cancelBtn = modal.querySelector('#walletCancelBtn');
-          const triggerDeleteBtn = modal.querySelector('#triggerDeleteWalletBtn');
+          const form = modal.querySelector('#editWalletForm');
           const walletNameInput = modal.querySelector('#walletName');
           const walletDescInput = modal.querySelector('#walletDescription');
-          const form = modal.querySelector('#editWalletForm');
+          const cancelBtn = modal.querySelector('#walletCancelBtn');
+          const saveBtn = modal.querySelector('#walletSaveBtn');
+          const deleteBtn = modal.querySelector('#walletDeleteBtn');
+          const triggerDeleteBtn = modal.querySelector('#walletTriggerDeleteBtn');
         
           // Cancelar → cerrar modal
           cancelBtn.onclick = () => window.appEvents.emit('closeModal');
@@ -1048,7 +1051,7 @@ static createWalletModal() {
           walletNameInput.select();
         
           // Guardar cambios
-          form.onsubmit = (e) => {
+          form.onsubmit = async (e) => {
             e.preventDefault();
             
             const newName = walletNameInput.value.trim();
@@ -1060,13 +1063,13 @@ static createWalletModal() {
             }
     
             // Actualizar wallet
-            const success = Storage.updateWallet(wallet.id, { 
+            const success = await Storage.updateWallet(wallet.id, { 
               name: newName,
               description: newDesc 
             });
             
             if (success) {
-              AppState.refreshData();
+              await AppState.refreshData();
               Helpers.showToast('Wallet actualizada', 'success');
               window.appEvents.emit('closeModal');
               window.appEvents.emit('dataUpdated');
@@ -1085,11 +1088,11 @@ static createWalletModal() {
           };
     
           // Confirmar eliminación
-          deleteBtn.onclick = (e) => {
+          deleteBtn.onclick = async (e) => {
             e.preventDefault();
       
-            Storage.deleteWallet(wallet.id);
-            AppState.refreshData();
+            await Storage.deleteWallet(wallet.id);
+            await AppState.refreshData();
             Helpers.showToast('Wallet eliminada', 'success');
             window.appEvents.emit('closeModal');
             window.appEvents.emit('dataUpdated');
@@ -1100,8 +1103,11 @@ static createWalletModal() {
     
     
 
-    static walletTransactionsModal(wallet) {
-      const walletTransactions = (Storage.get('ginbertfi_transactions') || [])
+    static async walletTransactionsModal(wallet) {
+      // Obtener transacciones de IndexedDB
+      const transactionRepo = new TransactionRepository();
+      const allTransactions = await transactionRepo.getAll();
+      const walletTransactions = (allTransactions || [])
         .filter(t => t.walletId === wallet.id)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
 

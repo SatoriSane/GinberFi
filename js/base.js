@@ -32,40 +32,38 @@ const AppState = {
   wallets: [],
   expenses: [],
   
-  init() {
-    this.loadData();
-    this.resetExpansionState(); // 👈 Llama a esta función al iniciar
+  async init() {
+    await this.loadData();
+    this.resetExpansionState();
+    window.appEvents.emit('dataUpdated');
   },
   
-  loadData() {
-    this.wallets = Storage.getWallets();
-    this.selectedWallet = Storage.getSelectedWallet();
-    this.categories = Storage.getCategories();
-    this.expenses = Storage.getExpenses();
+  async loadData() {
+    this.wallets = await Storage.getWallets();
+    this.selectedWallet = await Storage.getSelectedWallet();
+    this.categories = await Storage.getCategories();
+    this.expenses = await Storage.getExpenses();
   },
+  
   resetExpansionState() {
     // Solo resetea el estado de las subcategorías
-    this.categories.forEach(category => {
-      if (category.subcategories) {
-        category.subcategories.forEach(sub => {
-          sub.expanded = false;
-        });
-      }
-    });
+    if (Array.isArray(this.categories)) {
+      this.categories.forEach(category => {
+        if (category.subcategories) {
+          category.subcategories.forEach(sub => {
+            sub.expanded = false;
+          });
+        }
+      });
+    }
   },
   
-  refreshData() {
-    this.loadData();
-    // Llama a resetExpansionState aquí para plegar las subcategorías
-    this.resetExpansionState(); 
+  async refreshData() {
+    await this.loadData();
+    this.resetExpansionState();
     window.appEvents.emit('dataUpdated');
   }
 };
 
 // Global event emitter instance
 window.appEvents = new EventEmitter();
-
-// Initialize app state when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  AppState.init();
-});
