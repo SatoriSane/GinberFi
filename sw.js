@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'ginbertfi-v1.2';
+const CACHE_NAME = 'ginbertfi-v2.0';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -12,14 +12,24 @@ const urlsToCache = [
   '/css/resumen.css',
   '/css/modals.css',
   '/js/base.js',
-  '/js/storage.js',
+  '/js/storage-indexeddb.js',
   '/js/header.js',
   '/js/navigation.js',
   '/js/modals.js',
   '/js/gastos.js',
   '/js/huchas.js',
   '/js/resumen.js',
-  '/js/app.js'
+  '/js/opciones.js',
+  '/js/app.js',
+  '/js/helpers.js',
+  '/js/theme-manager.js',
+  '/js/db/db-config.js',
+  '/js/db/base-repository.js',
+  '/js/db/wallet-repository.js',
+  '/js/db/category-repository.js',
+  '/js/db/expense-repository.js',
+  '/js/db/transaction-repository.js',
+  '/js/db/migration-service.js'
 ];
 
 // Install event - cache resources

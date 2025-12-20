@@ -582,9 +582,9 @@ class OpcionesManager {
     }
   }
 
-  static executeReset() {
+  static async executeReset() {
     try {
-      // Limpiar todos los datos del localStorage
+      // Limpiar localStorage (tema, preferencias, etc.)
       const keysToRemove = [
         'ginbertfi_wallets',
         'ginbertfi_categories', 
@@ -599,13 +599,40 @@ class OpcionesManager {
         localStorage.removeItem(key);
       });
 
-      this.closeResetModal();
-      this.showSuccessMessage('Aplicación reiniciada', 'Todos los datos han sido eliminados. La aplicación se recargará.');
-      
-      // Recargar la aplicación
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // Limpiar IndexedDB
+      if (DBConfig.isSupported()) {
+        // Cerrar conexión si existe
+        if (DBConfig._dbInstance) {
+          DBConfig._dbInstance.close();
+          DBConfig._dbInstance = null;
+        }
+        
+        const dbName = DBConfig.DB_NAME;
+        const deleteRequest = indexedDB.deleteDatabase(dbName);
+        
+        deleteRequest.onsuccess = () => {
+          console.log('IndexedDB eliminada correctamente');
+          this.closeResetModal();
+          this.showSuccessMessage('Aplicación reiniciada', 'Todos los datos han sido eliminados. La aplicación se recargará.');
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        };
+        
+        deleteRequest.onerror = (error) => {
+          console.error('Error al eliminar IndexedDB:', error);
+          this.showErrorMessage('Error', 'Hubo un problema al reiniciar la aplicación');
+        };
+      } else {
+        // Si no hay IndexedDB, solo recargar
+        this.closeResetModal();
+        this.showSuccessMessage('Aplicación reiniciada', 'Todos los datos han sido eliminados. La aplicación se recargará.');
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
       
     } catch (error) {
       console.error('Error resetting app:', error);
