@@ -128,7 +128,13 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     const transactions = await transactionRepo.getByWalletId(walletId) || [];
     const walletTransactions = transactions
       .filter(t => t.walletId === walletId)
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .sort((a, b) => {
+        // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
+        // Si no existe createdAt, usar el id que también es un timestamp
+        const timeA = a.createdAt || a.id;
+        const timeB = b.createdAt || b.id;
+        return timeB.localeCompare(timeA);
+      })
       .slice(0, 3);
 
     if (walletTransactions.length === 0) {

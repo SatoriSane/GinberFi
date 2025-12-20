@@ -1109,7 +1109,13 @@ static createWalletModal() {
       const allTransactions = await transactionRepo.getAll();
       const walletTransactions = (allTransactions || [])
         .filter(t => t.walletId === wallet.id)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
+        .sort((a, b) => {
+          // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
+          // Si no existe createdAt, usar el id que también es un timestamp
+          const timeA = a.createdAt || a.id;
+          const timeB = b.createdAt || b.id;
+          return timeB.localeCompare(timeA);
+        });
 
       // Función interna para etiquetas de tipo de transacción
       const getTransactionTypeLabel = (type) => {
@@ -1166,7 +1172,9 @@ static createWalletModal() {
                   <h3>No hay transacciones</h3>
                   <p>Esta wallet no tiene movimientos registrados</p>
                 </div>
-              ` : Object.keys(groupedTransactions).map(dateKey => {
+              ` : Object.keys(groupedTransactions)
+                .sort((a, b) => b.localeCompare(a)) // Ordenar fechas de más reciente a más antiguo
+                .map(dateKey => {
                 const group = groupedTransactions[dateKey];
                 return `
                   <div class="transaction-date-group">
