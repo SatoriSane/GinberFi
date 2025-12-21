@@ -1104,11 +1104,10 @@ static createWalletModal() {
     
 
     static async walletTransactionsModal(wallet) {
-      // Obtener transacciones de IndexedDB
+      // Obtener transacciones de IndexedDB (usar el mismo método que en últimos movimientos)
       const transactionRepo = new TransactionRepository();
-      const allTransactions = await transactionRepo.getAll();
-      const walletTransactions = (allTransactions || [])
-        .filter(t => t.walletId === wallet.id)
+      const transactions = await transactionRepo.getByWalletId(wallet.id) || [];
+      const walletTransactions = transactions
         .sort((a, b) => {
           // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
           // Si no existe createdAt, usar el id que también es un timestamp
@@ -1149,6 +1148,15 @@ static createWalletModal() {
           };
         }
         groupedTransactions[dateKey].transactions.push(tx);
+      });
+      
+      // Ordenar transacciones dentro de cada grupo por createdAt/id
+      Object.keys(groupedTransactions).forEach(dateKey => {
+        groupedTransactions[dateKey].transactions.sort((a, b) => {
+          const timeA = a.createdAt || a.id;
+          const timeB = b.createdAt || b.id;
+          return timeB.localeCompare(timeA);
+        });
       });
 
       return {
