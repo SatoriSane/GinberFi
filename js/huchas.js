@@ -149,12 +149,14 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     const transactionsHTML = walletTransactions.map(tx => {
       // Usar Helpers.formatDate para parsear correctamente en hora local
       const compactDate = Helpers.formatDate(tx.date);
+      // Mostrar descripción si existe, sino mostrar el tipo de transacción
+      const displayText = tx.description || this.getTransactionTypeLabel(tx.type);
       
       return `
         <div class="recent-transaction-item" data-wallet-id="${walletId}">
           <div class="transaction-left">
             <div class="transaction-date">${compactDate}</div>
-            <div class="transaction-type">${this.getTransactionTypeLabel(tx.type)}</div>
+            <div class="transaction-type">${displayText}</div>
           </div>
           <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
             ${tx.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(tx.amount), currency)}
