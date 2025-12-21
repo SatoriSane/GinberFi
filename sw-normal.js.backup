@@ -1,0 +1,50 @@
+// Service Worker for PWA functionality - VERSIÓN NORMAL CON CACHÉ
+// Restaurar este código después de diagnosticar el problema
+
+const CACHE_NAME = 'ginbertfi-v3.4'; // Incrementar cuando restaures
+
+// Fetch event - Network First strategy (ESTRATEGIA NORMAL)
+self.addEventListener('fetch', (event) => {
+  // Solo gestionar peticiones GET
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Ignorar peticiones que no son HTTP/HTTPS
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        // Si la petición a la red es exitosa, la usamos y la guardamos en caché
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+        return networkResponse;
+      })
+      .catch(() => {
+        // Si la red falla, intentamos obtener el recurso desde el caché
+        return caches.match(event.request)
+          .then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Para recursos no encontrados, devolver error
+            return new Response('Contenido no disponible sin conexión.', {
+              status: 404,
+              statusText: 'Not Found'
+            });
+          });
+      })
+  );
+});
+
+// INSTRUCCIONES PARA RESTAURAR:
+// 1. Copia el código del fetch event de arriba
+// 2. Reemplaza el fetch event actual en sw.js (líneas 59-87)
+// 3. Cambia CACHE_NAME a 'ginbertfi-v3.4' (o superior)
+// 4. Elimina los console.log() de debug en huchas.js y modals.js
+// 5. Haz push
