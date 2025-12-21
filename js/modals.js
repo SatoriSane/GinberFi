@@ -1107,6 +1107,10 @@ static createWalletModal() {
       // Obtener transacciones de IndexedDB (usar el mismo método que en últimos movimientos)
       const transactionRepo = new TransactionRepository();
       const transactions = await transactionRepo.getByWalletId(wallet.id) || [];
+      
+      // Debug: Log para verificar ordenamiento
+      console.log(`[Modal] Wallet ${wallet.id}: ${transactions.length} transacciones totales`);
+      
       const walletTransactions = transactions
         .sort((a, b) => {
           // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
@@ -1115,6 +1119,15 @@ static createWalletModal() {
           const timeB = b.createdAt || b.id;
           return timeB.localeCompare(timeA);
         });
+      
+      // Debug: Log de las primeras 3 transacciones
+      console.log('[Modal] Primeras 3 transacciones:', walletTransactions.slice(0, 3).map(tx => ({
+        id: tx.id,
+        description: tx.description,
+        amount: tx.amount,
+        date: tx.date,
+        createdAt: tx.createdAt
+      })));
 
       // Función interna para etiquetas de tipo de transacción
       const getTransactionTypeLabel = (type) => {

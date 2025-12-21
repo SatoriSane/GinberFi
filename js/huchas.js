@@ -126,6 +126,10 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
   async getRecentTransactionsHTML(walletId, currency) {
     const transactionRepo = new TransactionRepository();
     const transactions = await transactionRepo.getByWalletId(walletId) || [];
+    
+    // Debug: Log para verificar ordenamiento
+    console.log(`[Últimos 3] Wallet ${walletId}: ${transactions.length} transacciones totales`);
+    
     const walletTransactions = transactions
       .filter(t => t.walletId === walletId)
       .sort((a, b) => {
@@ -136,6 +140,15 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
         return timeB.localeCompare(timeA);
       })
       .slice(0, 3);
+    
+    // Debug: Log de las 3 transacciones seleccionadas
+    console.log('[Últimos 3] Transacciones mostradas:', walletTransactions.map(tx => ({
+      id: tx.id,
+      description: tx.description,
+      amount: tx.amount,
+      date: tx.date,
+      createdAt: tx.createdAt
+    })));
 
     if (walletTransactions.length === 0) {
       return `
