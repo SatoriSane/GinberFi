@@ -58,12 +58,167 @@ class GinbertFiApp {
         navigator.serviceWorker.register('/sw.js')
           .then(registration => {
             console.log('Service Worker registered successfully:', registration.scope);
+            
+            // Verificar actualizaciones cada 60 segundos
+            setInterval(() => {
+              registration.update();
+            }, 60000);
+            
+            // Detectar cuando hay una actualización disponible
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('Nueva versión de la app detectada, instalando...');
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // Hay una nueva versión disponible
+                  console.log('Nueva versión instalada, esperando activación');
+                  this.showUpdateNotification();
+                }
+              });
+            });
           })
           .catch(error => {
             console.log('Service Worker registration failed:', error);
           });
+        
+        // Detectar cuando el nuevo SW toma control
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          console.log('Nueva versión activada, recargando...');
+          window.location.reload();
+        });
       });
     }
+  }
+  
+  showUpdateNotification() {
+    // Crear notificación de actualización
+    const notification = document.createElement('div');
+    notification.className = 'update-notification';
+    notification.innerHTML = `
+      <div class="update-content">
+        <span class="update-icon">🔄</span>
+        <div class="update-text">
+          <strong>Nueva versión disponible</strong>
+          <p>Hay una actualización de GinbertFi lista para instalar</p>
+        </div>
+        <button class="update-btn" id="updateAppBtn">Actualizar ahora</button>
+        <button class="update-dismiss" id="dismissUpdateBtn">×</button>
+      </div>
+    `;
+    
+    // Agregar estilos si no existen
+    if (!document.querySelector('#update-notification-styles')) {
+      const style = document.createElement('style');
+      style.id = 'update-notification-styles';
+      style.textContent = `
+        .update-notification {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: var(--white);
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-xl);
+          z-index: 9999;
+          max-width: 90%;
+          width: 500px;
+          animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+          from {
+            transform: translateX(-50%) translateY(100px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+          }
+        }
+        
+        .update-content {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+          padding: var(--spacing-lg);
+          position: relative;
+        }
+        
+        .update-icon {
+          font-size: 32px;
+          flex-shrink: 0;
+        }
+        
+        .update-text {
+          flex: 1;
+        }
+        
+        .update-text strong {
+          display: block;
+          color: var(--dark-blue);
+          margin-bottom: 4px;
+        }
+        
+        .update-text p {
+          margin: 0;
+          color: var(--text-secondary);
+          font-size: 14px;
+        }
+        
+        .update-btn {
+          background: var(--primary-color);
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: var(--radius-md);
+          font-weight: 600;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: background 0.2s;
+        }
+        
+        .update-btn:hover {
+          background: var(--primary-dark);
+        }
+        
+        .update-dismiss {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: var(--text-secondary);
+          cursor: pointer;
+          padding: 4px 8px;
+          line-height: 1;
+        }
+        
+        .update-dismiss:hover {
+          color: var(--dark-blue);
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Botón para actualizar
+    document.getElementById('updateAppBtn').addEventListener('click', () => {
+      // Enviar mensaje al SW para que se active inmediatamente
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+      }
+    });
+    
+    // Botón para descartar
+    document.getElementById('dismissUpdateBtn').addEventListener('click', () => {
+      notification.remove();
+    });
   }
 
   setupErrorHandling() {

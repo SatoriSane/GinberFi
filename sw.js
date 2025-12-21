@@ -95,6 +95,14 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
+// Message event - listen for skip waiting command
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('Service Worker: Recibido comando SKIP_WAITING, activando inmediatamente...');
+    self.skipWaiting();
+  }
+});
+
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('Service Worker: Activando y limpiando cachés antiguos.');
