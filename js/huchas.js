@@ -127,14 +127,20 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     const transactionRepo = new TransactionRepository();
     const transactions = await transactionRepo.getByWalletId(walletId) || [];
     
-    // Debug: Log para verificar ordenamiento
-    console.log(`[Últimos 3] Wallet ${walletId}: ${transactions.length} transacciones totales`);
+    // Debug: Log para verificar datos recibidos de IndexedDB
+    console.log(`[Últimos 3] Wallet ${walletId}:`);
+    console.log(`  - Total transacciones de IndexedDB: ${transactions.length}`);
+    console.log(`  - Todas las transacciones:`, transactions.map(tx => ({
+      id: tx.id,
+      desc: tx.description,
+      date: tx.date,
+      createdAt: tx.createdAt
+    })));
     
+    // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
+    // Si no existe createdAt, usar el id que también es un timestamp
     const walletTransactions = transactions
-      .filter(t => t.walletId === walletId)
       .sort((a, b) => {
-        // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
-        // Si no existe createdAt, usar el id que también es un timestamp
         const timeA = a.createdAt || a.id;
         const timeB = b.createdAt || b.id;
         return timeB.localeCompare(timeA);
@@ -142,7 +148,8 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       .slice(0, 3);
     
     // Debug: Log de las 3 transacciones seleccionadas
-    console.log('[Últimos 3] Transacciones mostradas:', walletTransactions.map(tx => ({
+    console.log(`  - Después de ordenar y slice(0,3): ${walletTransactions.length} transacciones`);
+    console.log('  - Transacciones mostradas:', walletTransactions.map(tx => ({
       id: tx.id,
       description: tx.description,
       amount: tx.amount,
