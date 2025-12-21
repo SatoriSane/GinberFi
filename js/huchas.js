@@ -115,6 +115,11 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
         const container = this.walletsContainer.querySelector(`.recent-transactions[data-wallet-id="${wallet.id}"]`);
         if (container) {
           container.innerHTML = transactionsHTML;
+          // Debug: Verificar cuántos items se insertaron en el DOM
+          const insertedItems = container.querySelectorAll('.recent-transaction-item');
+          console.log(`[DOM] Wallet ${wallet.id}: ${insertedItems.length} items insertados en el DOM`);
+        } else {
+          console.error(`[DOM] No se encontró contenedor para wallet ${wallet.id}`);
         }
       }
       
@@ -185,7 +190,7 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       `;
     }).join('');
 
-    return `
+    const finalHTML = `
       <div class="recent-transactions-header">
         <span>Últimos movimientos</span>
         <button class="view-all-btn" data-wallet-id="${walletId}">Ver todos</button>
@@ -194,6 +199,11 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
         ${transactionsHTML}
       </div>
     `;
+    
+    // Debug: Verificar HTML generado
+    console.log(`  - HTML generado (${walletTransactions.length} items):`, finalHTML.substring(0, 500));
+    
+    return finalHTML;
   }
 
   // Event listeners for wallet card elements (exist from the start)

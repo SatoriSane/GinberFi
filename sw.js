@@ -1,6 +1,6 @@
 // Service Worker for PWA functionality
 // VERSIÓN DEBUG: Network Only (sin caché) para diagnosticar problemas
-const CACHE_NAME = 'ginbertfi-v3.3-debug';
+const CACHE_NAME = 'ginbertfi-v3.4-debug';
 const urlsToCache = [
   './',
   'index.html',
