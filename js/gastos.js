@@ -793,10 +793,13 @@ fillSubcategorySelect() {
   // 🚀 NUEVO: Manejador para guardar un gasto rápido
   async handleCreateQuickExpense(form) {
     const formData = new FormData(form);
+    const today = new Date();
+    const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
     const expenseData = {
       name: Helpers.sanitizeInput(formData.get('name')),
       amount: parseFloat(formData.get('amount')),
-      date: new Date().toISOString().split('T')[0], // Fecha actual
+      date: localDate, // Fecha actual en hora local
       walletId: formData.get('walletId'),
       categoryId: 'unclassified', // <- La magia está aquí
       subcategoryId: null
