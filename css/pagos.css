@@ -1,197 +1,159 @@
 /* Pagos Tab Styles - Scheduled Payments */
 
 .pagos-container {
-  padding: var(--spacing-md) 0 0;
-  display: grid;
+  padding: var(--spacing-lg) 0;
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-lg);
 }
 
-/* Section Styles - JERARQUÍA VISUAL MEJORADA */
-.pagos-section {
-  border-radius: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  background: var(--white);
-  overflow: hidden;
-  border: 2px solid rgba(0, 0, 0, 0.03);
-  margin-bottom: var(--spacing-lg);
-  transition: all 0.3s ease;
-}
-
-.pagos-section:hover {
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-}
-
-/* Barra lateral de color más prominente */
-.pagos-section.overdue {
-  border-left: 6px solid #EF4444;
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.02) 0%, rgba(255, 255, 255, 1) 2%);
-}
-
-.pagos-section.upcoming {
-  border-left: 6px solid #F59E0B;
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.02) 0%, rgba(255, 255, 255, 1) 2%);
-}
-
-.pagos-section.this-month {
-  border-left: 6px solid #3B82F6;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.02) 0%, rgba(255, 255, 255, 1) 2%);
-}
-
-.pagos-section.future {
-  border-left: 6px solid #10B981;
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.02) 0%, rgba(255, 255, 255, 1) 2%);
-}
-
-.pagos-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-lg);
-  background: linear-gradient(180deg, rgba(249, 250, 251, 1) 0%, rgba(243, 244, 246, 1) 100%);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
-}
-
-/* MUY IMPORTANTE: Título de sección */
-.pagos-section-title {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--dark-blue);
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* IMPORTANTE: Total de la sección */
-.pagos-section-total {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--dark-blue);
-  background: rgba(255, 255, 255, 0.8);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  letter-spacing: -0.5px;
-}
-
-.pagos-list {
-  padding: var(--spacing-sm);
-}
-
-/* Payment Item - DISEÑO MINIMALISTA */
+/* Payment Item - Balanced & Clean */
 .payment-item {
-  background: #FFFFFF;
-  border-radius: 12px;
+  background: var(--white);
+  border-radius: var(--radius-xl);
   padding: 0;
-  margin-bottom: var(--spacing-md);
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
+  margin: 0 var(--spacing-md);
+  border: 1.5px solid var(--border-light);
   cursor: pointer;
   overflow: hidden;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.payment-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
 }
 
 .payment-item:hover {
-  border-color: #BFDBFE;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+  border-color: var(--pastel-blue);
+  background: var(--surface-primary);
   transform: translateY(-1px);
 }
 
-.payment-item:last-child {
-  margin-bottom: 0;
+
+/* Header - Clean category only */
+.payment-item-header {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
 }
 
-/* Contenido del item */
-.payment-item-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: var(--spacing-lg);
+.payment-category-header {
+  font-size: 0.8125rem;
+  color: var(--text-light);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Body - Balanced proportions */
+.payment-item-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  align-items: center;
 }
 
-/* Lado izquierdo: Título y categoría */
-.payment-left {
-  flex: 1;
+/* Info section */
+.payment-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
   min-width: 0;
+}
+
+/* Action section */
+.payment-action-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
 }
 
 .payment-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #111827;
-  margin-bottom: 4px;
+  color: var(--text-dark);
+  line-height: 1.35;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Badges group */
+.payment-badges {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  line-height: 1.4;
+  flex-wrap: wrap;
 }
 
-.recurring-indicator {
-  font-size: 0.875rem;
-  color: #10B981;
-  opacity: 0.5;
-}
 
-.payment-subtitle {
-  font-size: 0.8125rem;
-  color: #9CA3AF;
-  font-weight: 500;
-}
-
-/* Lado derecho: Fecha y monto */
-.payment-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
+/* Badges - Proportional */
 .payment-date-badge {
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: #EFF6FF;
-  color: #2563EB;
-  letter-spacing: 0.5px;
+  padding: 5px 11px;
+  border-radius: var(--radius-lg);
+  background: var(--pastel-blue);
+  color: var(--dark-blue);
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
 }
 
 .payment-date-badge.overdue {
-  background: #FEE2E2;
-  color: #DC2626;
-  animation: pulse-overdue 2s ease-in-out infinite;
+  background: var(--budget-danger-bg);
+  color: var(--color-error);
 }
 
-@keyframes pulse-overdue {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+.payment-recurring-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: var(--radius-lg);
+  background: var(--budget-excellent-bg);
+  color: var(--color-success);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
+/* Amount - Prominent but balanced */
 .payment-amount {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
-  letter-spacing: -0.5px;
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: var(--dark-blue);
   line-height: 1;
+  text-align: right;
+  letter-spacing: -0.02em;
 }
 
-/* Botón de acción */
+/* Action button - Proportional */
 .payment-action-btn {
-  width: 100%;
-  padding: 14px;
+  padding: 9px 20px;
   border: none;
-  background: linear-gradient(to right, #D1FAE5, #BFDBFE);
-  color: #1E40AF;
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
   font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border-top: 1px solid #E5E7EB;
+  border-radius: var(--radius-lg);
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
 }
 
 .payment-action-btn:hover {
-  background: linear-gradient(to right, #A7F3D0, #93C5FD);
+  opacity: 0.85;
 }
 
 /* Empty State (reused from gastos.css) */
@@ -232,78 +194,62 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .pagos-section {
-    margin-bottom: var(--spacing-md);
+  .pagos-list-container {
+    margin: var(--spacing-sm);
+    border-radius: 12px;
   }
 
-  .pagos-section-header {
-    padding: var(--spacing-md);
-    flex-wrap: wrap;
-    gap: var(--spacing-xs);
+  .pagos-header {
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 
-  .pagos-section-title {
+  .pagos-title {
     font-size: 0.875rem;
-    letter-spacing: 0.5px;
   }
 
-  .pagos-section-total {
-    font-size: 1.125rem;
-  }
-
-  .payment-item-content {
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-  }
-
-  /* Ajustar tamaños en móvil pero mantener layout horizontal */
-  .payment-title {
+  .pagos-total {
     font-size: 1rem;
   }
 
-  .payment-subtitle {
+  .pagos-container {
+    padding: var(--spacing-md) 0;
+    gap: var(--spacing-md);
+  }
+
+  .payment-item {
+    margin: 0 var(--spacing-sm);
+  }
+
+  .payment-item-header {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .payment-category-header {
     font-size: 0.75rem;
   }
 
-  .payment-amount {
-    font-size: 1.25rem;
+  .payment-item-body {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    gap: var(--spacing-md);
   }
 
-  .payment-date-badge {
+  .payment-title {
+    font-size: 1.2rem;
+  }
+
+  .payment-amount {
+    font-size: 1.375rem;
+  }
+
+  .payment-date-badge,
+  .payment-recurring-badge {
     font-size: 0.6875rem;
-    padding: 3px 8px;
+    padding: 4px 9px;
   }
 
   .payment-action-btn {
-    padding: 12px;
+    padding: 8px 16px;
     font-size: 0.875rem;
   }
 }
 
-/* Stats Summary (optional, for future enhancements) */
-.pagos-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: var(--surface-primary);
-  border-radius: 16px;
-  margin-bottom: var(--spacing-md);
-}
-
-.pagos-stat-item {
-  text-align: center;
-  padding: var(--spacing-sm);
-}
-
-.pagos-stat-value {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--dark-blue);
-}
-
-.pagos-stat-label {
-  font-size: var(--font-size-xs);
-  color: var(--text-light);
-  margin-top: var(--spacing-xs);
-}

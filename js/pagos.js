@@ -93,64 +93,24 @@ class PagosManager {
   }
 
   async generateHTML() {
-    const overdue = await this.scheduledRepo.getOverdue();
-    const upcoming = await this.scheduledRepo.getUpcoming(7);
-    const thisMonth = await this.scheduledRepo.getThisMonth();
-    const future = await this.scheduledRepo.getFuture();
+    // Get all pending payments
+    const allPayments = this.payments.filter(p => p.status === 'pending');
+    
+    // Sort by due date (ascending)
+    allPayments.sort((a, b) => {
+      const dateA = new Date(a.dueDate);
+      const dateB = new Date(b.dueDate);
+      return dateA - dateB;
+    });
 
-    // Filter to avoid duplicates (payments can appear in multiple categories)
-    const upcomingFiltered = upcoming.filter(p => !overdue.find(o => o.id === p.id));
-    const thisMonthFiltered = thisMonth.filter(p => 
-      !overdue.find(o => o.id === p.id) && 
-      !upcoming.find(u => u.id === p.id)
-    );
-    const futureFiltered = future.filter(p => 
-      !overdue.find(o => o.id === p.id) && 
-      !upcoming.find(u => u.id === p.id) && 
-      !thisMonth.find(t => t.id === p.id)
-    );
-
-    let html = '';
-
-    // Overdue section
-    if (overdue.length > 0) {
-      html += this.renderSection('🔴 VENCIDOS', overdue, 'overdue');
+    if (allPayments.length === 0) {
+      return '';
     }
 
-    // Upcoming section (next 7 days)
-    if (upcomingFiltered.length > 0) {
-      html += this.renderSection('⚠️ PRÓXIMOS 7 DÍAS', upcomingFiltered, 'upcoming');
-    }
-
-    // This month section
-    if (thisMonthFiltered.length > 0) {
-      html += this.renderSection('📅 ESTE MES', thisMonthFiltered, 'this-month');
-    }
-
-    // Future section
-    if (futureFiltered.length > 0) {
-      html += this.renderSection('📆 FUTUROS', futureFiltered, 'future');
-    }
-
-    return html;
+    // Render payments directly without header
+    return allPayments.map(p => this.renderPaymentItem(p)).join('');
   }
 
-  renderSection(title, payments, sectionClass) {
-    const count = payments.length;
-    const total = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
-
-    return `
-      <div class="pagos-section ${sectionClass}">
-        <div class="pagos-section-header">
-          <h3 class="pagos-section-title">${title} (${count})</h3>
-          <span class="pagos-section-total">${Helpers.formatCurrency(total)}</span>
-        </div>
-        <div class="pagos-list">
-          ${payments.map(p => this.renderPaymentItem(p)).join('')}
-        </div>
-      </div>
-    `;
-  }
 
   renderPaymentItem(payment) {
     const wallet = AppState.wallets.find(w => w.id === payment.walletId);
@@ -161,7 +121,7 @@ class PagosManager {
     }
 
     const currency = wallet ? wallet.currency : 'BOB';
-    const recurrenceIcon = payment.isRecurring ? '⟳' : '';
+    const recurrenceText = payment.isRecurring ? this.getRecurrenceText(payment.recurrence) : '';
     
     // Calculate days until due
     const daysUntil = this.getDaysUntilDue(payment.dueDate);
@@ -170,26 +130,53 @@ class PagosManager {
                         daysUntil < 0 ? `VENCIDO` :
                         Helpers.formatDate(payment.dueDate);
 
+    // Build category/subcategory display
+    let categoryDisplay = '';
+    if (category && subcategory) {
+      categoryDisplay = `
+        <div class="payment-category">${category.name}</div>
+        <div class="payment-subcategory">↳ ${subcategory.name}</div>
+      `;
+    }
+
+    // Get urgency class based on days until due
+    let urgencyClass = '';
+    if (daysUntil < 0) urgencyClass = 'urgent';
+    else if (daysUntil === 0) urgencyClass = 'today';
+    else if (daysUntil <= 3) urgencyClass = 'soon';
+
+    // Build category info
+    let categoryInfo = '';
+    if (category) {
+      categoryInfo = subcategory 
+        ? `${category.name} › ${subcategory.name}`
+        : category.name;
+    }
+
     return `
-      <div class="payment-item" data-payment-id="${payment.id}">
-        <div class="payment-item-content">
-          <div class="payment-left">
-            <div class="payment-title">
-              ${payment.name}
-              ${payment.isRecurring ? `<span class="recurring-indicator">⟳</span>` : ''}
-            </div>
-            <div class="payment-subtitle">
-              ${subcategory ? `${category.name} · ${subcategory.name}` : ''}
+      <div class="payment-item ${urgencyClass}" data-payment-id="${payment.id}">
+        ${categoryInfo ? `
+        <div class="payment-item-header">
+          <div class="payment-category-header">${categoryInfo}</div>
+        </div>
+        ` : ''}
+        
+        <div class="payment-item-body">
+          <div class="payment-info-section">
+            <div class="payment-title">${payment.name}</div>
+            <div class="payment-badges">
+              <div class="payment-date-badge ${daysUntil < 0 ? 'overdue' : ''}">${dueDateText}</div>
+              ${payment.isRecurring ? `<div class="payment-recurring-badge">⟳ ${recurrenceText}</div>` : ''}
             </div>
           </div>
-          <div class="payment-right">
-            <div class="payment-date-badge ${daysUntil < 0 ? 'overdue' : ''}">${dueDateText}</div>
+          
+          <div class="payment-action-section">
             <div class="payment-amount">${Helpers.formatCurrency(payment.amount, currency)}</div>
+            <button class="payment-action-btn" data-payment-id="${payment.id}" title="Registrar pago" onclick="event.stopPropagation()">
+              Pagar
+            </button>
           </div>
         </div>
-        <button class="payment-action-btn" data-payment-id="${payment.id}" title="Registrar pago">
-          Pagar
-        </button>
       </div>
     `;
   }
@@ -225,11 +212,14 @@ class PagosManager {
       });
     });
 
-    // Click on payment item content to edit
-    this.pagosContainer.querySelectorAll('.payment-item-content').forEach(content => {
-      content.addEventListener('click', (e) => {
-        const paymentId = content.closest('.payment-item').dataset.paymentId;
-        this.openEditPaymentModal(paymentId);
+    // Click on payment item to edit
+    this.pagosContainer.querySelectorAll('.payment-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        // Avoid triggering when clicking the action button
+        if (!e.target.closest('.payment-action-btn')) {
+          const paymentId = item.dataset.paymentId;
+          this.openEditPaymentModal(paymentId);
+        }
       });
     });
   }

@@ -1683,11 +1683,11 @@ static createQuickExpenseModal() {
           <input type="hidden" name="action" value="pay">
           
           <div class="payment-info-box">
-            <div class="payment-info-main">
+            <div class="payment-info-simple">
               <div class="payment-info-name">${payment.name}</div>
               <div class="payment-info-amount">${Helpers.formatCurrency(payment.amount, currency)}</div>
             </div>
-            <div class="payment-info-detail">
+            <div class="payment-info-due">
               Vence: ${Helpers.formatDate(payment.dueDate)}
             </div>
           </div>
