@@ -96,9 +96,10 @@ openModal(modalData) {
       
       closeBtn.addEventListener('click', () => this.closeModal());
       
+      // Solo cerrar si se hace click directamente en el overlay (fondo oscuro)
+      // NO cerrar si se hace click en el contenido del modal
       overlay.addEventListener('click', (e) => {
-        const modalContent = overlay.querySelector('.modal');
-        if (!modalContent.contains(e.target)) {
+        if (e.target === overlay) {
           this.closeModal();
         }
       });
@@ -118,31 +119,6 @@ openModal(modalData) {
             document.removeEventListener('keydown', this.escapeHandler);
             this.escapeHandler = null;
         }
-    }
-    reattachCloseHandlers() {
-      if (!this.currentModal) return;
-  
-      // Elimina el listener de Escape que pudiera quedar colgado
-      this.removeEventListeners();
-  
-      const closeBtn = this.currentModal.querySelector('.modal-close');
-      const overlay  = this.currentModal;   // overlay = elemento .modal‑overlay
-  
-      // Botón X
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => this.closeModal());
-      }
-  
-      // Click fuera del contenido
-      overlay.addEventListener('click', e => {
-        if (e.target === overlay) this.closeModal();
-      });
-  
-      // Tecla Escape
-      this.escapeHandler = e => {
-        if (e.key === 'Escape') this.closeModal();
-      };
-      document.addEventListener('keydown', this.escapeHandler);
     }
 
     // Specific modal creators
@@ -1108,9 +1084,6 @@ static createWalletModal() {
       const transactionRepo = new TransactionRepository();
       const transactions = await transactionRepo.getByWalletId(wallet.id) || [];
       
-      // Debug: Log para verificar ordenamiento
-      console.log(`[Modal] Wallet ${wallet.id}: ${transactions.length} transacciones totales`);
-      
       const walletTransactions = transactions
         .sort((a, b) => {
           // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
@@ -1119,15 +1092,6 @@ static createWalletModal() {
           const timeB = b.createdAt || b.id;
           return timeB.localeCompare(timeA);
         });
-      
-      // Debug: Log de las primeras 3 transacciones
-      console.log('[Modal] Primeras 3 transacciones:', walletTransactions.slice(0, 3).map(tx => ({
-        id: tx.id,
-        description: tx.description,
-        amount: tx.amount,
-        date: tx.date,
-        createdAt: tx.createdAt
-      })));
 
       // Función interna para etiquetas de tipo de transacción
       const getTransactionTypeLabel = (type) => {
