@@ -1,15 +1,54 @@
 
 /* Modal de transacciones - Diseño estilizado y amigable */
+.wallet-transactions-modal .modal {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+  }
+
 .wallet-transactions-modal .modal-body {
-    max-height: 75vh;
-    overflow-y: auto;
+    flex: 1;
+    overflow: hidden;
     padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
   }
   
   .wallet-transactions-content {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-md);
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  /* Lista de transacciones con scroll */
+  .wallet-transactions-modal .transactions-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: var(--spacing-xs);
+    min-height: 0; /* Importante para que flex funcione correctamente */
+    max-height: 60vh; /* Altura máxima para forzar scroll */
+  }
+  
+  /* Scrollbar personalizado */
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar-track {
+    background: var(--surface-primary);
+    border-radius: 3px;
+  }
+  
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar-thumb {
+    background: var(--pastel-blue);
+    border-radius: 3px;
+  }
+  
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar-thumb:hover {
+    background: var(--interactive-bg);
   }
   
   /* Resumen de wallet compacto */
@@ -184,6 +223,41 @@
     margin: 0;
     font-size: var(--font-size-base);
     opacity: 0.8;
+  }
+  
+  /* Indicador de carga */
+  .wallet-transactions-modal .loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+  }
+  
+  .wallet-transactions-modal .spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--surface-secondary);
+    border-top-color: var(--pastel-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Footer sticky siempre visible */
+  .wallet-transactions-modal .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--white);
+    border-top: 1px solid var(--border-light);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+    z-index: 10;
   }
   
   

@@ -12,6 +12,7 @@ class ModalManager {
         this.escapeHandler = null;
         this.closeButtonHandler = null;
         this.overlayClickHandler = null;
+        this._isOpening = false;
 
         ModalManager.instance = this;
         this.init();
@@ -44,6 +45,9 @@ openModal(modalData) {
   const modal = this.createModal(modalData);
   this.modalsContainer.appendChild(modal);
   this.currentModal = modal;
+  
+  // Marcar que el modal se está abriendo
+  this._isOpening = true;
 
   // Mostrar con animación
   setTimeout(() => {
@@ -52,13 +56,14 @@ openModal(modalData) {
     }
   }, 10);
 
-  // Handlers de cierre - agregar después de un pequeño delay para evitar que eventos
+  // Handlers de cierre - agregar después de un delay más largo para evitar que eventos
   // de click que abrieron el modal lo cierren inmediatamente
   setTimeout(() => {
     if (this.currentModal === modal) {
       this.setupCloseHandlers(modal);
+      this._isOpening = false;
     }
-  }, 100);
+  }, 300);
 
   if (modalData.onShow) modalData.onShow(modal);
   if (modalData.onOpen) modalData.onOpen(modal);
@@ -68,6 +73,11 @@ openModal(modalData) {
     
   
     closeModal() {
+        // No cerrar si el modal se está abriendo
+        if (this._isOpening) {
+            return;
+        }
+        
         if (this.currentModal) {
             this.currentModal.classList.remove('show');
             this.removeEventListeners(); // Limpiar listeners
@@ -1118,10 +1128,17 @@ static createWalletModal() {
       const walletTransactions = transactions
         .sort((a, b) => {
           // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
-          // Si no existe createdAt, usar el id que también es un timestamp
-          const timeA = a.createdAt || a.id;
-          const timeB = b.createdAt || b.id;
-          return timeB.localeCompare(timeA);
+          // Si no existe createdAt, extraer el timestamp del id
+          const getTimestamp = (tx) => {
+            if (tx.createdAt) return new Date(tx.createdAt).getTime();
+            // Extraer timestamp del id (ej: "exp-1764687387892" -> 1764687387892)
+            const match = tx.id.match(/(\d+)/);
+            return match ? parseInt(match[1], 10) : 0;
+          };
+          
+          const timeA = getTimestamp(a);
+          const timeB = getTimestamp(b);
+          return timeB - timeA; // Orden descendente (más reciente primero)
         });
 
       // Función interna para etiquetas de tipo de transacción
@@ -1161,11 +1178,51 @@ static createWalletModal() {
       // Ordenar transacciones dentro de cada grupo por createdAt/id
       Object.keys(groupedTransactions).forEach(dateKey => {
         groupedTransactions[dateKey].transactions.sort((a, b) => {
-          const timeA = a.createdAt || a.id;
-          const timeB = b.createdAt || b.id;
-          return timeB.localeCompare(timeA);
+          const getTimestamp = (tx) => {
+            if (tx.createdAt) return new Date(tx.createdAt).getTime();
+            const match = tx.id.match(/(\d+)/);
+            return match ? parseInt(match[1], 10) : 0;
+          };
+          const timeA = getTimestamp(a);
+          const timeB = getTimestamp(b);
+          return timeB - timeA;
         });
       });
+      
+      // Preparar datos para scroll infinito
+      const sortedDateKeys = Object.keys(groupedTransactions).sort((a, b) => b.localeCompare(a));
+      let currentIndex = 0;
+      const ITEMS_PER_LOAD = 20;
+
+      // Función para renderizar un grupo de transacciones
+      const renderTransactionGroup = (dateKey) => {
+        const group = groupedTransactions[dateKey];
+        return `
+          <div class="transaction-date-group">
+            <div class="date-header">
+              <span class="date-label">${group.name}</span>
+            </div>
+            <div class="date-transactions">
+              ${group.transactions.map(tx => {
+                return `
+                  <div class="transaction-item-modal ${tx.type}" data-transaction-id="${tx.id}">
+                    <div class="transaction-info">
+                      <div class="transaction-type">${getTransactionTypeLabel(tx.type)}</div>
+                      ${tx.description ? `<div class="transaction-description">${tx.description}</div>` : ''}
+                    </div>
+                    <div class="transaction-meta">
+                      ${tx.source ? tx.source : (tx.categoryName ? tx.categoryName : '')}
+                    </div>
+                    <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
+                      ${tx.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(tx.amount), wallet.currency)}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      };
 
       return {
         title: `Transacciones - ${wallet.name}`,
@@ -1181,43 +1238,18 @@ static createWalletModal() {
               </span>
             </div>
 
-            <div class="transactions-list">
+            <div class="transactions-list" id="transactionsList">
               ${walletTransactions.length === 0 ? `
                 <div class="empty-transactions">
                   <div class="empty-icon">📊</div>
                   <h3>No hay transacciones</h3>
                   <p>Esta wallet no tiene movimientos registrados</p>
                 </div>
-              ` : Object.keys(groupedTransactions)
-                .sort((a, b) => b.localeCompare(a)) // Ordenar fechas de más reciente a más antiguo
-                .map(dateKey => {
-                const group = groupedTransactions[dateKey];
-                return `
-                  <div class="transaction-date-group">
-                    <div class="date-header">
-                      <span class="date-label">${group.name}</span>
-                    </div>
-                    <div class="date-transactions">
-                      ${group.transactions.map(tx => {
-                        return `
-                          <div class="transaction-item-modal ${tx.type}" data-transaction-id="${tx.id}">
-                            <div class="transaction-info">
-                              <div class="transaction-type">${getTransactionTypeLabel(tx.type)}</div>
-                              ${tx.description ? `<div class="transaction-description">${tx.description}</div>` : ''}
-                            </div>
-                            <div class="transaction-meta">
-                              ${tx.source ? tx.source : (tx.categoryName ? tx.categoryName : '')}
-                            </div>
-                            <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
-                              ${tx.amount > 0 ? '+' : ''}${Helpers.formatCurrency(Math.abs(tx.amount), wallet.currency)}
-                            </div>
-                          </div>
-                        `;
-                      }).join('')}
-                    </div>
-                  </div>
-                `;
-              }).join('')}
+              ` : ''}
+            </div>
+            <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+              <div class="spinner"></div>
+              <span>Cargando más transacciones...</span>
             </div>
           </div>
         `,
@@ -1225,16 +1257,119 @@ static createWalletModal() {
           <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cerrar</button>
         `,
         onShow: (modal) => {
-          // Opcional: click en transacciones para futuras funcionalidades
-          modal.querySelectorAll('.transaction-item-modal').forEach(el => {
-            el.addEventListener('click', () => {
-              const txId = el.dataset.transactionId;
-              const tx = walletTransactions.find(t => t.id === txId);
-              if (tx) {
-                console.log('Transacción seleccionada:', tx);
-                // Aquí podrías abrir un modal de detalle/edición de transacción
+          if (walletTransactions.length === 0) return;
+          
+          const transactionsList = modal.querySelector('#transactionsList');
+          const loadingIndicator = modal.querySelector('#loadingIndicator');
+          
+          // Función para cargar más transacciones
+          const loadMoreTransactions = () => {
+            if (sortedDateKeys.length === 0) {
+              console.log('No hay más grupos para cargar');
+              return false;
+            }
+            
+            let itemsLoaded = 0;
+            const groupsToLoad = [];
+            
+            // Cargar grupos completos hasta alcanzar aproximadamente ITEMS_PER_LOAD
+            while (sortedDateKeys.length > 0 && itemsLoaded < ITEMS_PER_LOAD) {
+              const dateKey = sortedDateKeys[0];
+              const groupSize = groupedTransactions[dateKey].transactions.length;
+              
+              groupsToLoad.push(dateKey);
+              itemsLoaded += groupSize;
+              
+              // Remover el grupo de la lista
+              sortedDateKeys.shift();
+            }
+            
+            console.log(`Cargando ${groupsToLoad.length} grupos con ${itemsLoaded} transacciones. Quedan ${sortedDateKeys.length} grupos`);
+            
+            // Renderizar todos los grupos seleccionados
+            groupsToLoad.forEach(dateKey => {
+              const groupHTML = renderTransactionGroup(dateKey);
+              transactionsList.insertAdjacentHTML('beforeend', groupHTML);
+              currentIndex += groupedTransactions[dateKey].transactions.length;
+            });
+            
+            // Agregar event listeners a las nuevas transacciones
+            modal.querySelectorAll('.transaction-item-modal').forEach(el => {
+              if (!el.dataset.listenerAdded) {
+                el.dataset.listenerAdded = 'true';
+                el.addEventListener('click', () => {
+                  const txId = el.dataset.transactionId;
+                  const tx = walletTransactions.find(t => t.id === txId);
+                  if (tx) {
+                    console.log('Transacción seleccionada:', tx);
+                  }
+                });
               }
             });
+            
+            return sortedDateKeys.length > 0;
+          };
+          
+          // Cargar primeras transacciones
+          loadMoreTransactions();
+          
+          // Detectar scroll para cargar más
+          const modalContent = modal.querySelector('.wallet-transactions-content');
+          let isLoading = false;
+          
+          console.log('📜 Configurando scroll listener. Dimensiones iniciales:', {
+            scrollHeight: transactionsList.scrollHeight,
+            clientHeight: transactionsList.clientHeight,
+            hasScroll: transactionsList.scrollHeight > transactionsList.clientHeight
+          });
+          
+          let lastScrollTop = 0;
+          let allLoaded = false;
+          
+          transactionsList.addEventListener('scroll', (e) => {
+            const scrollTop = transactionsList.scrollTop;
+            const scrollHeight = transactionsList.scrollHeight;
+            const clientHeight = transactionsList.clientHeight;
+            const scrollPercentage = ((scrollTop + clientHeight) / scrollHeight) * 100;
+            
+            // Detectar dirección del scroll
+            const scrollingDown = scrollTop > lastScrollTop;
+            lastScrollTop = scrollTop;
+            
+            // Si hace scroll hacia arriba y ya se cargó todo, ocultar el mensaje
+            if (!scrollingDown && allLoaded && scrollPercentage < 95) {
+              loadingIndicator.style.display = 'none';
+            }
+            
+            console.log('📜 Scroll event:', {
+              scrollTop,
+              scrollHeight,
+              clientHeight,
+              scrollPercentage: scrollPercentage.toFixed(1) + '%',
+              gruposRestantes: sortedDateKeys.length,
+              isLoading,
+              scrollingDown
+            });
+            
+            // Cargar más cuando esté al 80% del scroll y vaya hacia abajo
+            if (scrollPercentage >= 80 && !isLoading && sortedDateKeys.length > 0 && scrollingDown) {
+              console.log(`✅ Scroll al ${scrollPercentage.toFixed(1)}% - Cargando más transacciones...`);
+              isLoading = true;
+              loadingIndicator.style.display = 'flex';
+              
+              setTimeout(() => {
+                const hasMore = loadMoreTransactions();
+                loadingIndicator.style.display = 'none';
+                isLoading = false;
+                
+                if (!hasMore) {
+                  console.log('No hay más transacciones para cargar');
+                  allLoaded = true;
+                  loadingIndicator.innerHTML = '<span style="color: var(--text-light); font-size: 12px;">No hay más transacciones</span>';
+                  loadingIndicator.style.display = 'flex';
+                }
+              }, 300);
+            }
           });
         }
       };

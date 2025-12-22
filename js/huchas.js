@@ -43,6 +43,7 @@ class HuchasManager {
   }
 
   async render() {
+    console.log('🔄 HuchasManager.render() llamado');
     
     AppState.wallets = await Storage.getWallets() || [];
     const wallets = AppState.wallets;
@@ -114,7 +115,11 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
         const transactionsHTML = await this.getRecentTransactionsHTML(wallet.id, wallet.currency);
         const container = this.walletsContainer.querySelector(`.recent-transactions[data-wallet-id="${wallet.id}"]`);
         if (container) {
+          console.log(`[${wallet.name}] Insertando HTML en el DOM. Container encontrado:`, !!container);
           container.innerHTML = transactionsHTML;
+          console.log(`[${wallet.name}] HTML insertado. Longitud:`, transactionsHTML.length, 'caracteres');
+        } else {
+          console.error(`[${wallet.name}] ❌ Container NO encontrado para walletId: ${wallet.id}`);
         }
       }
       
@@ -127,15 +132,47 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     const transactionRepo = new TransactionRepository();
     const transactions = await transactionRepo.getByWalletId(walletId) || [];
     
+    const wallet = AppState.wallets.find(w => w.id === walletId);
+    console.log(`[${wallet?.name}] Cargando transacciones recientes:`, {
+      walletId,
+      totalTransactions: transactions.length,
+      transactionIds: transactions.map(t => t.id).slice(0, 5)
+    });
+    
     // Ordenar por createdAt (timestamp completo) para obtener el orden exacto de creación
-    // Si no existe createdAt, usar el id que también es un timestamp
+    // Si no existe createdAt, extraer el timestamp del id
     const walletTransactions = transactions
       .sort((a, b) => {
-        const timeA = a.createdAt || a.id;
-        const timeB = b.createdAt || b.id;
-        return timeB.localeCompare(timeA);
+        // Extraer timestamp: si es createdAt usar directamente, si es id extraer el número
+        const getTimestamp = (tx) => {
+          if (tx.createdAt) return new Date(tx.createdAt).getTime();
+          // Extraer timestamp del id (ej: "exp-1764687387892" -> 1764687387892)
+          const match = tx.id.match(/(\d+)/);
+          return match ? parseInt(match[1], 10) : 0;
+        };
+        
+        const timeA = getTimestamp(a);
+        const timeB = getTimestamp(b);
+        return timeB - timeA; // Orden descendente (más reciente primero)
       })
       .slice(0, 3);
+    
+    console.log(`[${wallet?.name}] Top 3 transacciones:`, walletTransactions.map(t => ({
+      id: t.id,
+      createdAt: t.createdAt,
+      type: t.type,
+      amount: t.amount,
+      date: t.date,
+      sortKey: t.createdAt || t.id
+    })));
+    
+    // Mostrar también las últimas 5 transacciones ANTES de ordenar para comparar
+    const last5BeforeSort = transactions.slice(-5).map(t => ({
+      id: t.id,
+      createdAt: t.createdAt,
+      sortKey: t.createdAt || t.id
+    }));
+    console.log(`[${wallet?.name}] Últimas 5 transacciones (sin ordenar):`, last5BeforeSort);
 
     if (walletTransactions.length === 0) {
       return `
@@ -392,7 +429,9 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }
 
     if (await Storage.addIncome(walletId, amount, source, description)) {
-      await AppState.refreshData();
+      const wallet = AppState.wallets.find(w => w.id === walletId);
+      console.log(`✅ Ingreso agregado a ${wallet?.name} (${walletId})`);
+      await AppState.refreshData(); // Ya emite 'dataUpdated' internamente
       window.appEvents.emit('closeModal');
       Helpers.showToast('Ingreso agregado exitosamente', 'success');
     } else {
@@ -418,7 +457,7 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }
 
     if (await Storage.transferMoney(fromWalletId, toWalletId, amount, description)) {
-      await AppState.refreshData();
+      await AppState.refreshData(); // Ya emite 'dataUpdated' internamente
       window.appEvents.emit('closeModal');
       Helpers.showToast('Transferencia realizada exitosamente', 'success');
     } else {
