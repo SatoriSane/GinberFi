@@ -162,43 +162,34 @@ class PagosManager {
 
     const currency = wallet ? wallet.currency : 'BOB';
     const recurrenceIcon = payment.isRecurring ? '⟳' : '';
-    const recurrenceText = this.getRecurrenceText(payment.recurrence);
     
     // Calculate days until due
     const daysUntil = this.getDaysUntilDue(payment.dueDate);
     const dueDateText = daysUntil === 0 ? 'HOY' : 
                         daysUntil === 1 ? 'MAÑANA' :
-                        daysUntil < 0 ? `VENCIDO ${Math.abs(daysUntil)}d` :
+                        daysUntil < 0 ? `VENCIDO` :
                         Helpers.formatDate(payment.dueDate);
 
     return `
       <div class="payment-item" data-payment-id="${payment.id}">
-        <div class="payment-main">
-          <div class="payment-info">
-            <div class="payment-name">${payment.name}</div>
-            <div class="payment-details">
-              <span class="payment-date ${daysUntil < 0 ? 'overdue' : ''}">${dueDateText}</span>
-              ${category ? `<span class="payment-category">🏷️ ${category.name}</span>` : ''}
-              ${subcategory ? `<span class="payment-subcategory">${subcategory.name}</span>` : ''}
-              ${payment.isRecurring ? `<span class="payment-recurrence">${recurrenceIcon} ${recurrenceText}</span>` : ''}
+        <div class="payment-item-content">
+          <div class="payment-left">
+            <div class="payment-title">
+              ${payment.name}
+              ${payment.isRecurring ? `<span class="recurring-indicator">⟳</span>` : ''}
+            </div>
+            <div class="payment-subtitle">
+              ${subcategory ? `${category.name} · ${subcategory.name}` : ''}
             </div>
           </div>
-          <div class="payment-amount-container">
+          <div class="payment-right">
+            <div class="payment-date-badge ${daysUntil < 0 ? 'overdue' : ''}">${dueDateText}</div>
             <div class="payment-amount">${Helpers.formatCurrency(payment.amount, currency)}</div>
-            ${wallet ? `<div class="payment-wallet">${wallet.name}</div>` : ''}
           </div>
         </div>
-        <div class="payment-actions">
-          <button class="payment-action-btn pay-btn" data-payment-id="${payment.id}" title="Registrar pago">
-            ✓ Pagar
-          </button>
-          <button class="payment-action-btn edit-btn" data-payment-id="${payment.id}" title="Editar">
-            ✏️
-          </button>
-          <button class="payment-action-btn postpone-btn" data-payment-id="${payment.id}" title="Posponer">
-            ⏰
-          </button>
-        </div>
+        <button class="payment-action-btn" data-payment-id="${payment.id}" title="Registrar pago">
+          Pagar
+        </button>
       </div>
     `;
   }
@@ -226,7 +217,7 @@ class PagosManager {
 
   attachEventListeners() {
     // Pay buttons
-    this.pagosContainer.querySelectorAll('.pay-btn').forEach(btn => {
+    this.pagosContainer.querySelectorAll('.payment-action-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const paymentId = btn.dataset.paymentId;
@@ -234,31 +225,11 @@ class PagosManager {
       });
     });
 
-    // Edit buttons
-    this.pagosContainer.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const paymentId = btn.dataset.paymentId;
+    // Click on payment item content to edit
+    this.pagosContainer.querySelectorAll('.payment-item-content').forEach(content => {
+      content.addEventListener('click', (e) => {
+        const paymentId = content.closest('.payment-item').dataset.paymentId;
         this.openEditPaymentModal(paymentId);
-      });
-    });
-
-    // Postpone buttons
-    this.pagosContainer.querySelectorAll('.postpone-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const paymentId = btn.dataset.paymentId;
-        this.openPostponeModal(paymentId);
-      });
-    });
-
-    // Click on payment item to view details
-    this.pagosContainer.querySelectorAll('.payment-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        if (!e.target.closest('.payment-actions')) {
-          const paymentId = item.dataset.paymentId;
-          this.openPaymentDetailsModal(paymentId);
-        }
       });
     });
   }
@@ -287,30 +258,6 @@ class PagosManager {
     if (!payment) return;
 
     const modalData = ModalManager.executePaymentModal(payment);
-    window.appEvents.emit('openModal', modalData);
-  }
-
-  async openPostponeModal(paymentId) {
-    const payment = this.payments.find(p => p.id === paymentId);
-    if (!payment) return;
-
-    const days = prompt('¿Cuántos días deseas posponer el pago?', '7');
-    if (!days || isNaN(days)) return;
-
-    const success = await this.scheduledRepo.postponePayment(paymentId, parseInt(days));
-    if (success) {
-      Helpers.showToast(`Pago pospuesto ${days} días`, 'success');
-      this.render();
-    } else {
-      Helpers.showToast('Error al posponer el pago', 'error');
-    }
-  }
-
-  async openPaymentDetailsModal(paymentId) {
-    const payment = this.payments.find(p => p.id === paymentId);
-    if (!payment) return;
-
-    const modalData = ModalManager.paymentDetailsModal(payment);
     window.appEvents.emit('openModal', modalData);
   }
 
@@ -400,8 +347,8 @@ class PagosManager {
   async handleExecutePayment(form) {
     const formData = new FormData(form);
     const paymentId = formData.get('paymentId');
-    const action = formData.get('action'); // 'pay', 'skip'
     const actualDate = formData.get('actualDate');
+    const walletId = formData.get('walletId'); // Wallet seleccionada en el formulario
     
     const payment = await this.scheduledRepo.getById(paymentId);
     if (!payment) {
@@ -409,51 +356,39 @@ class PagosManager {
       return;
     }
 
-    if (action === 'pay') {
-      // Create expense
-      const expenseData = {
-        name: payment.name,
-        amount: payment.amount,
-        date: actualDate || payment.dueDate,
-        walletId: payment.walletId,
-        subcategoryId: payment.subcategoryId,
-        categoryId: payment.categoryId
-      };
+    // Create expense with selected wallet
+    const expenseData = {
+      name: payment.name,
+      amount: payment.amount,
+      date: actualDate || payment.dueDate,
+      walletId: walletId, // Usar la wallet seleccionada
+      subcategoryId: payment.subcategoryId,
+      categoryId: payment.categoryId
+    };
 
-      // Check wallet balance
-      const wallet = AppState.wallets.find(w => w.id === payment.walletId);
-      if (!wallet || wallet.balance < payment.amount) {
-        Helpers.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
-        return;
-      }
+    // Check wallet balance
+    const wallet = AppState.wallets.find(w => w.id === walletId);
+    if (!wallet || wallet.balance < payment.amount) {
+      Helpers.showToast('Saldo insuficiente en la wallet seleccionada', 'error');
+      return;
+    }
 
-      // Add expense
-      const expenseSuccess = await Storage.addExpense(expenseData);
-      if (!expenseSuccess) {
-        Helpers.showToast('Error al registrar el gasto', 'error');
-        return;
-      }
+    // Add expense
+    const expenseSuccess = await Storage.addExpense(expenseData);
+    if (!expenseSuccess) {
+      Helpers.showToast('Error al registrar el gasto', 'error');
+      return;
+    }
 
-      // Mark payment as paid
-      const paymentSuccess = await this.scheduledRepo.markAsPaid(paymentId, actualDate);
-      if (paymentSuccess) {
-        await AppState.refreshData();
-        Helpers.showToast('Pago registrado exitosamente', 'success');
-        window.appEvents.emit('closeModal');
-        this.render();
-      } else {
-        Helpers.showToast('Error al actualizar el pago programado', 'error');
-      }
-    } else if (action === 'skip') {
-      const reason = formData.get('skipReason') || '';
-      const success = await this.scheduledRepo.skipPayment(paymentId, reason);
-      if (success) {
-        Helpers.showToast('Pago omitido', 'success');
-        window.appEvents.emit('closeModal');
-        this.render();
-      } else {
-        Helpers.showToast('Error al omitir el pago', 'error');
-      }
+    // Mark payment as paid
+    const paymentSuccess = await this.scheduledRepo.markAsPaid(paymentId, actualDate);
+    if (paymentSuccess) {
+      await AppState.refreshData();
+      Helpers.showToast('Pago registrado exitosamente', 'success');
+      window.appEvents.emit('closeModal');
+      this.render();
+    } else {
+      Helpers.showToast('Error al actualizar el pago programado', 'error');
     }
   }
 }

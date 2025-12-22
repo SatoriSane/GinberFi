@@ -81,41 +81,185 @@
   justify-content: flex-end; /* versión móvil aplicada */
 }
 
+/* IMPORTANTE: Botones de acción del modal */
 .modal-footer button {
   width: 100%; /* versión móvil aplicada */
-  padding: 1rem; /* versión móvil aplicada */
+  padding: 14px 24px; /* versión móvil aplicada */
   margin: 0; /* versión móvil aplicada */
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Form styles within modals */
+.modal-footer .btn-primary {
+  background: linear-gradient(135deg, #D1FAE5 0%, #BFDBFE 100%);
+  color: var(--dark-blue);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.modal-footer .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, #A7F3D0 0%, #93C5FD 100%);
+}
+
+.modal-footer .btn-secondary {
+  background: #F3F4F6;
+  color: #6B7280;
+  border: 2px solid #E5E7EB;
+}
+
+.modal-footer .btn-secondary:hover {
+  background: #E5E7EB;
+  color: #374151;
+  border-color: #D1D5DB;
+}
+
+/* Form styles within modals - JERARQUÍA MEJORADA */
 .modal-form .form-group {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
+/* Labels más sutiles pero legibles */
 .modal-form label {
   display: block;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
   font-weight: 600;
-  color: var(--dark-blue);
+  color: #374151;
+  font-size: 0.875rem;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
 }
 
+/* Inputs más grandes y con mejor jerarquía */
 .modal-form input,
 .modal-form select,
 .modal-form textarea {
   width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 2px solid var(--pastel-blue);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  transition: border-color 0.2s ease;
+  padding: 12px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--dark-blue);
+  transition: all 0.2s ease;
+  background: #FFFFFF;
+}
+
+.modal-form input:hover,
+.modal-form select:hover,
+.modal-form textarea:hover {
+  border-color: #D1D5DB;
 }
 
 .modal-form input:focus,
 .modal-form select:focus,
 .modal-form textarea:focus {
   outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  background: #FFFFFF;
+}
+
+/* Input de fecha y número más destacado */
+.modal-form input[type="date"],
+.modal-form input[type="number"] {
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+/* Select con mejor estilo */
+.modal-form select {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Textarea con altura óptima */
+.modal-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+/* Checkbox styles */
+.modal-form input[type="checkbox"] {
+  width: auto;
+  margin-right: var(--spacing-sm);
+  cursor: pointer;
+  accent-color: var(--dark-blue);
+  transform: scale(1.2);
+}
+
+.modal-form label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.modal-form label:has(input[type="checkbox"]):hover {
+  background-color: rgba(66, 153, 225, 0.05);
+}
+
+/* Radio buttons styles */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--pastel-blue);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.radio-group label:hover {
+  background-color: rgba(66, 153, 225, 0.05);
   border-color: var(--dark-blue);
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.radio-group input[type="radio"] {
+  width: auto;
+  margin-right: var(--spacing-sm);
+  cursor: pointer;
+  accent-color: var(--dark-blue);
+  transform: scale(1.2);
+}
+
+.radio-group input[type="radio"]:checked + span,
+.radio-group label:has(input[type="radio"]:checked) {
+  background-color: rgba(66, 153, 225, 0.1);
+  border-color: var(--dark-blue);
+  font-weight: 600;
+}
+
+/* Form row for side-by-side fields */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Specific modal types */
@@ -344,4 +488,180 @@
 .currency-option.selected .currency-code,
 .currency-option.selected .currency-name {
   color: var(--dark-blue);
+}
+
+/* Button styles for modals */
+.btn-warning {
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  color: #92400E;
+  border: 1px solid #FCD34D;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #FDE68A, #FCD34D);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #FEE2E2, #FECACA);
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #FECACA, #FCA5A5);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.danger-zone {
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+/* Payment Info Box - MINIMALISTA Y LIMPIO */
+.payment-info-box {
+  background: #F9FAFB;
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid #E5E7EB;
+}
+
+.payment-info-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.payment-info-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  flex: 1;
+}
+
+.payment-info-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+
+.payment-info-detail {
+  font-size: 0.875rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .payment-info-box {
+    padding: var(--spacing-lg);
+  }
+
+  .payment-info-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .payment-info-amount {
+    font-size: 1.75rem;
+  }
+}
+
+.payment-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+}
+
+.detail-value {
+  font-weight: 600;
+  color: var(--dark-blue);
+  text-align: right;
+}
+
+.payment-history {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.payment-history h4 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--dark-blue);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.history-item {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  align-items: center;
+}
+
+.history-item.paid {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.history-item.skipped {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.history-date {
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+.history-status {
+  font-weight: 600;
+}
+
+.history-reason {
+  color: var(--text-light);
+  font-style: italic;
+  margin-left: auto;
 }

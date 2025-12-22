@@ -1663,154 +1663,55 @@ static createQuickExpenseModal() {
   }
 
   static executePaymentModal(payment) {
-    const wallet = AppState.wallets.find(w => w.id === payment.walletId);
-    const currency = wallet ? wallet.currency : 'BOB';
+    const wallets = AppState.wallets;
+    const currentWallet = wallets.find(w => w.id === payment.walletId);
+    const currency = currentWallet ? currentWallet.currency : 'BOB';
     const today = new Date().toISOString().split('T')[0];
 
+    const walletOptions = wallets.map(w => 
+      `<option value="${w.id}" ${w.id === payment.walletId ? 'selected' : ''}>
+        ${w.name} (${Helpers.formatCurrency(w.balance, w.currency)})
+      </option>`
+    ).join('');
+
     return {
-      title: 'Ejecutar Pago',
+      title: 'Registrar Pago',
       className: 'payment-modal',
       body: `
         <form class="modal-form" id="executePaymentForm">
           <input type="hidden" name="paymentId" value="${payment.id}">
+          <input type="hidden" name="action" value="pay">
           
-          <div class="payment-summary">
-            <h3>${payment.name}</h3>
-            <p class="payment-amount-big">${Helpers.formatCurrency(payment.amount, currency)}</p>
-            <p class="payment-meta">Vencimiento: ${Helpers.formatDate(payment.dueDate)}</p>
+          <div class="payment-info-box">
+            <div class="payment-info-main">
+              <div class="payment-info-name">${payment.name}</div>
+              <div class="payment-info-amount">${Helpers.formatCurrency(payment.amount, currency)}</div>
+            </div>
+            <div class="payment-info-detail">
+              Vence: ${Helpers.formatDate(payment.dueDate)}
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Acción</label>
-            <div class="radio-group">
-              <label>
-                <input type="radio" name="action" value="pay" checked>
-                Registrar pago realizado
-              </label>
-              <label>
-                <input type="radio" name="action" value="skip">
-                Omitir este pago
-              </label>
-            </div>
+            <label for="paymentWallet">Pagar con Wallet</label>
+            <select id="paymentWallet" name="walletId" required>
+              ${walletOptions}
+            </select>
           </div>
 
-          <div id="paymentDateField">
-            <div class="form-group">
-              <label for="actualPaymentDate">Fecha del pago</label>
-              <input type="date" id="actualPaymentDate" name="actualDate" value="${today}">
-            </div>
-          </div>
-
-          <div id="skipReasonField" style="display: none;">
-            <div class="form-group">
-              <label for="skipReason">Motivo (opcional)</label>
-              <textarea id="skipReason" name="skipReason" rows="2" placeholder="¿Por qué omites este pago?"></textarea>
-            </div>
+          <div class="form-group">
+            <label for="actualPaymentDate">Fecha del pago</label>
+            <input type="date" id="actualPaymentDate" name="actualDate" value="${today}" required>
           </div>
         </form>
       `,
       footer: `
         <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
-        <button type="submit" class="btn-primary" form="executePaymentForm">Confirmar</button>
-      `,
-      onShow: (modal) => {
-        const radioButtons = modal.querySelectorAll('input[name="action"]');
-        const paymentDateField = modal.querySelector('#paymentDateField');
-        const skipReasonField = modal.querySelector('#skipReasonField');
-
-        radioButtons.forEach(radio => {
-          radio.addEventListener('change', (e) => {
-            if (e.target.value === 'pay') {
-              paymentDateField.style.display = 'block';
-              skipReasonField.style.display = 'none';
-            } else {
-              paymentDateField.style.display = 'none';
-              skipReasonField.style.display = 'block';
-            }
-          });
-        });
-      }
-    };
-  }
-
-  static paymentDetailsModal(payment) {
-    const wallet = AppState.wallets.find(w => w.id === payment.walletId);
-    const category = AppState.categories.find(c => c.id === payment.categoryId);
-    let subcategory = null;
-    if (category) {
-      subcategory = category.subcategories.find(s => s.id === payment.subcategoryId);
-    }
-
-    const currency = wallet ? wallet.currency : 'BOB';
-    const recurrenceText = payment.isRecurring ? 
-      ModalManager.getRecurrenceText(payment.recurrence) : 'Pago único';
-
-    const historyHTML = payment.executionHistory && payment.executionHistory.length > 0 ? `
-      <div class="payment-history">
-        <h4>Historial de Ejecuciones</h4>
-        <div class="history-list">
-          ${payment.executionHistory.map(h => `
-            <div class="history-item ${h.status}">
-              <span class="history-date">${Helpers.formatDate(h.date || h.executedAt)}</span>
-              <span class="history-status">${h.status === 'paid' ? '✓ Pagado' : h.status === 'skipped' ? '⊘ Omitido' : '⏰ Pospuesto'}</span>
-              ${h.reason ? `<span class="history-reason">${h.reason}</span>` : ''}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    ` : '';
-
-    return {
-      title: 'Detalles del Pago',
-      className: 'payment-details-modal',
-      body: `
-        <div class="payment-details-content">
-          <div class="detail-row">
-            <span class="detail-label">Nombre:</span>
-            <span class="detail-value">${payment.name}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Monto:</span>
-            <span class="detail-value">${Helpers.formatCurrency(payment.amount, currency)}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Próximo vencimiento:</span>
-            <span class="detail-value">${Helpers.formatDate(payment.dueDate)}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Wallet:</span>
-            <span class="detail-value">${wallet ? wallet.name : 'N/A'}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Categoría:</span>
-            <span class="detail-value">${category ? category.name : 'N/A'}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Subcategoría:</span>
-            <span class="detail-value">${subcategory ? subcategory.name : 'N/A'}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Recurrencia:</span>
-            <span class="detail-value">${recurrenceText}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Notificación:</span>
-            <span class="detail-value">${payment.notifyDaysBefore || 3} días antes</span>
-          </div>
-          ${payment.notes ? `
-          <div class="detail-row">
-            <span class="detail-label">Notas:</span>
-            <span class="detail-value">${payment.notes}</span>
-          </div>
-          ` : ''}
-          ${historyHTML}
-        </div>
-      `,
-      footer: `
-        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cerrar</button>
+        <button type="submit" class="btn-primary" form="executePaymentForm">Registrar Pago</button>
       `
     };
   }
+
 
   static getRecurrenceText(recurrence) {
     const texts = {
