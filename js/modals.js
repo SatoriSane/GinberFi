@@ -1439,6 +1439,391 @@ static createQuickExpenseModal() {
       `
   };
 }
+
+  // ============================================
+  // SCHEDULED PAYMENTS MODALS
+  // ============================================
+
+  static createScheduledPaymentModal() {
+    const wallets = AppState.wallets;
+    const categories = AppState.categories;
+    
+    const walletOptions = wallets.map(w => 
+      `<option value="${w.id}">${w.name} (${Helpers.formatCurrency(w.balance, w.currency)})</option>`
+    ).join('');
+    
+    const subcategoryOptions = categories.map(cat => {
+      if (!cat.subcategories || cat.subcategories.length === 0) return '';
+      const opts = cat.subcategories.map(sub => 
+        `<option value="${sub.id}">${cat.name} → ${sub.name}</option>`
+      ).join('');
+      return opts;
+    }).join('');
+
+    const today = new Date().toISOString().split('T')[0];
+
+    return {
+      title: 'Programar Pago',
+      className: 'payment-modal',
+      body: `
+        <form class="modal-form" id="scheduledPaymentForm">
+          <div class="form-group">
+            <label for="paymentName">Nombre del Pago</label>
+            <input type="text" id="paymentName" name="name" required placeholder="ej: Netflix, Alquiler, Luz">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="paymentAmount">Monto</label>
+              <input type="number" id="paymentAmount" name="amount" step="0.01" required placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label for="paymentDate">Fecha de Vencimiento</label>
+              <input type="date" id="paymentDate" name="dueDate" required value="${today}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="paymentWallet">Pagar con Wallet</label>
+            <select id="paymentWallet" name="walletId" required>
+              ${walletOptions}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="paymentSubcategory">Categoría / Subcategoría</label>
+            <select id="paymentSubcategory" name="subcategoryId" required>
+              <option value="">-- Selecciona --</option>
+              ${subcategoryOptions}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="paymentRecurring" name="isRecurring" value="true">
+              Pago Recurrente
+            </label>
+          </div>
+
+          <div id="recurrenceOptions" style="display: none;">
+            <div class="form-group">
+              <label for="paymentRecurrence">Frecuencia</label>
+              <select id="paymentRecurrence" name="recurrence">
+                <option value="weekly">Semanal</option>
+                <option value="biweekly">Quincenal</option>
+                <option value="monthly" selected>Mensual</option>
+                <option value="quarterly">Trimestral</option>
+                <option value="yearly">Anual</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="paymentNotify">Notificar con X días de anticipación</label>
+            <input type="number" id="paymentNotify" name="notifyDaysBefore" value="3" min="0" max="30">
+          </div>
+
+          <div class="form-group">
+            <label for="paymentNotes">Notas (opcional)</label>
+            <textarea id="paymentNotes" name="notes" rows="2" placeholder="Información adicional..."></textarea>
+          </div>
+        </form>
+      `,
+      footer: `
+        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+        <button type="submit" class="btn-primary" form="scheduledPaymentForm">Programar</button>
+      `,
+      onShow: (modal) => {
+        const recurringCheckbox = modal.querySelector('#paymentRecurring');
+        const recurrenceOptions = modal.querySelector('#recurrenceOptions');
+        
+        recurringCheckbox.addEventListener('change', (e) => {
+          recurrenceOptions.style.display = e.target.checked ? 'block' : 'none';
+        });
+      }
+    };
+  }
+
+  static editScheduledPaymentModal(payment) {
+    const wallets = AppState.wallets;
+    const categories = AppState.categories;
+    
+    const walletOptions = wallets.map(w => 
+      `<option value="${w.id}" ${w.id === payment.walletId ? 'selected' : ''}>
+        ${w.name} (${Helpers.formatCurrency(w.balance, w.currency)})
+      </option>`
+    ).join('');
+    
+    const subcategoryOptions = categories.map(cat => {
+      if (!cat.subcategories || cat.subcategories.length === 0) return '';
+      const opts = cat.subcategories.map(sub => 
+        `<option value="${sub.id}" ${sub.id === payment.subcategoryId ? 'selected' : ''}>
+          ${cat.name} → ${sub.name}
+        </option>`
+      ).join('');
+      return opts;
+    }).join('');
+
+    return {
+      title: 'Editar Pago Programado',
+      className: 'payment-modal',
+      body: `
+        <form class="modal-form" id="editScheduledPaymentForm">
+          <input type="hidden" name="paymentId" value="${payment.id}">
+          
+          <div class="form-group">
+            <label for="editPaymentName">Nombre del Pago</label>
+            <input type="text" id="editPaymentName" name="name" required value="${payment.name}">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editPaymentAmount">Monto</label>
+              <input type="number" id="editPaymentAmount" name="amount" step="0.01" required value="${payment.amount}">
+            </div>
+            <div class="form-group">
+              <label for="editPaymentDate">Fecha de Vencimiento</label>
+              <input type="date" id="editPaymentDate" name="dueDate" required value="${payment.dueDate}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editPaymentWallet">Pagar con Wallet</label>
+            <select id="editPaymentWallet" name="walletId" required>
+              ${walletOptions}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editPaymentSubcategory">Categoría / Subcategoría</label>
+            <select id="editPaymentSubcategory" name="subcategoryId" required>
+              ${subcategoryOptions}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="editPaymentRecurring" name="isRecurring" value="true" ${payment.isRecurring ? 'checked' : ''}>
+              Pago Recurrente
+            </label>
+          </div>
+
+          <div id="editRecurrenceOptions" style="display: ${payment.isRecurring ? 'block' : 'none'};">
+            <div class="form-group">
+              <label for="editPaymentRecurrence">Frecuencia</label>
+              <select id="editPaymentRecurrence" name="recurrence">
+                <option value="weekly" ${payment.recurrence === 'weekly' ? 'selected' : ''}>Semanal</option>
+                <option value="biweekly" ${payment.recurrence === 'biweekly' ? 'selected' : ''}>Quincenal</option>
+                <option value="monthly" ${payment.recurrence === 'monthly' ? 'selected' : ''}>Mensual</option>
+                <option value="quarterly" ${payment.recurrence === 'quarterly' ? 'selected' : ''}>Trimestral</option>
+                <option value="yearly" ${payment.recurrence === 'yearly' ? 'selected' : ''}>Anual</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editPaymentNotify">Notificar con X días de anticipación</label>
+            <input type="number" id="editPaymentNotify" name="notifyDaysBefore" value="${payment.notifyDaysBefore || 3}" min="0" max="30">
+          </div>
+
+          <div class="form-group">
+            <label for="editPaymentNotes">Notas</label>
+            <textarea id="editPaymentNotes" name="notes" rows="2">${payment.notes || ''}</textarea>
+          </div>
+
+          <div class="form-group danger-zone">
+            <button type="button" class="btn-danger" id="deletePaymentBtn">Eliminar Pago Programado</button>
+          </div>
+        </form>
+      `,
+      footer: `
+        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+        <button type="submit" class="btn-primary" form="editScheduledPaymentForm">Guardar Cambios</button>
+      `,
+      onShow: async (modal) => {
+        const recurringCheckbox = modal.querySelector('#editPaymentRecurring');
+        const recurrenceOptions = modal.querySelector('#editRecurrenceOptions');
+        
+        recurringCheckbox.addEventListener('change', (e) => {
+          recurrenceOptions.style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        const deleteBtn = modal.querySelector('#deletePaymentBtn');
+        deleteBtn.addEventListener('click', async () => {
+          if (confirm('¿Estás seguro de que deseas eliminar este pago programado?')) {
+            const repo = new ScheduledPaymentRepository();
+            await repo.delete(payment.id);
+            window.appEvents.emit('closeModal');
+            window.appEvents.emit('dataUpdated');
+            Helpers.showToast('Pago programado eliminado', 'success');
+          }
+        });
+      }
+    };
+  }
+
+  static executePaymentModal(payment) {
+    const wallet = AppState.wallets.find(w => w.id === payment.walletId);
+    const currency = wallet ? wallet.currency : 'BOB';
+    const today = new Date().toISOString().split('T')[0];
+
+    return {
+      title: 'Ejecutar Pago',
+      className: 'payment-modal',
+      body: `
+        <form class="modal-form" id="executePaymentForm">
+          <input type="hidden" name="paymentId" value="${payment.id}">
+          
+          <div class="payment-summary">
+            <h3>${payment.name}</h3>
+            <p class="payment-amount-big">${Helpers.formatCurrency(payment.amount, currency)}</p>
+            <p class="payment-meta">Vencimiento: ${Helpers.formatDate(payment.dueDate)}</p>
+          </div>
+
+          <div class="form-group">
+            <label>Acción</label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="action" value="pay" checked>
+                Registrar pago realizado
+              </label>
+              <label>
+                <input type="radio" name="action" value="skip">
+                Omitir este pago
+              </label>
+            </div>
+          </div>
+
+          <div id="paymentDateField">
+            <div class="form-group">
+              <label for="actualPaymentDate">Fecha del pago</label>
+              <input type="date" id="actualPaymentDate" name="actualDate" value="${today}">
+            </div>
+          </div>
+
+          <div id="skipReasonField" style="display: none;">
+            <div class="form-group">
+              <label for="skipReason">Motivo (opcional)</label>
+              <textarea id="skipReason" name="skipReason" rows="2" placeholder="¿Por qué omites este pago?"></textarea>
+            </div>
+          </div>
+        </form>
+      `,
+      footer: `
+        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+        <button type="submit" class="btn-primary" form="executePaymentForm">Confirmar</button>
+      `,
+      onShow: (modal) => {
+        const radioButtons = modal.querySelectorAll('input[name="action"]');
+        const paymentDateField = modal.querySelector('#paymentDateField');
+        const skipReasonField = modal.querySelector('#skipReasonField');
+
+        radioButtons.forEach(radio => {
+          radio.addEventListener('change', (e) => {
+            if (e.target.value === 'pay') {
+              paymentDateField.style.display = 'block';
+              skipReasonField.style.display = 'none';
+            } else {
+              paymentDateField.style.display = 'none';
+              skipReasonField.style.display = 'block';
+            }
+          });
+        });
+      }
+    };
+  }
+
+  static paymentDetailsModal(payment) {
+    const wallet = AppState.wallets.find(w => w.id === payment.walletId);
+    const category = AppState.categories.find(c => c.id === payment.categoryId);
+    let subcategory = null;
+    if (category) {
+      subcategory = category.subcategories.find(s => s.id === payment.subcategoryId);
+    }
+
+    const currency = wallet ? wallet.currency : 'BOB';
+    const recurrenceText = payment.isRecurring ? 
+      ModalManager.getRecurrenceText(payment.recurrence) : 'Pago único';
+
+    const historyHTML = payment.executionHistory && payment.executionHistory.length > 0 ? `
+      <div class="payment-history">
+        <h4>Historial de Ejecuciones</h4>
+        <div class="history-list">
+          ${payment.executionHistory.map(h => `
+            <div class="history-item ${h.status}">
+              <span class="history-date">${Helpers.formatDate(h.date || h.executedAt)}</span>
+              <span class="history-status">${h.status === 'paid' ? '✓ Pagado' : h.status === 'skipped' ? '⊘ Omitido' : '⏰ Pospuesto'}</span>
+              ${h.reason ? `<span class="history-reason">${h.reason}</span>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : '';
+
+    return {
+      title: 'Detalles del Pago',
+      className: 'payment-details-modal',
+      body: `
+        <div class="payment-details-content">
+          <div class="detail-row">
+            <span class="detail-label">Nombre:</span>
+            <span class="detail-value">${payment.name}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Monto:</span>
+            <span class="detail-value">${Helpers.formatCurrency(payment.amount, currency)}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Próximo vencimiento:</span>
+            <span class="detail-value">${Helpers.formatDate(payment.dueDate)}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Wallet:</span>
+            <span class="detail-value">${wallet ? wallet.name : 'N/A'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Categoría:</span>
+            <span class="detail-value">${category ? category.name : 'N/A'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Subcategoría:</span>
+            <span class="detail-value">${subcategory ? subcategory.name : 'N/A'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Recurrencia:</span>
+            <span class="detail-value">${recurrenceText}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Notificación:</span>
+            <span class="detail-value">${payment.notifyDaysBefore || 3} días antes</span>
+          </div>
+          ${payment.notes ? `
+          <div class="detail-row">
+            <span class="detail-label">Notas:</span>
+            <span class="detail-value">${payment.notes}</span>
+          </div>
+          ` : ''}
+          ${historyHTML}
+        </div>
+      `,
+      footer: `
+        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cerrar</button>
+      `
+    };
+  }
+
+  static getRecurrenceText(recurrence) {
+    const texts = {
+      'weekly': 'Semanal',
+      'biweekly': 'Quincenal',
+      'monthly': 'Mensual',
+      'quarterly': 'Trimestral',
+      'yearly': 'Anual',
+      'custom': 'Personalizado'
+    };
+    return texts[recurrence] || 'Una vez';
+  }
+
     static getTransactionTypeLabel(type) {
       const labels = {
         'income': 'Ingreso',

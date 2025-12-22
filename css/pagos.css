@@ -1,0 +1,295 @@
+/* Pagos Tab Styles - Scheduled Payments */
+
+.pagos-container {
+  padding: var(--spacing-md) 0 0;
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+/* Section Styles */
+.pagos-section {
+  border-radius: 20px;
+  box-shadow: 0 2px 12px var(--shadow-color);
+  background: var(--white);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.pagos-section.overdue {
+  border-left: 4px solid #EF4444;
+}
+
+.pagos-section.upcoming {
+  border-left: 4px solid #F59E0B;
+}
+
+.pagos-section.this-month {
+  border-left: 4px solid #3B82F6;
+}
+
+.pagos-section.future {
+  border-left: 4px solid #10B981;
+}
+
+.pagos-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: linear-gradient(180deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.pagos-section-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--dark-blue);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pagos-section-total {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--dark-blue);
+  background: rgba(255, 255, 255, 0.5);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 8px;
+}
+
+.pagos-list {
+  padding: var(--spacing-sm);
+}
+
+/* Payment Item */
+.payment-item {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.payment-item:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-item:last-child {
+  margin-bottom: 0;
+}
+
+.payment-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.payment-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.payment-name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--dark-blue);
+  margin-bottom: var(--spacing-xs);
+}
+
+.payment-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+}
+
+.payment-date {
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3B82F6;
+}
+
+.payment-date.overdue {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  font-weight: 700;
+}
+
+.payment-category,
+.payment-subcategory,
+.payment-recurrence {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.payment-recurrence {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+  font-weight: 600;
+}
+
+.payment-amount-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: var(--spacing-md);
+}
+
+.payment-amount {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--dark-blue);
+  white-space: nowrap;
+  letter-spacing: -0.5px;
+}
+
+.payment-wallet {
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  margin-top: var(--spacing-xs);
+}
+
+/* Payment Actions */
+.payment-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.payment-action-btn {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--white);
+  color: var(--dark-blue);
+}
+
+.payment-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.payment-action-btn.pay-btn {
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  border-color: transparent;
+  color: var(--dark-blue);
+}
+
+.payment-action-btn.pay-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.payment-action-btn.edit-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #3B82F6;
+}
+
+.payment-action-btn.postpone-btn {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: #F59E0B;
+}
+
+/* Empty State (reused from gastos.css) */
+.pagos-container .empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+  background: linear-gradient(135deg, rgba(209, 250, 229, 0.3) 0%, rgba(191, 219, 254, 0.3) 100%);
+  border-radius: 20px;
+  margin: var(--spacing-md);
+  border: 2px dashed rgba(66, 153, 225, 0.3);
+}
+
+.pagos-container .empty-state p {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  color: var(--dark-blue);
+}
+
+.add-payment-btn {
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-payment-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payment-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .payment-amount-container {
+    align-items: flex-start;
+    margin-left: 0;
+    margin-top: var(--spacing-sm);
+  }
+  
+  .payment-actions {
+    flex-direction: column;
+  }
+  
+  .payment-action-btn {
+    width: 100%;
+  }
+}
+
+/* Stats Summary (optional, for future enhancements) */
+.pagos-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--surface-primary);
+  border-radius: 16px;
+  margin-bottom: var(--spacing-md);
+}
+
+.pagos-stat-item {
+  text-align: center;
+  padding: var(--spacing-sm);
+}
+
+.pagos-stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--dark-blue);
+}
+
+.pagos-stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  margin-top: var(--spacing-xs);
+}

@@ -1,7 +1,7 @@
 // IndexedDB Configuration
 class DBConfig {
   static DB_NAME = 'GinberFiDB';
-  static DB_VERSION = 1;
+  static DB_VERSION = 2;
   static _dbInstance = null; // Cache de la conexión
 
   // Object Store Names
@@ -12,7 +12,8 @@ class DBConfig {
     TRANSACTIONS: 'transactions',
     INCOME_SOURCES: 'income_sources',
     HISTORICAL_EXPENSES: 'historical_expenses',
-    SETTINGS: 'settings'
+    SETTINGS: 'settings',
+    SCHEDULED_PAYMENTS: 'scheduled_payments'
   };
 
   // Index definitions for each store
@@ -40,6 +41,15 @@ class DBConfig {
       { name: 'subcategoryId', keyPath: 'subcategoryId', unique: false },
       { name: 'date', keyPath: 'date', unique: false },
       { name: 'archivedAt', keyPath: 'archivedAt', unique: false }
+    ],
+    SCHEDULED_PAYMENTS: [
+      { name: 'walletId', keyPath: 'walletId', unique: false },
+      { name: 'categoryId', keyPath: 'categoryId', unique: false },
+      { name: 'subcategoryId', keyPath: 'subcategoryId', unique: false },
+      { name: 'dueDate', keyPath: 'dueDate', unique: false },
+      { name: 'status', keyPath: 'status', unique: false },
+      { name: 'isRecurring', keyPath: 'isRecurring', unique: false },
+      { name: 'createdAt', keyPath: 'createdAt', unique: false }
     ]
   };
 
@@ -119,6 +129,14 @@ class DBConfig {
           db.createObjectStore(this.STORES.SETTINGS, { keyPath: 'key' });
         }
 
+        // Create Scheduled Payments store
+        if (!db.objectStoreNames.contains(this.STORES.SCHEDULED_PAYMENTS)) {
+          const scheduledStore = db.createObjectStore(this.STORES.SCHEDULED_PAYMENTS, { keyPath: 'id' });
+          this.INDEXES.SCHEDULED_PAYMENTS.forEach(index => {
+            scheduledStore.createIndex(index.name, index.keyPath, { unique: index.unique });
+          });
+        }
+
         console.log('Database upgrade complete');
       };
     });
@@ -134,6 +152,42 @@ class DBConfig {
     
     // Si no existe, inicializar
     return await this.initDB();
+  }
+
+  /**
+   * Close current database connection
+   */
+  static closeDB() {
+    if (this._dbInstance) {
+      this._dbInstance.close();
+      this._dbInstance = null;
+      console.log('Database connection closed');
+    }
+  }
+
+  /**
+   * Reset database (useful for testing or fixing upgrade issues)
+   */
+  static async resetDB() {
+    return new Promise((resolve, reject) => {
+      this.closeDB();
+      
+      const request = indexedDB.deleteDatabase(this.DB_NAME);
+      
+      request.onsuccess = () => {
+        console.log('Database deleted successfully');
+        resolve(true);
+      };
+      
+      request.onerror = () => {
+        console.error('Error deleting database:', request.error);
+        reject(request.error);
+      };
+      
+      request.onblocked = () => {
+        console.warn('Database deletion blocked. Close all tabs using this database.');
+      };
+    });
   }
 
   /**

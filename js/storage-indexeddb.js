@@ -13,6 +13,7 @@ class Storage {
   static categoryRepo = new CategoryRepository();
   static expenseRepo = new ExpenseRepository();
   static transactionRepo = new TransactionRepository();
+  static scheduledPaymentRepo = new ScheduledPaymentRepository();
 
   /**
    * Initialize IndexedDB and run migration if needed
@@ -446,6 +447,160 @@ class Storage {
       return true;
     } catch (error) {
       console.error('Error deleting wallet:', error);
+      return false;
+    }
+  }
+
+  // ============================================
+  // SCHEDULED PAYMENTS METHODS
+  // ============================================
+
+  /**
+   * Get all scheduled payments
+   */
+  static async getScheduledPayments() {
+    try {
+      return await this.scheduledPaymentRepo.getAll();
+    } catch (error) {
+      console.error('Error getting scheduled payments:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get scheduled payment by ID
+   */
+  static async getScheduledPayment(paymentId) {
+    try {
+      return await this.scheduledPaymentRepo.getById(paymentId);
+    } catch (error) {
+      console.error('Error getting scheduled payment:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Add new scheduled payment
+   */
+  static async addScheduledPayment(paymentData) {
+    try {
+      return await this.scheduledPaymentRepo.addScheduledPayment(paymentData);
+    } catch (error) {
+      console.error('Error adding scheduled payment:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Update scheduled payment
+   */
+  static async updateScheduledPayment(paymentId, updates) {
+    try {
+      const payment = await this.scheduledPaymentRepo.getById(paymentId);
+      if (!payment) return false;
+      
+      Object.assign(payment, updates);
+      return await this.scheduledPaymentRepo.update(payment);
+    } catch (error) {
+      console.error('Error updating scheduled payment:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Delete scheduled payment
+   */
+  static async deleteScheduledPayment(paymentId) {
+    try {
+      return await this.scheduledPaymentRepo.delete(paymentId);
+    } catch (error) {
+      console.error('Error deleting scheduled payment:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Mark payment as paid and create expense
+   */
+  static async executeScheduledPayment(paymentId, actualDate = null) {
+    try {
+      const payment = await this.scheduledPaymentRepo.getById(paymentId);
+      if (!payment) return false;
+
+      // Create expense
+      const expenseData = {
+        name: payment.name,
+        amount: payment.amount,
+        date: actualDate || payment.dueDate,
+        walletId: payment.walletId,
+        subcategoryId: payment.subcategoryId,
+        categoryId: payment.categoryId
+      };
+
+      const expenseSuccess = await this.addExpense(expenseData);
+      if (!expenseSuccess) return false;
+
+      // Mark payment as paid
+      return await this.scheduledPaymentRepo.markAsPaid(paymentId, actualDate);
+    } catch (error) {
+      console.error('Error executing scheduled payment:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get pending payments
+   */
+  static async getPendingPayments() {
+    try {
+      return await this.scheduledPaymentRepo.getPending();
+    } catch (error) {
+      console.error('Error getting pending payments:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get overdue payments
+   */
+  static async getOverduePayments() {
+    try {
+      return await this.scheduledPaymentRepo.getOverdue();
+    } catch (error) {
+      console.error('Error getting overdue payments:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get upcoming payments (next N days)
+   */
+  static async getUpcomingPayments(days = 7) {
+    try {
+      return await this.scheduledPaymentRepo.getUpcoming(days);
+    } catch (error) {
+      console.error('Error getting upcoming payments:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Clean up payments when deleting category/subcategory
+   */
+  static async deleteScheduledPaymentsBySubcategory(subcategoryId) {
+    try {
+      return await this.scheduledPaymentRepo.deleteBySubcategoryId(subcategoryId);
+    } catch (error) {
+      console.error('Error deleting scheduled payments:', error);
+      return false;
+    }
+  }
+
+  static async deleteScheduledPaymentsByCategory(categoryId) {
+    try {
+      return await this.scheduledPaymentRepo.deleteByCategoryId(categoryId);
+    } catch (error) {
+      console.error('Error deleting scheduled payments:', error);
       return false;
     }
   }

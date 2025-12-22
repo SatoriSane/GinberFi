@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="css/gastos.css">
+    <link rel="stylesheet" href="css/pagos.css">
     <link rel="stylesheet" href="css/huchas.css">
     <link rel="stylesheet" href="css/resumen.css">
     <link rel="stylesheet" href="css/modals.css">
@@ -67,6 +68,16 @@
             <button class="fab" id="addQuickExpenseFab">+</button>
         </div>
 
+        <div class="tab-content" id="pagosTab">
+            <div class="pagos-container" id="pagosContainer">
+                <div class="empty-state" id="emptyPagosState">
+                    <p>No hay pagos programados</p>
+                    <button class="add-payment-btn" id="addPaymentBtn">Programar Primer Pago</button>
+                </div>
+            </div>
+            <button class="fab" id="addPaymentFab">+</button>
+        </div>
+
         <div class="tab-content" id="huchasTab">
             <div class="wallets-container" id="walletsContainer">
                 <div class="empty-state" id="emptywalletsState">
@@ -86,6 +97,10 @@
         <button role="tab" class="nav-tab" data-tab="huchas" id="huchasNavBtn">
             <span class="nav-icon">🐷</span>
             <span class="nav-label">Wallets</span>
+        </button>
+        <button role="tab" class="nav-tab" data-tab="pagos" id="pagosNavBtn">
+            <span class="nav-icon">📅</span>
+            <span class="nav-label">Pagos</span>
         </button>
         <button role="tab" class="nav-tab active" data-tab="gastos" id="gastosNavBtn">
             <span class="nav-icon dollar-svg">
@@ -109,7 +124,9 @@
     <script src="js/db/category-repository.js"></script>
     <script src="js/db/expense-repository.js"></script>
     <script src="js/db/transaction-repository.js"></script>
+    <script src="js/db/scheduled-payment-repository.js"></script>
     <script src="js/db/migration-service.js"></script>
+    <script src="js/db/upgrade-db-v2.js"></script>
     <script src="js/storage-indexeddb.js"></script>
     <!-- App Scripts -->
     <script src="js/helpers.js"></script>
@@ -117,6 +134,7 @@
     <script src="js/header.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/gastos.js"></script>
+    <script src="js/pagos.js"></script>
     <script src="js/huchas.js"></script>
     <script src="js/resumen.js"></script>
     <script src="js/modals.js"></script>
