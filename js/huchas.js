@@ -471,11 +471,6 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     const modalConfig = await ModalManager.editWalletModal(wallet);
     window.appEvents.emit('openModal', modalConfig);
   }
-
-  async openTransactionsModal(wallet) {
-    const modalConfig = await ModalManager.walletTransactionsModal(wallet);
-    window.appEvents.emit('openModal', modalConfig);
-  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

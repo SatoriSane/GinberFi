@@ -468,8 +468,19 @@ class OpcionesManager {
       // Limpiar datos actuales y restaurar
       const data = backupData.data;
       
+      // Normalizar wallets: convertir 'purpose' a 'description' si existe
+      const normalizedWallets = (data.wallets || []).map(wallet => {
+        if (wallet.purpose && !wallet.description) {
+          return {
+            ...wallet,
+            description: wallet.purpose
+          };
+        }
+        return wallet;
+      });
+      
       // Restaurar cada tipo de dato usando IndexedDB
-      await Storage.saveWallets(data.wallets || []);
+      await Storage.saveWallets(normalizedWallets);
       await Storage.saveCategories(data.categories || []);
       await Storage.saveExpenses(data.expenses || []);
       

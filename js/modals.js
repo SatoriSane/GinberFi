@@ -9,7 +9,9 @@ class ModalManager {
 
         this.modalsContainer = document.getElementById('modalsContainer');
         this.currentModal = null;
-        this.escapeHandler = null; // Para poder remover el listener correctamente
+        this.escapeHandler = null;
+        this.closeButtonHandler = null;
+        this.overlayClickHandler = null;
 
         ModalManager.instance = this;
         this.init();
@@ -44,10 +46,19 @@ openModal(modalData) {
   this.currentModal = modal;
 
   // Mostrar con animación
-  setTimeout(() => modal.classList.add('show'), 10);
+  setTimeout(() => {
+    if (this.currentModal === modal) {
+      modal.classList.add('show');
+    }
+  }, 10);
 
-  // Handlers de cierre
-  this.setupCloseHandlers(modal);
+  // Handlers de cierre - agregar después de un pequeño delay para evitar que eventos
+  // de click que abrieron el modal lo cierren inmediatamente
+  setTimeout(() => {
+    if (this.currentModal === modal) {
+      this.setupCloseHandlers(modal);
+    }
+  }, 100);
 
   if (modalData.onShow) modalData.onShow(modal);
   if (modalData.onOpen) modalData.onOpen(modal);
@@ -94,31 +105,51 @@ openModal(modalData) {
       const closeBtn = modal.querySelector('.modal-close');
       const overlay = modal;
       
-      closeBtn.addEventListener('click', () => this.closeModal());
-      
-      // Solo cerrar si se hace click directamente en el overlay (fondo oscuro)
-      // NO cerrar si se hace click en el contenido del modal
-      overlay.addEventListener('click', (e) => {
+      // Guardar referencias a los handlers para poder limpiarlos después
+      this.closeButtonHandler = () => this.closeModal();
+      this.overlayClickHandler = (e) => {
         if (e.target === overlay) {
           this.closeModal();
         }
-      });
-      
-      
-      // Close on Escape key
+      };
       this.escapeHandler = (e) => {
         if (e.key === 'Escape') {
           this.closeModal();
         }
       };
+      
+      // Agregar los listeners
+      if (closeBtn) {
+        closeBtn.addEventListener('click', this.closeButtonHandler);
+      }
+      overlay.addEventListener('click', this.overlayClickHandler);
       document.addEventListener('keydown', this.escapeHandler);
     }
   
     removeEventListeners() {
-        if (this.escapeHandler) {
-            document.removeEventListener('keydown', this.escapeHandler);
-            this.escapeHandler = null;
+      // Remover listener de Escape
+      if (this.escapeHandler) {
+        document.removeEventListener('keydown', this.escapeHandler);
+        this.escapeHandler = null;
+      }
+      
+      // Remover listeners del modal actual
+      if (this.currentModal) {
+        const closeBtn = this.currentModal.querySelector('.modal-close');
+        const overlay = this.currentModal;
+        
+        if (closeBtn && this.closeButtonHandler) {
+          closeBtn.removeEventListener('click', this.closeButtonHandler);
         }
+        
+        if (overlay && this.overlayClickHandler) {
+          overlay.removeEventListener('click', this.overlayClickHandler);
+        }
+      }
+      
+      // Limpiar referencias
+      this.closeButtonHandler = null;
+      this.overlayClickHandler = null;
     }
 
     // Specific modal creators
