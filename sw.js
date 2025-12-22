@@ -1,6 +1,5 @@
 // Service Worker for PWA functionality
-// VERSIÓN DEBUG: Network Only (sin caché) para diagnosticar problemas
-const CACHE_NAME = 'ginbertfi-v3.4-debug';
+const CACHE_NAME = 'ginbertfi-v3.2';
 const urlsToCache = [
   './',
   'index.html',
@@ -57,8 +56,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event - Network Only strategy (TEMPORAL PARA DEBUG)
-// Esto fuerza a descargar todo desde el servidor sin usar caché
+// Fetch event - Network First strategy
 self.addEventListener('fetch', (event) => {
   // Solo gestionar peticiones GET
   if (event.request.method !== 'GET') {
@@ -70,19 +68,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // NETWORK ONLY - Siempre descarga desde el servidor
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        console.log('SW: Descargado desde red:', event.request.url);
+        // Si la petición a la red es exitosa, la usamos y la guardamos en caché
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
         return networkResponse;
       })
-      .catch((error) => {
-        console.error('SW: Error descargando:', event.request.url, error);
-        return new Response('Error de red. Verifica tu conexión.', {
-          status: 503,
-          statusText: 'Service Unavailable'
-        });
+      .catch(() => {
+        // Si la red falla, intentamos obtener el recurso desde el caché
+        return caches.match(event.request)
+          .then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Para recursos no encontrados, devolver error
+            return new Response('Contenido no disponible sin conexión.', {
+              status: 404,
+              statusText: 'Not Found'
+            });
+          });
       })
   );
 });
