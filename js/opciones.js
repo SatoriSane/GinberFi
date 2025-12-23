@@ -393,23 +393,26 @@ class OpcionesManager {
       window.appEvents.emit('dataUpdated');
     }
     
-    // Cerrar modal y mostrar confirmación
-    this.closeDesignModal();
-    
-    const themeNames = {
-      'light': 'claro',
-      'dark': 'oscuro',
-      'sunset': 'sunset',
-      'ocean': 'ocean',
-      'forest': 'forest',
-      'lavender': 'lavender',
-      'coral': 'coral',
-      'zen': 'zen',
-      'midnight': 'midnight',
-      'coastal': 'coastal'
-    };
-    
-    this.showSuccessMessage('Tema aplicado', `Se ha cambiado al modo ${themeNames[theme] || 'claro'}`);
+    // Actualizar visualmente la selección en el modal sin cerrarlo
+    const modal = document.getElementById('designModal');
+    if (modal) {
+      const themeOptions = modal.querySelectorAll('.theme-option');
+      themeOptions.forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      // Marcar el tema seleccionado
+      const themeMap = {
+        'light': 0, 'dark': 1, 'sunset': 2, 'ocean': 3, 
+        'forest': 4, 'lavender': 5, 'coral': 6, 'zen': 7,
+        'midnight': 8, 'coastal': 9, 'starry': 10
+      };
+      
+      const index = themeMap[theme];
+      if (index !== undefined && themeOptions[index]) {
+        themeOptions[index].classList.add('selected');
+      }
+    }
   }
 
   static initializeTheme() {
