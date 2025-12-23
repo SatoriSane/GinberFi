@@ -136,7 +136,6 @@ body.midnight-theme .balance-selector {
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(251, 191, 36, 0.3);
   box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
-  backdrop-filter: blur(10px);
 }
 
 body.midnight-theme .balance-selector:hover {

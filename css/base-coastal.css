@@ -124,7 +124,6 @@ body.coastal-theme .balance-selector {
   background: rgba(47, 96, 107, 0.4);
   border: 1px solid rgba(238, 142, 59, 0.3);
   box-shadow: 0 4px 15px rgba(238, 142, 59, 0.2);
-  backdrop-filter: blur(10px);
 }
 
 body.coastal-theme .balance-selector:hover {
