@@ -1,8 +1,7 @@
 /* Header Styles */
 .app-header {
   background: linear-gradient(135deg, var(--pastel-green) 0%, var(--pastel-blue) 100%);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(10px);
+
 }
 
 .header-content {
@@ -31,8 +30,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.5); 
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.6); 
-  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .balance-selector:hover {

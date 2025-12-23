@@ -3,7 +3,6 @@
   display: flex;
   background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-green) 100%);
   box-shadow: 0 -4px 6px -1px var(--shadow);
-  backdrop-filter: blur(10px);
 }
 
 .nav-tab {

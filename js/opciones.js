@@ -28,14 +28,11 @@ class OpcionesManager {
           </div>
           <div class="modal-body">
             <div class="options-list">
-              <div class="option-item theme-toggle-item">
-                <div class="option-icon">🌙</div>
+              <div class="option-item" onclick="OpcionesManager.showDesignOptions()">
+                <div class="option-icon">🎨</div>
                 <div class="option-content">
-                  <div class="option-title">Modo Oscuro</div>
-                  <div class="option-description">Alternar entre tema claro y oscuro</div>
-                </div>
-                <div class="theme-toggle" onclick="OpcionesManager.toggleTheme(event)">
-                  <div class="toggle-slider ${localStorage.getItem('ginbertfi_theme') === 'dark' ? 'active' : ''}"></div>
+                  <div class="option-title">Temas de Color</div>
+                  <div class="option-description">Elige entre 8 temas diferentes para personalizar tu experiencia</div>
                 </div>
               </div>
               
@@ -123,26 +120,49 @@ class OpcionesManager {
 
   static applyTheme(theme) {
     const head = document.head;
-    const existingDarkCSS = document.getElementById('dark-theme-css');
     
-    // Limpiar temas existentes
-    document.body.classList.remove('dark-theme');
+    // Limpiar todos los temas CSS existentes
+    const existingThemeCSS = document.querySelectorAll('[data-theme-css]');
+    existingThemeCSS.forEach(css => css.remove());
     
-    if (theme === 'dark') {
-      // Agregar CSS oscuro si no existe
-      if (!existingDarkCSS) {
-        const darkCSS = document.createElement('link');
-        darkCSS.id = 'dark-theme-css';
-        darkCSS.rel = 'stylesheet';
-        darkCSS.href = 'css/base-dark.css';
-        head.appendChild(darkCSS);
-      }
-      document.body.classList.add('dark-theme');
-    } else {
-      // Tema light - remover CSS oscuro
-      if (existingDarkCSS) {
-        existingDarkCSS.remove();
-      }
+    // Limpiar todas las clases de tema del body
+    document.body.classList.remove('dark-theme', 'sunset-theme', 'ocean-theme', 'forest-theme', 'lavender-theme', 'coral-theme', 'zen-theme');
+    
+    // Tema light no necesita CSS adicional (usa base.css)
+    if (theme === 'light') return;
+    
+    // Mapeo de temas a archivos CSS
+    const themeFiles = {
+      'dark': 'css/base-dark.css',
+      'sunset': 'css/base-sunset.css',
+      'ocean': 'css/base-ocean.css',
+      'forest': 'css/base-forest.css',
+      'lavender': 'css/base-lavender.css',
+      'coral': 'css/base-coral.css',
+      'zen': 'css/base-zen.css'
+    };
+    
+    // Mapeo de temas a clases del body
+    const themeClasses = {
+      'dark': 'dark-theme',
+      'sunset': 'sunset-theme',
+      'ocean': 'ocean-theme',
+      'forest': 'forest-theme',
+      'lavender': 'lavender-theme',
+      'coral': 'coral-theme',
+      'zen': 'zen-theme'
+    };
+    
+    // Cargar CSS del tema seleccionado
+    if (themeFiles[theme]) {
+      const themeCSS = document.createElement('link');
+      themeCSS.setAttribute('data-theme-css', theme);
+      themeCSS.rel = 'stylesheet';
+      themeCSS.href = themeFiles[theme];
+      head.appendChild(themeCSS);
+      
+      // Aplicar clase al body
+      document.body.classList.add(themeClasses[theme]);
     }
   }
 
@@ -153,7 +173,7 @@ class OpcionesManager {
       <div class="modal-overlay options-modal" id="designModal">
         <div class="modal">
           <div class="modal-header">
-            <h2 class="modal-title"> Opciones de dise o</h2>
+            <h2 class="modal-title">🎨 Temas de Color</h2>
             <button class="modal-close" onclick="OpcionesManager.closeDesignModal()">×</button>
           </div>
           <div class="modal-body">
@@ -168,8 +188,8 @@ class OpcionesManager {
                   </div>
                 </div>
                 <div class="theme-info">
-                  <div class="theme-title"> Modo Claro</div>
-                  <div class="theme-description">Dise o cl sico con colores claros</div>
+                  <div class="theme-title">☀️ Modo Claro</div>
+                  <div class="theme-description">Diseño clásico con colores claros y alegres</div>
                 </div>
               </div>
               
@@ -183,8 +203,98 @@ class OpcionesManager {
                   </div>
                 </div>
                 <div class="theme-info">
-                  <div class="theme-title"> Modo Oscuro</div>
-                  <div class="theme-description">Dise o elegante para ambientes con poca luz</div>
+                  <div class="theme-title">🌙 Modo Oscuro</div>
+                  <div class="theme-description">Diseño elegante para ambientes con poca luz</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'sunset' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('sunset')">
+                <div class="theme-preview sunset-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌅 Modo Sunset</div>
+                  <div class="theme-description">Colores cálidos inspirados en el atardecer</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'ocean' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('ocean')">
+                <div class="theme-preview ocean-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌊 Modo Ocean</div>
+                  <div class="theme-description">Azules profesionales inspirados en el océano</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'forest' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('forest')">
+                <div class="theme-preview forest-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌲 Modo Forest</div>
+                  <div class="theme-description">Colores naturales inspirados en el bosque</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'lavender' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('lavender')">
+                <div class="theme-preview lavender-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌸 Modo Lavender</div>
+                  <div class="theme-description">Colores elegantes inspirados en la lavanda</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'coral' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('coral')">
+                <div class="theme-preview coral-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🪸 Modo Coral</div>
+                  <div class="theme-description">Colores vibrantes inspirados en el coral</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'zen' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('zen')">
+                <div class="theme-preview zen-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🧘 Modo Zen</div>
+                  <div class="theme-description">Diseño minimalista y espacioso revolucionario</div>
                 </div>
               </div>
             </div>
@@ -234,29 +344,66 @@ class OpcionesManager {
     
     // Cerrar modal y mostrar confirmación
     this.closeDesignModal();
-    this.showSuccessMessage('Tema aplicado', `Se ha cambiado al modo ${theme === 'dark' ? 'oscuro' : 'claro'}`);
+    
+    const themeNames = {
+      'light': 'claro',
+      'dark': 'oscuro',
+      'sunset': 'sunset',
+      'ocean': 'ocean',
+      'forest': 'forest',
+      'lavender': 'lavender',
+      'coral': 'coral',
+      'zen': 'zen'
+    };
+    
+    this.showSuccessMessage('Tema aplicado', `Se ha cambiado al modo ${themeNames[theme] || 'claro'}`);
   }
 
   static applyTheme(theme) {
     const head = document.head;
-    const existingDarkCSS = document.getElementById('dark-theme-css');
     
-    if (theme === 'dark') {
-      // Agregar CSS oscuro si no existe
-      if (!existingDarkCSS) {
-        const darkCSS = document.createElement('link');
-        darkCSS.id = 'dark-theme-css';
-        darkCSS.rel = 'stylesheet';
-        darkCSS.href = 'css/base-dark.css';
-        head.appendChild(darkCSS);
-      }
-      document.body.classList.add('dark-theme');
-    } else {
-      // Remover CSS oscuro
-      if (existingDarkCSS) {
-        existingDarkCSS.remove();
-      }
-      document.body.classList.remove('dark-theme');
+    // Limpiar todos los temas CSS existentes
+    const existingThemeCSS = document.querySelectorAll('[data-theme-css]');
+    existingThemeCSS.forEach(css => css.remove());
+    
+    // Limpiar todas las clases de tema del body
+    document.body.classList.remove('dark-theme', 'sunset-theme', 'ocean-theme', 'forest-theme', 'lavender-theme', 'coral-theme', 'zen-theme');
+    
+    // Tema light no necesita CSS adicional (usa base.css)
+    if (theme === 'light') return;
+    
+    // Mapeo de temas a archivos CSS
+    const themeFiles = {
+      'dark': 'css/base-dark.css',
+      'sunset': 'css/base-sunset.css',
+      'ocean': 'css/base-ocean.css',
+      'forest': 'css/base-forest.css',
+      'lavender': 'css/base-lavender.css',
+      'coral': 'css/base-coral.css',
+      'zen': 'css/base-zen.css'
+    };
+    
+    // Mapeo de temas a clases del body
+    const themeClasses = {
+      'dark': 'dark-theme',
+      'sunset': 'sunset-theme',
+      'ocean': 'ocean-theme',
+      'forest': 'forest-theme',
+      'lavender': 'lavender-theme',
+      'coral': 'coral-theme',
+      'zen': 'zen-theme'
+    };
+    
+    // Cargar CSS del tema seleccionado
+    if (themeFiles[theme]) {
+      const themeCSS = document.createElement('link');
+      themeCSS.setAttribute('data-theme-css', theme);
+      themeCSS.rel = 'stylesheet';
+      themeCSS.href = themeFiles[theme];
+      head.appendChild(themeCSS);
+      
+      // Aplicar clase al body
+      document.body.classList.add(themeClasses[theme]);
     }
   }
 

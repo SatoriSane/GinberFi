@@ -1,10 +1,17 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'ginbertfi-v3.47';
+const CACHE_NAME = 'ginbertfi-v3.58';
 const urlsToCache = [
   './',
   'index.html',
   'manifest.json',
   'css/base.css',
+  'css/base-dark.css',
+  'css/base-sunset.css',
+  'css/base-ocean.css',
+  'css/base-forest.css',
+  'css/base-lavender.css',
+  'css/base-coral.css',
+  'css/base-zen.css',
   'css/header.css',
   'css/navigation.css',
   'css/gastos.css',

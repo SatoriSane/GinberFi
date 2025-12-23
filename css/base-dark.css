@@ -79,8 +79,6 @@ body.dark-theme {
 body.dark-theme .app-header {
   background: linear-gradient(135deg, #000000 0%, #161c25 50%, #000000 100%);
   border-bottom: 1px solid rgba(96, 165, 250, 0.2);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
 }
 
 body.dark-theme .balance-selector {
@@ -110,7 +108,6 @@ body.dark-theme .balance-dropdown {
   background: rgba(30, 41, 59, 1);
   border: 1px solid rgba(96, 165, 250, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
 }
 
 body.dark-theme .wallet-item:hover {
@@ -126,7 +123,6 @@ body.dark-theme .category-wrapper {
   background: rgba(12, 20, 38, 0.6);
   border: 1px solid rgba(96, 165, 250, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
 }
 
 body.dark-theme .subcategories-container {
@@ -157,12 +153,10 @@ body.dark-theme .wallet-card {
   background: rgba(12, 20, 38, 0.7);
   border: 1px solid rgba(96, 165, 250, 0.12);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(15px);
 }
 
 body.dark-theme .wallet-header {
   background: linear-gradient(135deg, rgba(12, 20, 38, 0.8) 0%, rgba(30, 58, 138, 0.3) 100%);
-  backdrop-filter: blur(10px);
 }
 body.dark-theme .wallet-card.collapsed .wallet-header:active {
   background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(12, 20, 38, 0.8));
@@ -170,7 +164,6 @@ body.dark-theme .wallet-card.collapsed .wallet-header:active {
 body.dark-theme .recent-transaction-item {
   background: rgba(24, 24, 27, 0.6);
   border: 1px solid rgba(96, 165, 250, 0.08);
-  backdrop-filter: blur(8px);
 }
 
 body.dark-theme .recent-transaction-item:hover {
@@ -188,13 +181,11 @@ body.dark-theme .modal {
   background: rgba(12, 20, 38, 0.9);
   border: 1px solid rgba(96, 165, 250, 0.15);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(25px);
 }
 
 body.dark-theme .modal-header {
   background: linear-gradient(135deg, rgba(12, 20, 38, 0.95) 0%, rgba(24, 24, 27, 0.8) 100%);
   border-bottom: 1px solid rgba(96, 165, 250, 0.1);
-  backdrop-filter: blur(15px);
 }
 
 body.dark-theme .modal-title {
@@ -225,7 +216,6 @@ body.dark-theme .app-navigation {
   background: rgba(30, 41, 59, 0.95);
   border-top: 1px solid rgba(96, 165, 250, 0.2);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
 }
 
 body.dark-theme .nav-item {
@@ -303,7 +293,6 @@ body.dark-theme .fab {
   color: #0C1426;
   box-shadow: 0 8px 32px rgba(52, 211, 153, 0.4);
   border: 1px solid rgba(52, 211, 153, 0.3);
-  backdrop-filter: blur(10px);
 }
 
 body.dark-theme .fab:hover {
