@@ -408,3 +408,17 @@ body.dark-theme .wallet-transactions-modal .wallet-balance {
 body.dark-theme .wallet-transactions-modal .transactions-count {
   color: var(--text-light);
 }
+
+/* Botón de cerrar modales - Dark theme */
+body.dark-theme .btn-close {
+  background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+body.dark-theme .btn-close:hover {
+  background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}

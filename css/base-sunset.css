@@ -353,3 +353,17 @@ body.sunset-theme .wallet-transactions-modal .wallet-balance {
 body.sunset-theme .wallet-transactions-modal .transactions-count {
   color: var(--text-light);
 }
+
+/* Botón de cerrar modales - Sunset theme */
+body.sunset-theme .btn-close {
+  background: linear-gradient(135deg, #F472B6 0%, #FB923C 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+body.sunset-theme .btn-close:hover {
+  background: linear-gradient(135deg, #EC4899 0%, #F97316 100%);
+  border-color: rgba(251, 146, 60, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
+}

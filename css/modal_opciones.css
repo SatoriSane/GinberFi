@@ -236,7 +236,7 @@
 
 .btn-close {
   background: var(--dark-blue);
-  color: white;
+  color: #FFFFFF;
   border: none;
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -246,7 +246,8 @@
 }
 
 .btn-close:hover {
-  background: #1E40AF;
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 /* Opciones de Diseño */

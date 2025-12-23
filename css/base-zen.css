@@ -330,3 +330,17 @@ body.zen-theme ::-webkit-scrollbar-thumb {
 body.zen-theme ::-webkit-scrollbar-thumb:hover {
   background: #D1D5DB;
 }
+
+/* Botón de cerrar modales - Zen theme */
+body.zen-theme .btn-close {
+  background: #4B5563;
+  color: #FFFFFF;
+  border: 1px solid #6B7280;
+}
+
+body.zen-theme .btn-close:hover {
+  background: #374151;
+  border-color: #9CA3AF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
+}

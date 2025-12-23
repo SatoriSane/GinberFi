@@ -353,3 +353,17 @@ body.coral-theme .wallet-transactions-modal .wallet-balance {
 body.coral-theme .wallet-transactions-modal .transactions-count {
   color: var(--text-light);
 }
+
+/* Botón de cerrar modales - Coral theme */
+body.coral-theme .btn-close {
+  background: linear-gradient(135deg, #FB7185 0%, #F472B6 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(251, 113, 133, 0.3);
+}
+
+body.coral-theme .btn-close:hover {
+  background: linear-gradient(135deg, #F43F5E 0%, #EC4899 100%);
+  border-color: rgba(251, 113, 133, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 113, 133, 0.4);
+}

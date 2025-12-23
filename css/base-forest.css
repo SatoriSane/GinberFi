@@ -353,3 +353,17 @@ body.forest-theme .wallet-transactions-modal .wallet-balance {
 body.forest-theme .wallet-transactions-modal .transactions-count {
   color: var(--text-light);
 }
+
+/* Botón de cerrar modales - Forest theme */
+body.forest-theme .btn-close {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+body.forest-theme .btn-close:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
