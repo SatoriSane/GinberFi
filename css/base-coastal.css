@@ -10,10 +10,19 @@
 
 /* ===== OVERRIDES GLOBALES DE VARIABLES ===== */
 body.coastal-theme {
-  /* Sobrescribir variables para textos claros */
+  /* Coastal Color Palette */
+  --pastel-green: #EE8E3B;
+  --pastel-blue: #2F606B;
   --dark-blue: #FCECD4;
+  --pastel-pink: #7d9599;
+  
+  /* Additional colors */
+  --light-green: #1F3A52;
+  --soft-gray: #0F1F2E;
   --text-dark: #FCECD4;
   --text-light: #7d9599;
+  --white: #0F1F2E;
+  --shadow: rgba(0, 0, 0, 0.7);
   
   /* Budget status colors (coastal theme) */
   --budget-excellent-bg: rgba(31, 58, 82, 0.6);
@@ -29,6 +38,37 @@ body.coastal-theme {
   --unclassified-bg: rgba(31, 58, 82, 0.7);
   --unclassified-border: rgba(238, 142, 59, 0.3);
   
+  /* State colors */
+  --color-success: #6EE7B7;
+  --color-warning: #FCD34D;
+  --color-error: #FCA5A5;
+  --color-info: #EE8E3B;
+  
+  /* Chart colors */
+  --chart-primary: #EE8E3B;
+  --chart-primary-alpha: rgba(238, 142, 59, 0.15);
+  
+  /* Component backgrounds */
+  --surface-primary: rgba(31, 58, 82, 0.8);
+  --surface-secondary: rgba(47, 96, 107, 0.9);
+  --surface-hover: rgba(238, 142, 59, 0.1);
+  --surface-active: rgba(238, 142, 59, 0.2);
+  
+  /* Transaction colors */
+  --transaction-positive: #6EE7B7;
+  --transaction-negative: #FCA5A5;
+  
+  /* Border and shadow variations */
+  --border-light: rgba(238, 142, 59, 0.2);
+  --border-medium: rgba(238, 142, 59, 0.3);
+  --shadow-color: rgba(0, 0, 0, 0.7);
+  
+  /* Interactive colors */
+  --interactive-bg: rgba(238, 142, 59, 0.1);
+  --interactive-bg-hover: rgba(238, 142, 59, 0.15);
+  --interactive-bg-active: rgba(238, 142, 59, 0.25);
+  --interactive-border: rgba(238, 142, 59, 0.4);
+  
   /* Subcategory specific */
   --subcategory-bg: rgba(31, 58, 82, 0.7);
   --subcategory-bg-hover: rgba(47, 96, 107, 0.8);
@@ -36,68 +76,7 @@ body.coastal-theme {
 }
 
 :root {
-  /* Coastal Color Palette */
-  --pastel-green: #EE8E3B;      /* Cobre/Naranja */
-  --pastel-blue: #2F606B;       /* Verde azulado */
-  --dark-blue: #173B61;         /* Azul marino oscuro */
-  --pastel-pink: #7d9599;       /* Gris azulado */
-  
-  /* Coastal theme specific colors */
-  --light-green: #2F606B;
-  --soft-gray: #7d9599;
-  --text-dark: #FCECD4;
-  --text-light: #7d9599;
-  --white: #FCECD4;
-  --shadow: rgba(238, 142, 59, 0.2);
-  
-  /* Border colors */
-  --border-color: rgba(125, 149, 153, 0.3);
-  --light-gray: #7d9599;
-  
-  /* Budget status colors (coastal theme) */
-  --budget-excellent-bg: rgba(16, 185, 129, 0.15);
-  --budget-excellent-border: #10B981;
-  --budget-good-bg: rgba(47, 96, 107, 0.15);
-  --budget-good-border: #2F606B;
-  --budget-warning-bg: rgba(238, 142, 59, 0.15);
-  --budget-warning-border: #EE8E3B;
-  --budget-danger-bg: rgba(220, 38, 38, 0.15);
-  --budget-danger-border: #DC2626;
-  
-  /* Unclassified colors */
-  --unclassified-bg: #1F3A52;
-  --unclassified-border: #2F606B;
-  
-  /* State colors */
-  --color-success: #10B981;
-  --color-warning: #EE8E3B;
-  --color-error: #DC2626;
-  --color-info: #2F606B;
-  
-  /* Chart colors */
-  --chart-primary: #EE8E3B;
-  --chart-primary-alpha: rgba(238, 142, 59, 0.15);
-  
-  /* Component backgrounds */
-  --surface-primary: rgba(47, 96, 107, 0.15);
-  --surface-secondary: rgba(125, 149, 153, 0.1);
-  --surface-hover: rgba(238, 142, 59, 0.1);
-  --surface-active: rgba(238, 142, 59, 0.2);
-  
-  /* Transaction colors */
-  --transaction-positive: #10B981;
-  --transaction-negative: #DC2626;
-  
-  /* Border and shadow variations */
-  --border-light: rgba(125, 149, 153, 0.2);
-  --border-medium: rgba(125, 149, 153, 0.3);
-  --shadow-color: rgba(238, 142, 59, 0.2);
-  
-  /* Interactive colors */
-  --interactive-bg: rgba(238, 142, 59, 0.1);
-  --interactive-bg-hover: rgba(238, 142, 59, 0.15);
-  --interactive-bg-active: rgba(238, 142, 59, 0.25);
-  --interactive-border: rgba(238, 142, 59, 0.3);
+  /* Coastal specific variables (deprecated, kept for compatibility) */
   
   /* Subcategory specific */
   --subcategory-bg: rgba(47, 96, 107, 0.1);
