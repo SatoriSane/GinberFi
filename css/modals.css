@@ -639,13 +639,28 @@
   }
 
   .payment-info-simple {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: var(--spacing-sm);
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .payment-info-name {
+    font-size: 1.125rem;
+    flex: 1;
+    min-width: 0;
   }
 
   .payment-info-amount {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  
+  .payment-info-due {
+    font-size: 0.875rem;
+    margin-top: 0;
   }
   
   .transfer-info-row {
