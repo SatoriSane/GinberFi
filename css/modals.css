@@ -28,7 +28,9 @@
   max-height: 90vh;
   width: 95vw; /* versión móvil aplicada */
   margin: var(--spacing-sm); /* versión móvil aplicada */
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   transform: scale(0.9) translateY(20px);
   transition: transform 0.3s ease;
 }
@@ -39,23 +41,29 @@
 
 .modal-header {
   background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+  min-height: 56px;
 }
 
 .modal-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--dark-blue);
+  line-height: 1.2;
 }
 
 .modal-close {
   background: transparent;
   color: var(--dark-blue);
-  font-size: var(--font-size-xl);
+  font-size: 24px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -63,6 +71,7 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
 
 .modal-close:hover {
@@ -70,30 +79,39 @@
 }
 
 .modal-body {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-footer {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-top: 1px solid rgba(44, 82, 130, 0.1);
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
   justify-content: flex-end; /* versión móvil aplicada */
+  flex-shrink: 0;
+  background: var(--white);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  min-height: 64px;
 }
 
 /* IMPORTANTE: Botones de acción del modal */
 .modal-footer button {
   width: 100%; /* versión móvil aplicada */
-  padding: 14px 24px; /* versión móvil aplicada */
+  padding: 12px 20px; /* versión móvil aplicada */
   margin: 0; /* versión móvil aplicada */
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .modal-footer .btn-primary {
