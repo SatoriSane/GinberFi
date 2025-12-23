@@ -924,6 +924,167 @@ static createWalletModal() {
       };
     }
     
+
+  // Edit Income Modal
+  static async editIncomeModal(transaction) {
+    const wallet = AppState.wallets.find(w => w.id === transaction.walletId);
+    const incomeSources = await Storage.getIncomeSources();
+  
+    return {
+      title: 'Editar Ingreso',
+      className: 'income-modal',
+      body: `
+        <form class="modal-form" id="editIncomeForm">
+          <div class="form-group">
+            <label for="editIncomeAmount">Cantidad</label>
+            <div class="input-with-currency">
+              <input type="number" id="editIncomeAmount" name="amount" required 
+                    placeholder="0.00" step="0.01" min="0.01" value="${Math.abs(transaction.amount)}">
+              <span class="currency-display">${wallet ? wallet.currency : 'BOB'}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Fuente del dinero</label>
+            <div class="source-list" id="editSourceList">
+              ${incomeSources.map(source => `
+                <div class="source-item ${source === transaction.source ? 'selected' : ''}" data-source="${source}">${source}</div>
+              `).join('')}
+            </div>
+            <div class="add-source-section">
+              <div class="add-source-input">
+                <input type="text" id="editNewSource" placeholder="Nueva fuente...">
+                <button type="button" class="add-source-btn" id="editAddSourceBtn">Agregar</button>
+              </div>
+            </div>
+            <input type="hidden" id="editIncomeSource" name="source" required value="${transaction.source || ''}">
+          </div>
+          <div class="form-group">
+            <label for="editIncomeDescription">Descripción (opcional)</label>
+            <input type="text" id="editIncomeDescription" name="description" 
+                   placeholder="ej: Sueldo de enero" value="${transaction.description || ''}">
+          </div>
+          
+          <div class="form-group delete-expense">
+            <button type="button" class="btn-text-danger"
+                    onclick="window.huchasManager.handleDeleteIncome('${transaction.id}', '${transaction.walletId}')">
+              🗑️ Eliminar ingreso
+            </button>
+          </div>
+          
+          <input type="hidden" name="transactionId" value="${transaction.id}">
+          <input type="hidden" name="walletId" value="${transaction.walletId}">
+        </form>
+      `,
+      footer: `
+        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cancelar</button>
+        <button type="submit" class="btn-primary" form="editIncomeForm">Guardar Cambios</button>
+      `,
+      onShow: () => {
+        const sourceList = document.getElementById('editSourceList');
+        const hiddenInput = document.getElementById('editIncomeSource');
+        const addBtn = document.getElementById('editAddSourceBtn');
+        const newSourceInput = document.getElementById('editNewSource');
+  
+        // Seleccionar fuente existente
+        sourceList.addEventListener('click', (e) => {
+          const item = e.target.closest('.source-item');
+          if (!item) return;
+  
+          sourceList.querySelectorAll('.source-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          hiddenInput.value = item.dataset.source;
+        });
+  
+        // Agregar nueva fuente
+        addBtn.addEventListener('click', () => {
+          const newSource = newSourceInput.value.trim();
+          if (!newSource) return;
+  
+          Storage.addIncomeSource(newSource);
+  
+          const item = document.createElement('div');
+          item.className = 'source-item selected';
+          item.dataset.source = newSource;
+          item.textContent = newSource;
+  
+          sourceList.querySelectorAll('.source-item').forEach(el => el.classList.remove('selected'));
+          sourceList.appendChild(item);
+          hiddenInput.value = newSource;
+  
+          newSourceInput.value = '';
+        });
+      }
+    };
+  }
+
+  // View Transfer Modal (con opción de eliminar)
+  static async viewTransferModal(transaction) {
+    const transactionRepo = new TransactionRepository();
+    const walletRepo = new WalletRepository();
+    
+    // Determinar cuál es la transacción de salida y cuál de entrada
+    let transferOut, transferIn;
+    
+    if (transaction.type === 'transfer_out') {
+      transferOut = transaction;
+      // Buscar la transacción de entrada correspondiente (ID siguiente)
+      const transferInId = (parseInt(transaction.id) + 1).toString();
+      transferIn = await transactionRepo.getById(transferInId);
+    } else {
+      transferIn = transaction;
+      // Buscar la transacción de salida correspondiente (ID anterior)
+      const transferOutId = (parseInt(transaction.id) - 1).toString();
+      transferOut = await transactionRepo.getById(transferOutId);
+    }
+    
+    const fromWallet = await walletRepo.getById(transferOut.walletId);
+    const toWallet = await walletRepo.getById(transferIn.walletId);
+    
+    return {
+      title: 'Detalles de Transferencia',
+      className: 'transfer-view-modal',
+      body: `
+        <div class="transfer-details">
+          <div class="transfer-info-row">
+            <span class="transfer-label">Desde:</span>
+            <span class="transfer-value">${fromWallet ? fromWallet.name : 'Wallet eliminada'}</span>
+          </div>
+          <div class="transfer-info-row">
+            <span class="transfer-label">Hacia:</span>
+            <span class="transfer-value">${toWallet ? toWallet.name : 'Wallet eliminada'}</span>
+          </div>
+          <div class="transfer-info-row">
+            <span class="transfer-label">Monto:</span>
+            <span class="transfer-value transfer-amount">${Helpers.formatCurrency(Math.abs(transferOut.amount), fromWallet?.currency || 'BOB')}</span>
+          </div>
+          <div class="transfer-info-row">
+            <span class="transfer-label">Fecha:</span>
+            <span class="transfer-value">${Helpers.formatDate(transferOut.date)}</span>
+          </div>
+          ${transferOut.description ? `
+          <div class="transfer-info-row">
+            <span class="transfer-label">Descripción:</span>
+            <span class="transfer-value">${transferOut.description}</span>
+          </div>
+          ` : ''}
+          
+          <div class="transfer-warning">
+            ⚠️ Las transferencias no se pueden editar. Solo se pueden eliminar.
+          </div>
+          
+          <div class="form-group delete-expense">
+            <button type="button" class="btn-text-danger"
+                    onclick="window.huchasManager.handleDeleteTransfer('${transferOut.id}', '${transferIn.id}', '${transferOut.walletId}', '${transferIn.walletId}')">
+              🗑️ Eliminar transferencia
+            </button>
+          </div>
+        </div>
+      `,
+      footer: `
+        <button type="button" class="btn-secondary" onclick="window.appEvents.emit('closeModal')">Cerrar</button>
+      `
+    };
+  }
   
     static createTransferModal(fromWalletId) {
       const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
@@ -1297,11 +1458,48 @@ static createWalletModal() {
             modal.querySelectorAll('.transaction-item-modal').forEach(el => {
               if (!el.dataset.listenerAdded) {
                 el.dataset.listenerAdded = 'true';
-                el.addEventListener('click', () => {
+                el.addEventListener('click', async () => {
                   const txId = el.dataset.transactionId;
                   const tx = walletTransactions.find(t => t.id === txId);
                   if (tx) {
-                    console.log('Transacción seleccionada:', tx);
+                    // Abrir modal de edición según el tipo de transacción
+                    if (tx.type === 'expense') {
+                      // Para gastos, extraer expenseId del transaction.id (formato: 'exp-12345')
+                      const expenseId = tx.id.replace('exp-', '');
+                      const expenseRepo = new ExpenseRepository();
+                      const expense = await expenseRepo.getById(expenseId);
+                      
+                      if (expense) {
+                        window.appEvents.emit('closeModal'); // Cerrar modal de transacciones
+                        setTimeout(() => {
+                          const walletTx = AppState.wallets.find(w => w.id === expense.walletId);
+                          const currency = walletTx ? walletTx.currency : 'BOB';
+                          const isUnclassified = !expense.categoryId || expense.categoryId === 'unclassified';
+                          
+                          const modalData = isUnclassified
+                            ? ModalManager.editExpenseModalUnclassified(expense, currency)
+                            : ModalManager.editExpenseModalClassified(expense, currency);
+                          
+                          window.appEvents.emit('openModal', modalData);
+                        }, 300);
+                      } else {
+                        Helpers.showToast('No se pudo encontrar el gasto', 'error');
+                      }
+                    } else if (tx.type === 'income') {
+                      // Abrir modal de edición de ingreso
+                      window.appEvents.emit('closeModal');
+                      setTimeout(async () => {
+                        const modalData = await ModalManager.editIncomeModal(tx);
+                        window.appEvents.emit('openModal', modalData);
+                      }, 300);
+                    } else if (tx.type === 'transfer_in' || tx.type === 'transfer_out') {
+                      // Para transferencias, abrir modal de visualización con opción de eliminar
+                      window.appEvents.emit('closeModal');
+                      setTimeout(async () => {
+                        const modalData = await ModalManager.viewTransferModal(tx);
+                        window.appEvents.emit('openModal', modalData);
+                      }, 300);
+                    }
                   }
                 });
               }

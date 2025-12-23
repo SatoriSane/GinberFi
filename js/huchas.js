@@ -23,6 +23,9 @@ class HuchasManager {
   }
 
   setupEventListeners() {
+    // Hacemos la instancia accesible globalmente para los onclick de los modales
+    window.huchasManager = this;
+    
     if (this.addNewWalletFab) {
       this.addNewWalletFab.addEventListener('click', () => this.openCreateWalletModal());
     }
@@ -35,6 +38,9 @@ class HuchasManager {
       if (e.target.id === 'incomeForm') {
         e.preventDefault();
         this.handleAddIncome(e.target);
+      } else if (e.target.id === 'editIncomeForm') {
+        e.preventDefault();
+        this.handleEditIncome(e.target);
       } else if (e.target.id === 'transferForm') {
         e.preventDefault();
         this.handleTransferMoney(e.target);
@@ -436,6 +442,137 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       Helpers.showToast('Ingreso agregado exitosamente', 'success');
     } else {
       Helpers.showToast('Error al agregar el ingreso', 'error');
+    }
+  }
+
+  async handleEditIncome(form) {
+    const formData = new FormData(form);
+    const transactionId = formData.get('transactionId');
+    const walletId = formData.get('walletId');
+    const amount = parseFloat(formData.get('amount'));
+    const source = formData.get('source');
+    const description = Helpers.sanitizeInput(formData.get('description') || '');
+
+    if (!Helpers.validateNumber(amount)) {
+      Helpers.showToast('El monto debe ser un número válido', 'error');
+      return;
+    }
+
+    if (!source) {
+      Helpers.showToast('Debes seleccionar una fuente de ingreso', 'error');
+      return;
+    }
+
+    // Obtener transacción original
+    const transactionRepo = new TransactionRepository();
+    const transaction = await transactionRepo.getById(transactionId);
+    
+    if (!transaction) {
+      Helpers.showToast('Transacción no encontrada', 'error');
+      return;
+    }
+
+    const oldAmount = transaction.amount;
+    const amountDiff = amount - Math.abs(oldAmount);
+
+    // Actualizar transacción
+    transaction.amount = amount;
+    transaction.source = source;
+    transaction.description = description;
+
+    if (await transactionRepo.update(transaction)) {
+      // Actualizar balance de wallet
+      const walletRepo = new WalletRepository();
+      const wallet = await walletRepo.getById(walletId);
+      
+      if (wallet) {
+        wallet.balance += amountDiff;
+        await walletRepo.update(wallet);
+      }
+
+      await AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Helpers.showToast('Ingreso actualizado exitosamente', 'success');
+    } else {
+      Helpers.showToast('Error al actualizar el ingreso', 'error');
+    }
+  }
+
+  async handleDeleteIncome(transactionId, walletId) {
+    if (!confirm('¿Estás seguro de que quieres eliminar este ingreso?')) {
+      return;
+    }
+
+    const transactionRepo = new TransactionRepository();
+    const transaction = await transactionRepo.getById(transactionId);
+    
+    if (!transaction) {
+      Helpers.showToast('Transacción no encontrada', 'error');
+      return;
+    }
+
+    // Eliminar transacción
+    if (await transactionRepo.delete(transactionId)) {
+      // Actualizar balance de wallet (restar el ingreso)
+      const walletRepo = new WalletRepository();
+      const wallet = await walletRepo.getById(walletId);
+      
+      if (wallet) {
+        wallet.balance -= Math.abs(transaction.amount);
+        await walletRepo.update(wallet);
+      }
+
+      await AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Helpers.showToast('Ingreso eliminado exitosamente', 'success');
+    } else {
+      Helpers.showToast('Error al eliminar el ingreso', 'error');
+    }
+  }
+
+  async handleDeleteTransfer(transferOutId, transferInId, fromWalletId, toWalletId) {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta transferencia? Se eliminarán ambos movimientos.')) {
+      return;
+    }
+
+    const transactionRepo = new TransactionRepository();
+    const walletRepo = new WalletRepository();
+    
+    // Obtener ambas transacciones
+    const transferOut = await transactionRepo.getById(transferOutId);
+    const transferIn = await transactionRepo.getById(transferInId);
+    
+    if (!transferOut || !transferIn) {
+      Helpers.showToast('Transacciones no encontradas', 'error');
+      return;
+    }
+
+    // Eliminar ambas transacciones
+    const deleteOut = await transactionRepo.delete(transferOutId);
+    const deleteIn = await transactionRepo.delete(transferInId);
+    
+    if (deleteOut && deleteIn) {
+      // Actualizar balances: revertir la transferencia
+      const fromWallet = await walletRepo.getById(fromWalletId);
+      const toWallet = await walletRepo.getById(toWalletId);
+      
+      if (fromWallet) {
+        // Devolver el dinero a la wallet origen (transferOut es negativo)
+        fromWallet.balance -= transferOut.amount; // Resta un negativo = suma
+        await walletRepo.update(fromWallet);
+      }
+      
+      if (toWallet) {
+        // Quitar el dinero de la wallet destino (transferIn es positivo)
+        toWallet.balance -= transferIn.amount;
+        await walletRepo.update(toWallet);
+      }
+
+      await AppState.refreshData();
+      window.appEvents.emit('closeModal');
+      Helpers.showToast('Transferencia eliminada exitosamente', 'success');
+    } else {
+      Helpers.showToast('Error al eliminar la transferencia', 'error');
     }
   }
 
