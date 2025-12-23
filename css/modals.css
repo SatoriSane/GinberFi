@@ -141,14 +141,14 @@
 .modal-form select,
 .modal-form textarea {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #E5E7EB;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--dark-blue);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border: 2px solid var(--pastel-blue);
+  border-radius: var(--radius-md);
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   background: #FFFFFF;
+  font-size: 16px; /* Mínimo 16px para prevenir zoom en iOS */
 }
 
 .modal-form input:hover,
