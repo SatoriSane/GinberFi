@@ -436,12 +436,16 @@ class OpcionesManager {
       const incomeRepo = new BaseRepository(DBConfig.STORES.INCOME_SOURCES);
       const incomeSources = await incomeRepo.getAll();
       
+      // Obtener pagos programados
+      const scheduledPaymentRepo = new ScheduledPaymentRepository();
+      const scheduledPayments = await scheduledPaymentRepo.getAll();
+      
       // Obtener wallet seleccionada (solo el ID)
       const selectedWallet = await Storage.getSelectedWallet();
       const selectedWalletId = selectedWallet ? selectedWallet.id : null;
       
       const backupData = {
-        version: '1.0',
+        version: '1.1',
         timestamp: new Date().toISOString(),
         data: {
           wallets: wallets || [],
@@ -450,6 +454,7 @@ class OpcionesManager {
           transactions: transactions || [],
           historicalExpenses: historicalExpenses || [],
           incomeSources: incomeSources ? incomeSources.map(s => s.name || s.id || s) : [],
+          scheduledPayments: scheduledPayments || [],
           selectedWallet: selectedWalletId
         }
       };
@@ -663,6 +668,15 @@ class OpcionesManager {
         }
       }
       
+      // Restaurar pagos programados
+      const scheduledPaymentRepo = new ScheduledPaymentRepository();
+      await scheduledPaymentRepo.clear();
+      if (data.scheduledPayments && data.scheduledPayments.length > 0) {
+        for (const payment of data.scheduledPayments) {
+          await scheduledPaymentRepo.add(payment);
+        }
+      }
+      
       // Restaurar wallet seleccionada
       if (data.selectedWallet) {
         // Asegurarse de que sea solo el ID, no el objeto completo
@@ -708,6 +722,7 @@ class OpcionesManager {
                 Esta acción eliminará permanentemente:<br>
                 • Todas las wallets y sus saldos<br>
                 • Todas las categorías y gastos<br>
+                • Todos los pagos programados<br>
                 • Todo el historial de transacciones<br><br>
                 <strong>Esta acción no se puede deshacer.</strong>
               </div>
