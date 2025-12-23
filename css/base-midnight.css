@@ -10,10 +10,19 @@
 
 /* ===== OVERRIDES GLOBALES DE VARIABLES ===== */
 body.midnight-theme {
-  /* Sobrescribir variables para textos claros */
+  /* Midnight Color Palette */
+  --pastel-green: rgba(251, 191, 36, 0.4);
+  --pastel-blue: rgba(51, 65, 85, 0.8);
   --dark-blue: #F1F5F9;
+  --pastel-pink: rgba(245, 158, 11, 0.3);
+  
+  /* Additional colors */
+  --light-green: #1E293B;
+  --soft-gray: #0F172A;
   --text-dark: #F1F5F9;
   --text-light: #CBD5E1;
+  --white: #0F172A;
+  --shadow: rgba(0, 0, 0, 0.8);
   
   /* Budget status colors (midnight theme) */
   --budget-excellent-bg: rgba(30, 41, 59, 0.6);
@@ -28,6 +37,37 @@ body.midnight-theme {
   /* Unclassified colors */
   --unclassified-bg: rgba(30, 41, 59, 0.7);
   --unclassified-border: rgba(251, 191, 36, 0.3);
+  
+  /* State colors */
+  --color-success: #6EE7B7;
+  --color-warning: #FCD34D;
+  --color-error: #FCA5A5;
+  --color-info: #FBBF24;
+  
+  /* Chart colors */
+  --chart-primary: #FBBF24;
+  --chart-primary-alpha: rgba(251, 191, 36, 0.15);
+  
+  /* Component backgrounds */
+  --surface-primary: rgba(30, 41, 59, 0.8);
+  --surface-secondary: rgba(51, 65, 85, 0.9);
+  --surface-hover: rgba(245, 158, 11, 0.1);
+  --surface-active: rgba(245, 158, 11, 0.2);
+  
+  /* Transaction colors */
+  --transaction-positive: #6EE7B7;
+  --transaction-negative: #FCA5A5;
+  
+  /* Border and shadow variations */
+  --border-light: rgba(251, 191, 36, 0.2);
+  --border-medium: rgba(251, 191, 36, 0.3);
+  --shadow-color: rgba(0, 0, 0, 0.8);
+  
+  /* Interactive colors */
+  --interactive-bg: rgba(245, 158, 11, 0.1);
+  --interactive-bg-hover: rgba(245, 158, 11, 0.15);
+  --interactive-bg-active: rgba(245, 158, 11, 0.25);
+  --interactive-border: rgba(251, 191, 36, 0.4);
   
   /* Subcategory specific */
   --subcategory-bg: rgba(30, 41, 59, 0.7);

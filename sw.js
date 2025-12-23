@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'ginbertfi-v3.84';
+const CACHE_NAME = 'ginbertfi-v3.90';
 const urlsToCache = [
   './',
   'index.html',

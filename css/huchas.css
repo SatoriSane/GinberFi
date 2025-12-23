@@ -476,6 +476,230 @@
   font-style: italic;
 }
 
+/* Income Wallet Selector Overlay */
+.income-wallet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.income-wallet-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.income-wallet-container {
+  background: var(--white);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -4px 24px var(--shadow-color);
+  border: 1px solid var(--border-light);
+}
+
+.income-wallet-overlay.active .income-wallet-container {
+  transform: translateY(0);
+}
+
+.income-wallet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border-light);
+}
+
+.income-wallet-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.income-wallet-close {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-light);
+  font-size: 24px;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.income-wallet-close:hover {
+  background: var(--surface-hover);
+  color: var(--text-dark);
+  transform: rotate(90deg);
+}
+
+.income-wallet-close:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
+.income-wallet-list {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.income-wallet-item {
+  background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-green));
+  border-radius: 16px;
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  border: 2px solid transparent;
+  min-height: 64px;
+  position: relative;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.income-wallet-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface-hover);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.income-wallet-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px var(--shadow-color);
+  border-color: var(--interactive-border);
+}
+
+.income-wallet-item:hover::before {
+  opacity: 1;
+}
+
+.income-wallet-item:active {
+  transform: scale(0.98);
+}
+
+.income-wallet-info {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}
+
+.income-wallet-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.income-wallet-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  filter: grayscale(0%);
+  transition: filter 0.3s ease, transform 0.3s ease;
+  line-height: 1;
+}
+
+.income-wallet-item:hover .income-wallet-icon {
+  filter: grayscale(0%) brightness(1.2);
+  transform: scale(1.2);
+}
+
+/* Empty state para cuando no hay wallets */
+.income-wallet-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+}
+
+.income-wallet-empty p {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-md);
+}
+
+.income-wallet-empty-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .income-wallet-container {
+    padding: var(--spacing-md);
+    max-height: 80vh;
+  }
+  
+  .income-wallet-title {
+    font-size: 18px;
+  }
+  
+  .income-wallet-item {
+    min-height: 56px;
+    padding: var(--spacing-md);
+  }
+  
+  .income-wallet-name {
+    font-size: 18px;
+  }
+  
+  .income-wallet-icon {
+    font-size: 28px;
+  }
+}
+
+/* Extra touch-friendly para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .income-wallet-item {
+    min-height: 52px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .income-wallet-name {
+    font-size: 17px;
+  }
+  
+  .income-wallet-icon {
+    font-size: 26px;
+  }
+}
+
 /* Adaptive text sizing for long wallet names */
 @media (max-width: 360px) {
   .wallet-name-header {

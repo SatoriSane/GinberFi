@@ -3,6 +3,7 @@ class HuchasManager {
     this.walletsContainer = document.getElementById('walletsContainer');
     this.emptywalletsState = document.getElementById('emptywalletsState');
     this.addWalletBtn = document.getElementById('addWalletBtn');
+    this.addWalletListBtn = document.getElementById('addWalletListBtn');
     this.addNewWalletFab = document.getElementById('addNewWalletFab');
     this.firstWalletBtn = this.emptywalletsState.querySelector('#addWalletBtn');
     this.expandedwallets = new Set();
@@ -26,12 +27,18 @@ class HuchasManager {
     // Hacemos la instancia accesible globalmente para los onclick de los modales
     window.huchasManager = this;
     
+    // FAB ahora abre el selector de wallets para ingresos
     if (this.addNewWalletFab) {
-      this.addNewWalletFab.addEventListener('click', () => this.openCreateWalletModal());
+      this.addNewWalletFab.addEventListener('click', () => this.showIncomeWalletSelector());
     }
 
     if (this.firstWalletBtn) {
       this.firstWalletBtn.addEventListener('click', () => this.openCreateWalletModal());
+    }
+
+    // Botón de añadir wallet en la lista
+    if (this.addWalletListBtn) {
+      this.addWalletListBtn.addEventListener('click', () => this.openCreateWalletModal());
     }
 
     document.addEventListener('submit', (e) => {
@@ -66,9 +73,11 @@ class HuchasManager {
     if (!wallets.length) {
       this.emptywalletsState.style.display = 'block';
       this.addNewWalletFab.style.display = 'none';
+      this.addWalletListBtn.style.display = 'none';
     } else {
       this.emptywalletsState.style.display = 'none';
       this.addNewWalletFab.style.display = 'flex';
+      this.addWalletListBtn.style.display = 'block';
 
       const walletsHtml = wallets.map(wallet => {
         const isExpanded = expandedWallets.has(wallet.id);
@@ -646,6 +655,89 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     
     const modalConfig = await ModalManager.editWalletModal(wallet);
     window.appEvents.emit('openModal', modalConfig);
+  }
+
+  showIncomeWalletSelector() {
+    // Crear el overlay si no existe
+    let overlay = document.getElementById('incomeWalletOverlay');
+    
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'incomeWalletOverlay';
+      overlay.className = 'income-wallet-overlay';
+      
+      const container = document.createElement('div');
+      container.className = 'income-wallet-container';
+      
+      const header = document.createElement('div');
+      header.className = 'income-wallet-header';
+      header.innerHTML = `
+        <h3 class="income-wallet-title">💰 Registrar Ingreso</h3>
+        <button class="income-wallet-close" aria-label="Cerrar">×</button>
+      `;
+      
+      const list = document.createElement('div');
+      list.className = 'income-wallet-list';
+      
+      container.appendChild(header);
+      container.appendChild(list);
+      overlay.appendChild(container);
+      document.body.appendChild(overlay);
+      
+      // Event listeners
+      const closeBtn = header.querySelector('.income-wallet-close');
+      closeBtn.addEventListener('click', () => this.hideIncomeWalletSelector());
+      
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          this.hideIncomeWalletSelector();
+        }
+      });
+    }
+    
+    // Llenar con las wallets actuales
+    const list = overlay.querySelector('.income-wallet-list');
+    const wallets = AppState.wallets;
+    
+    if (wallets.length === 0) {
+      list.innerHTML = `
+        <div class="income-wallet-empty">
+          <div class="income-wallet-empty-icon">🐷</div>
+          <p>No hay wallets disponibles</p>
+          <span style="font-size: var(--font-size-sm); font-style: italic;">Crea tu primera wallet para empezar</span>
+        </div>
+      `;
+    } else {
+      list.innerHTML = wallets.map(wallet => `
+        <div class="income-wallet-item" data-wallet-id="${wallet.id}">
+          <div class="income-wallet-info">
+            <div class="income-wallet-name">${wallet.name}</div>
+          </div>
+          <div class="income-wallet-icon">💵</div>
+        </div>
+      `).join('');
+      
+      // Event listeners para cada wallet
+      list.querySelectorAll('.income-wallet-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const walletId = item.dataset.walletId;
+          this.hideIncomeWalletSelector();
+          await this.openIncomeModal(walletId);
+        });
+      });
+    }
+    
+    // Mostrar overlay con animación
+    setTimeout(() => {
+      overlay.classList.add('active');
+    }, 10);
+  }
+
+  hideIncomeWalletSelector() {
+    const overlay = document.getElementById('incomeWalletOverlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+    }
   }
 }
 
