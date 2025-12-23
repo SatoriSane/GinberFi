@@ -77,7 +77,22 @@ body.sunset-theme {
 
 /* Sunset theme specific overrides */
 body.sunset-theme .app-header {
-  background: linear-gradient(135deg, #FB923C 0%, #F472B6 50%, #E879F9 100%);
+  background: 
+    /* Rayos de sol radiales desde el horizonte */
+    linear-gradient(95deg, transparent 48%, rgba(255, 255, 255, 0.08) 49%, rgba(255, 255, 255, 0.08) 50%, transparent 51%),
+    linear-gradient(100deg, transparent 48%, rgba(255, 255, 255, 0.06) 49%, rgba(255, 255, 255, 0.06) 50%, transparent 51%),
+    linear-gradient(105deg, transparent 48%, rgba(255, 255, 255, 0.07) 49%, rgba(255, 255, 255, 0.07) 50%, transparent 51%),
+    linear-gradient(110deg, transparent 48%, rgba(255, 255, 255, 0.05) 49%, rgba(255, 255, 255, 0.05) 50%, transparent 51%),
+    
+    /* Nubes horizontales abstractas */
+    radial-gradient(ellipse 120px 15px at 20% 40%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 100px 12px at 75% 65%, rgba(255, 255, 255, 0.1) 0%, transparent 70%),
+    
+    /* Profundidad del atardecer */
+    linear-gradient(to bottom, transparent 0%, rgba(131, 24, 67, 0.1) 100%),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #FB923C 0%, #F472B6 50%, #E879F9 100%);
   border-bottom: 1px solid rgba(251, 146, 60, 0.3);
 }
 

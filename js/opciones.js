@@ -32,7 +32,7 @@ class OpcionesManager {
                 <div class="option-icon">🎨</div>
                 <div class="option-content">
                   <div class="option-title">Temas de Color</div>
-                  <div class="option-description">Elige entre 8 temas diferentes para personalizar tu experiencia</div>
+                  <div class="option-description">Elige entre 10 temas diferentes para personalizar tu experiencia</div>
                 </div>
               </div>
               
@@ -126,7 +126,7 @@ class OpcionesManager {
     existingThemeCSS.forEach(css => css.remove());
     
     // Limpiar todas las clases de tema del body
-    document.body.classList.remove('dark-theme', 'sunset-theme', 'ocean-theme', 'forest-theme', 'lavender-theme', 'coral-theme', 'zen-theme');
+    document.body.classList.remove('dark-theme', 'sunset-theme', 'ocean-theme', 'forest-theme', 'lavender-theme', 'coral-theme', 'zen-theme', 'midnight-theme', 'coastal-theme', 'starry-theme');
     
     // Tema light no necesita CSS adicional (usa base.css)
     if (theme === 'light') return;
@@ -139,7 +139,10 @@ class OpcionesManager {
       'forest': 'css/base-forest.css',
       'lavender': 'css/base-lavender.css',
       'coral': 'css/base-coral.css',
-      'zen': 'css/base-zen.css'
+      'zen': 'css/base-zen.css',
+      'midnight': 'css/base-midnight.css',
+      'coastal': 'css/base-coastal.css',
+      'starry': 'css/base-starry.css'
     };
     
     // Mapeo de temas a clases del body
@@ -150,7 +153,10 @@ class OpcionesManager {
       'forest': 'forest-theme',
       'lavender': 'lavender-theme',
       'coral': 'coral-theme',
-      'zen': 'zen-theme'
+      'zen': 'zen-theme',
+      'midnight': 'midnight-theme',
+      'coastal': 'coastal-theme',
+      'starry': 'starry-theme'
     };
     
     // Cargar CSS del tema seleccionado
@@ -297,6 +303,51 @@ class OpcionesManager {
                   <div class="theme-description">Diseño minimalista y espacioso revolucionario</div>
                 </div>
               </div>
+              
+              <div class="theme-option ${currentTheme === 'midnight' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('midnight')">
+                <div class="theme-preview midnight-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌙✨ Modo Midnight</div>
+                  <div class="theme-description">Elegancia premium en negro y oro</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'coastal' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('coastal')">
+                <div class="theme-preview coastal-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌊⚓ Modo Coastal</div>
+                  <div class="theme-description">Elegancia oceánica con tonos cobre</div>
+                </div>
+              </div>
+              
+              <div class="theme-option ${currentTheme === 'starry' ? 'selected' : ''}" 
+                   onclick="OpcionesManager.setTheme('starry')">
+                <div class="theme-preview starry-preview">
+                  <div class="preview-header"></div>
+                  <div class="preview-content">
+                    <div class="preview-card"></div>
+                    <div class="preview-card"></div>
+                  </div>
+                </div>
+                <div class="theme-info">
+                  <div class="theme-title">🌌 Starry Night</div>
+                  <div class="theme-description">Noche Estrellada</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -353,58 +404,12 @@ class OpcionesManager {
       'forest': 'forest',
       'lavender': 'lavender',
       'coral': 'coral',
-      'zen': 'zen'
+      'zen': 'zen',
+      'midnight': 'midnight',
+      'coastal': 'coastal'
     };
     
     this.showSuccessMessage('Tema aplicado', `Se ha cambiado al modo ${themeNames[theme] || 'claro'}`);
-  }
-
-  static applyTheme(theme) {
-    const head = document.head;
-    
-    // Limpiar todos los temas CSS existentes
-    const existingThemeCSS = document.querySelectorAll('[data-theme-css]');
-    existingThemeCSS.forEach(css => css.remove());
-    
-    // Limpiar todas las clases de tema del body
-    document.body.classList.remove('dark-theme', 'sunset-theme', 'ocean-theme', 'forest-theme', 'lavender-theme', 'coral-theme', 'zen-theme');
-    
-    // Tema light no necesita CSS adicional (usa base.css)
-    if (theme === 'light') return;
-    
-    // Mapeo de temas a archivos CSS
-    const themeFiles = {
-      'dark': 'css/base-dark.css',
-      'sunset': 'css/base-sunset.css',
-      'ocean': 'css/base-ocean.css',
-      'forest': 'css/base-forest.css',
-      'lavender': 'css/base-lavender.css',
-      'coral': 'css/base-coral.css',
-      'zen': 'css/base-zen.css'
-    };
-    
-    // Mapeo de temas a clases del body
-    const themeClasses = {
-      'dark': 'dark-theme',
-      'sunset': 'sunset-theme',
-      'ocean': 'ocean-theme',
-      'forest': 'forest-theme',
-      'lavender': 'lavender-theme',
-      'coral': 'coral-theme',
-      'zen': 'zen-theme'
-    };
-    
-    // Cargar CSS del tema seleccionado
-    if (themeFiles[theme]) {
-      const themeCSS = document.createElement('link');
-      themeCSS.setAttribute('data-theme-css', theme);
-      themeCSS.rel = 'stylesheet';
-      themeCSS.href = themeFiles[theme];
-      head.appendChild(themeCSS);
-      
-      // Aplicar clase al body
-      document.body.classList.add(themeClasses[theme]);
-    }
   }
 
   static initializeTheme() {

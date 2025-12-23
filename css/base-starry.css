@@ -1,0 +1,317 @@
+/* Starry Night Theme - Noche Estrellada en escala de grises */
+:root {
+  /* Starry Color Palette - Escala de grises con predominio del negro */
+  --pastel-green: #6B7280;
+  --pastel-blue: #4B5563;
+  --dark-blue: #E5E7EB;
+  --pastel-pink: #9CA3AF;
+  
+  /* Starry theme specific colors */
+  --light-green: #1F2937;
+  --soft-gray: #111827;
+  --text-dark: #E5E7EB;
+  --text-light: #9CA3AF;
+  --white: #0A0A0A;
+  --shadow: rgba(0, 0, 0, 0.9);
+  
+  /* Border colors for starry theme */
+  --border-color: #374151;
+  --light-gray: #4B5563;
+  
+  /* Budget status colors (starry theme) */
+  --budget-excellent-bg: rgba(31, 41, 55, 0.7);
+  --budget-excellent-border: #6B7280;
+  --budget-good-bg: rgba(55, 65, 81, 0.7);
+  --budget-good-border: #9CA3AF;
+  --budget-warning-bg: rgba(75, 85, 99, 0.5);
+  --budget-warning-border: #D1D5DB;
+  --budget-danger-bg: rgba(127, 29, 29, 0.3);
+  --budget-danger-border: #EF4444;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #111827;
+  --unclassified-border: #374151;
+  
+  /* State colors (starry theme) */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #6B7280;
+  
+  /* Chart colors (starry theme) */
+  --chart-primary: #6B7280;
+  --chart-primary-alpha: rgba(107, 114, 128, 0.15);
+  
+  /* Component backgrounds (starry theme) */
+  --surface-primary: rgba(17, 24, 39, 0.9);
+  --surface-secondary: rgba(31, 41, 55, 0.95);
+  --surface-hover: rgba(107, 114, 128, 0.1);
+  --surface-active: rgba(107, 114, 128, 0.2);
+  
+  /* Transaction colors (starry theme) */
+  --transaction-positive: #10B981;
+  --transaction-negative: #EF4444;
+  
+  /* Border and shadow variations (starry theme) */
+  --border-light: rgba(75, 85, 99, 0.4);
+  --border-medium: rgba(107, 114, 128, 0.4);
+  --shadow-color: rgba(0, 0, 0, 0.9);
+  
+  /* Interactive colors (starry theme) */
+  --interactive-bg: rgba(107, 114, 128, 0.1);
+  --interactive-bg-hover: rgba(107, 114, 128, 0.15);
+  --interactive-bg-active: rgba(107, 114, 128, 0.25);
+  --interactive-border: rgba(107, 114, 128, 0.3);
+  
+  /* Subcategory specific (starry theme) */
+  --subcategory-bg: rgba(31, 41, 55, 0.8);
+  --subcategory-bg-hover: rgba(55, 65, 81, 0.9);
+  --subcategory-border-accent: rgba(107, 114, 128, 0.4);
+}
+
+/* Starry theme body styles */
+body.starry-theme {
+  background: linear-gradient(135deg, #0A0A0A 0%, #1F2937 50%, #0A0A0A 100%);
+  color: var(--text-dark);
+}
+
+/* Starry theme specific overrides */
+body.starry-theme .app-header {
+  background: 
+    /* Estrellas sutiles */
+    radial-gradient(circle 1px at 15% 30%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
+    radial-gradient(circle 0.8px at 35% 55%, rgba(229, 231, 235, 0.5) 0%, transparent 100%),
+    radial-gradient(circle 1.2px at 55% 40%, rgba(255, 255, 255, 0.55) 0%, transparent 100%),
+    radial-gradient(circle 0.9px at 75% 60%, rgba(229, 231, 235, 0.6) 0%, transparent 100%),
+    radial-gradient(circle 1px at 90% 45%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
+    /* Gradiente base */
+    linear-gradient(135deg, #0A0A0A 0%, #1F2937 100%);
+  border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+body.starry-theme .balance-selector {
+  background: rgba(31, 41, 55, 0.7);
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+body.starry-theme .balance-selector:hover {
+  background: rgba(55, 65, 81, 0.8);
+  box-shadow: 0 4px 16px rgba(107, 114, 128, 0.2);
+}
+
+body.starry-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.starry-theme .wallet-name {
+  color: rgba(229, 231, 235, 0.9);
+}
+
+body.starry-theme .balance-dropdown {
+  background: #1F2937;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95);
+}
+
+body.starry-theme .wallet-item:hover {
+  background: rgba(107, 114, 128, 0.15);
+}
+
+body.starry-theme .wallet-item.selected {
+  background: rgba(107, 114, 128, 0.25);
+  border-left: 3px solid #9CA3AF;
+}
+
+body.starry-theme .wallet-card {
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+body.starry-theme .wallet-header {
+  background: linear-gradient(135deg, 
+    rgba(31, 41, 55, 0.7) 0%, 
+    rgba(55, 65, 81, 0.5) 100%);
+}
+
+body.starry-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg,
+    rgba(55, 65, 81, 0.8) 0%,
+    rgba(75, 85, 99, 0.6) 100%);
+}
+
+body.starry-theme .recent-transaction-item {
+  background: rgba(31, 41, 55, 0.6);
+  border: 1px solid rgba(107, 114, 128, 0.15);
+}
+
+body.starry-theme .recent-transaction-item:hover {
+  background: rgba(31, 41, 55, 0.8);
+  border-color: rgba(107, 114, 128, 0.3);
+  box-shadow: 0 4px 16px rgba(107, 114, 128, 0.1);
+}
+
+body.starry-theme .empty-state {
+  background: rgba(31, 41, 55, 0.4);
+  border: 2px dashed rgba(107, 114, 128, 0.3);
+}
+
+/* Navigation */
+body.starry-theme .app-navigation {
+  background: linear-gradient(135deg, #0A0A0A 0%, #1F2937 100%);
+  border-top: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+body.starry-theme .nav-item {
+  color: #9CA3AF;
+}
+
+body.starry-theme .nav-item:hover {
+  background: rgba(107, 114, 128, 0.15);
+  color: #E5E7EB;
+}
+
+body.starry-theme .nav-item.active {
+  background: rgba(107, 114, 128, 0.25);
+  border-top-color: #6B7280;
+  color: #F9FAFB;
+}
+
+/* Buttons */
+body.starry-theme .options-btn {
+  background: var(--pastel-blue);
+  color: var(--dark-blue);
+}
+
+body.starry-theme .options-btn:hover {
+  background: #374151;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Modal */
+body.starry-theme .modal {
+  background: #1F2937;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+}
+
+body.starry-theme .modal-header {
+  background: linear-gradient(135deg, #0A0A0A 0%, #1F2937 100%);
+  border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+body.starry-theme .modal-body {
+  background: #1F2937;
+}
+
+/* Forms */
+body.starry-theme input,
+body.starry-theme select,
+body.starry-theme textarea {
+  background: #374151;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  color: #E5E7EB;
+}
+
+body.starry-theme input:focus,
+body.starry-theme select:focus,
+body.starry-theme textarea:focus {
+  border-color: #6B7280;
+  background: #4B5563;
+}
+
+body.starry-theme input::placeholder,
+body.starry-theme textarea::placeholder {
+  color: #6B7280;
+}
+
+/* FAB */
+body.starry-theme .fab {
+  background: linear-gradient(135deg, #4B5563 0%, #6B7280 100%);
+  color: #0A0A0A;
+  box-shadow: 0 8px 32px rgba(107, 114, 128, 0.4);
+}
+
+body.starry-theme .fab:hover {
+  background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+  box-shadow: 0 12px 40px rgba(107, 114, 128, 0.6);
+}
+
+/* Theme specific overrides for text */
+body.starry-theme .app-name,
+body.starry-theme .wallet-name-header,
+body.starry-theme .category-name,
+body.starry-theme .modal-title {
+  color: #F9FAFB;
+}
+.expense-item {
+  background: rgba(31, 41, 55, 0.7);
+}
+body.starry-theme .wallet-description,
+body.starry-theme .expense-date,
+body.starry-theme label {
+  color: #9CA3AF;
+}
+
+body.starry-theme .wallet-balance-compact,
+body.starry-theme .category-total,
+body.starry-theme .expense-amount {
+  color: #D1D5DB;
+}
+
+/* Scrollbar */
+body.starry-theme ::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+body.starry-theme ::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.4);
+}
+
+body.starry-theme ::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.6);
+}
+
+/* Button colors */
+body.starry-theme .btn-primary {
+  background: linear-gradient(135deg, #6B7280 0%, #9CA3AF 100%);
+  color: #0A0A0A;
+}
+
+body.starry-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #4B5563 0%, #6B7280 100%);
+}
+
+body.starry-theme .btn-secondary {
+  background: rgba(55, 65, 81, 0.7);
+  color: #E5E7EB;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+body.starry-theme .btn-secondary:hover {
+  background: rgba(75, 85, 99, 0.9);
+}
+
+/* Wallet transactions modal */
+body.starry-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+}
+
+body.starry-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Close button */
+body.starry-theme .btn-close {
+  background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+body.starry-theme .btn-close:hover {
+  background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
+  border-color: rgba(107, 114, 128, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+}
