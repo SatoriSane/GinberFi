@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'ginbertfi-v3.41';
+const CACHE_NAME = 'ginbertfi-v3.42';
 const urlsToCache = [
   './',
   'index.html',
@@ -49,14 +49,15 @@ const urlsToCache = [
 // Install event - cache resources
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Instalando y precacheando recursos.');
+  // Activar inmediatamente el nuevo Service Worker sin esperar
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Cacheando archivos:', urlsToCache);
         return cache.addAll(urlsToCache);
       })
-      .then(() => self.skipWaiting()) // Forzar activación del nuevo SW
-      .catch((err) => console.error('Service Worker: Error al precachear archivos.', err))
   );
 });
 

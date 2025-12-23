@@ -71,9 +71,9 @@ class GinbertFiApp {
               
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Hay una nueva versión disponible
-                  console.log('Nueva versión instalada, esperando activación');
-                  this.showUpdateNotification();
+                  // Hay una nueva versión disponible - activar automáticamente
+                  console.log('Nueva versión instalada, activando automáticamente...');
+                  newWorker.postMessage({ type: 'SKIP_WAITING' });
                 }
               });
             });
