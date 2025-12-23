@@ -840,7 +840,7 @@ static createWalletModal() {
       const incomeSources = await Storage.getIncomeSources();
     
       return {
-        title: 'Agregar Ingreso',
+        title: 'Ingreso en ' + (wallet ? wallet.name : 'Wallet'),
         className: 'income-modal',
         body: `
           <form class="modal-form" id="incomeForm">
@@ -931,7 +931,7 @@ static createWalletModal() {
     const incomeSources = await Storage.getIncomeSources();
   
     return {
-      title: 'Editar Ingreso',
+      title: 'Editar Ingreso en ' + (wallet ? wallet.name : 'Wallet'),
       className: 'income-modal',
       body: `
         <form class="modal-form" id="editIncomeForm">
