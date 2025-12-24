@@ -110,6 +110,13 @@ class ResumenManager {
             <div class="resumen-stat-label">Categoría Principal</div>
           </div>
         </div>
+        <div class="resumen-stat-card top-subcategory">
+          <div class="resumen-stat-icon">⭐</div>
+          <div class="resumen-stat-content">
+            <div class="resumen-stat-value">${stats.topSubcategory.name}</div>
+            <div class="resumen-stat-label">Subcategoría Principal</div>
+          </div>
+        </div>
       </div>
 
       <div class="resumen-charts-container">
@@ -286,11 +293,29 @@ class ResumenManager {
     const topCategoryName = Object.keys(categorySpending).reduce((a, b) => 
       categorySpending[a] > categorySpending[b] ? a : b, 'N/A');
 
+    // Find top subcategory
+    const subcategorySpending = {};
+    expenses.forEach(expense => {
+      const category = this.getCategoryForExpense(expense);
+      if (category && category.subcategories) {
+        const subcategory = category.subcategories.find(sub => sub.id === expense.subcategoryId);
+        if (subcategory) {
+          subcategorySpending[subcategory.name] = (subcategorySpending[subcategory.name] || 0) + expense.amount;
+        }
+      }
+    });
+
+    const topSubcategoryName = Object.keys(subcategorySpending).length > 0
+      ? Object.keys(subcategorySpending).reduce((a, b) => 
+          subcategorySpending[a] > subcategorySpending[b] ? a : b)
+      : 'N/A';
+
     return {
       totalSpent,
       avgDaily,
       transactionCount,
-      topCategory: { name: topCategoryName }
+      topCategory: { name: topCategoryName },
+      topSubcategory: { name: topSubcategoryName }
     };
   }
 

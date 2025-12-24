@@ -176,6 +176,11 @@
   color: white;
 }
 
+.resumen-stat-card.top-subcategory .resumen-stat-icon {
+  background: linear-gradient(135deg, #FFD54F, #FFE082);
+  color: white;
+}
+
 /* Charts Container */
 .resumen-charts-container {
   display: grid;
