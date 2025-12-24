@@ -348,24 +348,43 @@
   margin-bottom: var(--spacing-md);
 }
 
-.source-item {
-  padding: var(--spacing-sm) var(--spacing-md);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  border-bottom: 1px solid rgba(44, 82, 130, 0.1);
+/* Contenedor de fuentes - layout horizontal con wrap */
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding: 0;
 }
 
-.source-item:last-child {
-  border-bottom: none;
+/* Items de fuente como botones/etiquetas */
+.source-item {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--white);
+  border: 2px solid var(--pastel-blue);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--dark-blue);
 }
 
 .source-item:hover {
   background: var(--light-green);
+  border-color: var(--dark-blue);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .source-item.selected {
   background: var(--pastel-green);
-  font-weight: 600;
+  border-color: var(--dark-blue);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
 }
 
 .add-source-section {
@@ -386,10 +405,18 @@
 .add-source-btn {
   background: var(--pastel-green);
   color: var(--dark-blue);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm); /* Padding más pequeño */
   border-radius: var(--radius-md);
   font-weight: 600;
   white-space: nowrap;
+  height: 52px; /* Altura compacta - ajusta a tu gusto */
+  display: inline-flex; /* Para centrar el texto verticalmente */
+  align-items: center;
+  justify-content: center;
+}
+
+.add-source-btn:hover {
+  background: #A3E0A3;
 }
 
 .add-source-btn:hover {
