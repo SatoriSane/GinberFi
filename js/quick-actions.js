@@ -65,7 +65,7 @@ class QuickActionsManager {
     this.closeMenu();
     
     // Pequeño delay para que la animación de cierre sea visible
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     switch (action) {
       case 'quick-expense':
@@ -198,7 +198,7 @@ class QuickActionsManager {
               ${Helpers.formatCurrency(wallet.balance, wallet.currency)}
             </div>
           </div>
-          <div class="income-wallet-icon">💰</div>
+          <div class="income-wallet-icon"></div>
         </div>
       `).join('');
       

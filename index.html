@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="css/modals.css">
     <link rel="stylesheet" href="css/modal_opciones.css">
     <link rel="stylesheet" href="css/modal_wallet_transactions.css">
+    <link rel="stylesheet" href="css/quick-actions.css">
 </head>
 <body>
     <header role="banner" class="app-header">
@@ -121,26 +122,29 @@
     <div class="modals-container" id="modalsContainer"></div>
 
     <!-- Quick Actions Menu Overlay -->
-    <div class="quick-actions-overlay" id="quickActionsOverlay">
-        <div class="quick-actions-menu">
-            <button class="quick-action-btn" data-action="quick-expense">
-                <span class="action-icon">💳</span>
-                <span class="action-label">Gasto Rápido</span>
-            </button>
-            <button class="quick-action-btn" data-action="schedule-payment">
-                <span class="action-icon">📅</span>
-                <span class="action-label">Programar Pago</span>
-            </button>
-            <button class="quick-action-btn" data-action="add-income">
-                <span class="action-icon">💰</span>
-                <span class="action-label">Ingresar a Wallet</span>
-            </button>
-            <button class="quick-action-btn" data-action="transfer">
-                <span class="action-icon">🔄</span>
-                <span class="action-label">Transferir</span>
-            </button>
-        </div>
+<div class="quick-actions-overlay" id="quickActionsOverlay">
+    <div class="quick-actions-menu">
+        <button class="quick-action-btn" data-action="transfer">
+            <span class="action-icon">⇆</span>
+            <span class="action-label">Transferir</span>
+        </button>
+        <button class="quick-action-btn" data-action="schedule-payment">
+            <span class="action-icon">📅</span>
+            <span class="action-label">Programar</span>
+        </button>
+<button class="quick-action-btn" data-action="add-income">
+    <div class="piggy-icon-container">
+        <div class="piggy-slot"></div>
+        <div class="piggy-coin">BOB</div>
     </div>
+    <span class="action-label">Ingresar</span>
+</button>
+        <button class="quick-action-btn" data-action="quick-expense">
+            <span class="action-icon">💸</span>
+            <span class="action-label">Gasto</span>
+        </button>
+    </div>
+</div>
 
     <script src="js/base.js"></script>
     <!-- IndexedDB Layer -->
