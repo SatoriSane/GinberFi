@@ -852,6 +852,11 @@ static createWalletModal() {
                 <span class="currency-display">${wallet ? wallet.currency : 'BOB'}</span>
               </div>
             </div>
+                        <div class="form-group">
+              <label for="incomeDescription">Descripción (opcional)</label>
+              <input type="text" id="incomeDescription" name="description" 
+                     placeholder="ej: Sueldo de enero">
+            </div>
             <div class="form-group">
               <label>Fuente del dinero</label>
               <div class="source-list" id="sourceList">
@@ -867,11 +872,7 @@ static createWalletModal() {
               </div>
               <input type="hidden" id="incomeSource" name="source" required>
             </div>
-            <div class="form-group">
-              <label for="incomeDescription">Descripción (opcional)</label>
-              <input type="text" id="incomeDescription" name="description" 
-                     placeholder="ej: Sueldo de enero">
-            </div>
+
             <input type="hidden" name="walletId" value="${walletId}">
           </form>
         `,
@@ -943,6 +944,11 @@ static createWalletModal() {
               <span class="currency-display">${wallet ? wallet.currency : 'BOB'}</span>
             </div>
           </div>
+                    <div class="form-group">
+            <label for="editIncomeDescription">Descripción (opcional)</label>
+            <input type="text" id="editIncomeDescription" name="description" 
+                   placeholder="ej: Sueldo de enero" value="${transaction.description || ''}">
+          </div>
           <div class="form-group">
             <label>Fuente del dinero</label>
             <div class="source-list" id="editSourceList">
@@ -958,11 +964,7 @@ static createWalletModal() {
             </div>
             <input type="hidden" id="editIncomeSource" name="source" required value="${transaction.source || ''}">
           </div>
-          <div class="form-group">
-            <label for="editIncomeDescription">Descripción (opcional)</label>
-            <input type="text" id="editIncomeDescription" name="description" 
-                   placeholder="ej: Sueldo de enero" value="${transaction.description || ''}">
-          </div>
+
           
           <div class="form-group delete-expense">
             <button type="button" class="btn-text-danger"
