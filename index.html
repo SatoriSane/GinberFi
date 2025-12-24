@@ -64,8 +64,6 @@
                 </div>
 
             <button class="add-category-list-btn" id="addCategoryListBtn">+ Añadir categoría</button>
-
-            <button class="fab" id="addQuickExpenseFab">+</button>
         </div>
 
         <div class="tab-content" id="pagosTab">
@@ -75,7 +73,6 @@
                     <button class="add-payment-btn" id="addPaymentBtn">Programar Primer Pago</button>
                 </div>
             </div>
-            <button class="fab" id="addPaymentFab">+</button>
         </div>
 
         <div class="tab-content" id="huchasTab">
@@ -87,8 +84,6 @@
             </div>
 
             <button class="add-category-list-btn" id="addWalletListBtn">+ Añadir wallet</button>
-
-            <button class="fab" id="addNewWalletFab">+</button>
         </div>
 
         <div class="tab-content" id="resumenTab">
@@ -105,6 +100,12 @@
             <span class="nav-icon">📅</span>
             <span class="nav-label">Pagos</span>
         </button>
+        
+        <!-- Central FAB Button -->
+        <button class="central-fab" id="centralFabBtn" aria-label="Acciones rápidas">
+            <span class="fab-icon">+</span>
+        </button>
+        
         <button role="tab" class="nav-tab active" data-tab="gastos" id="gastosNavBtn">
             <span class="nav-icon dollar-svg">
               <img src="dollar-banknote-svgrepo-com.svg" alt="icono gastos">
@@ -118,6 +119,28 @@
     </nav>
 
     <div class="modals-container" id="modalsContainer"></div>
+
+    <!-- Quick Actions Menu Overlay -->
+    <div class="quick-actions-overlay" id="quickActionsOverlay">
+        <div class="quick-actions-menu">
+            <button class="quick-action-btn" data-action="quick-expense">
+                <span class="action-icon">💳</span>
+                <span class="action-label">Gasto Rápido</span>
+            </button>
+            <button class="quick-action-btn" data-action="schedule-payment">
+                <span class="action-icon">📅</span>
+                <span class="action-label">Programar Pago</span>
+            </button>
+            <button class="quick-action-btn" data-action="add-income">
+                <span class="action-icon">💰</span>
+                <span class="action-label">Ingresar a Wallet</span>
+            </button>
+            <button class="quick-action-btn" data-action="transfer">
+                <span class="action-icon">🔄</span>
+                <span class="action-label">Transferir</span>
+            </button>
+        </div>
+    </div>
 
     <script src="js/base.js"></script>
     <!-- IndexedDB Layer -->
@@ -142,6 +165,7 @@
     <script src="js/resumen.js"></script>
     <script src="js/modals.js"></script>
     <script src="js/opciones.js"></script>
+    <script src="js/quick-actions.js"></script>
     <script src="js/app.js"></script>
     
 </body>

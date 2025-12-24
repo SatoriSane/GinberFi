@@ -5,7 +5,6 @@ class GastosManager {
     this.emptyCategoriesState = document.getElementById('emptyCategoriesState');
     this.addCategoryBtn = document.getElementById('addCategoryBtn');
     this.addCategoryListBtn = document.getElementById('addCategoryListBtn');
-    this.addQuickExpenseFab = document.getElementById('addQuickExpenseFab');
 
     this.init();
   }
@@ -42,17 +41,12 @@ class GastosManager {
     // Hacemos la instancia accesible globalmente para los onclick de los modales
     window.gastosManager = this;
 
-    // El botón del estado vacío sigue abriendo el modal de crear categoría
+    // El botón del estado vacío abre el modal de crear categoría
     this.addCategoryBtn.addEventListener('click', () => {
       this.openCreateCategoryModal();
     });
 
-    // ✅ CAMBIO: El FAB ahora abre el modal de "Gasto Rápido"
-    this.addQuickExpenseFab.addEventListener('click', () => {
-      this.openQuickExpenseModal();
-    });
-
-    // 🚀 NUEVO: El nuevo botón "+ Añadir Categoría" también abre el modal de creación
+    // El botón "+ Añadir Categoría" abre el modal de creación
     this.addCategoryListBtn.addEventListener('click', () => {
         this.openCreateCategoryModal();
     });
@@ -145,9 +139,6 @@ class GastosManager {
         console.log('HTML insertado, adjuntando event listeners...');
         this.attachCategoryEventListeners();
     }
-    
-    // El FAB de gasto rápido siempre debe estar visible si hay wallets
-    this.addQuickExpenseFab.style.display = AppState.wallets.length > 0 ? 'flex' : 'none';
   }
 
   renderCategories(categories) {

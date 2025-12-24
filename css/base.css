@@ -311,36 +311,6 @@ label {
   animation: slideUp 0.3s ease-out;
 }
 
-/* FAB Button */
-.fab {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    color: #1a365d;
-    background-color: #1e528755;
-    font-size: 28px;
-    line-height: 56px;
-    text-align: center;
-    border: #1a365d;
-    box-shadow: var(--shadow-lg);
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    opacity: 1;
-    transition: all 0.3s ease;
-}
-
-.fab:hover {
-    background-color: #3b6fa3; /* Lighter shade for hover */
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 12px 20px -4px var(--shadow);
-    opacity: 1;
-}
 .nav-tab {
   display: flex;           
   align-items: center;     

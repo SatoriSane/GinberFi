@@ -4,7 +4,6 @@ class HuchasManager {
     this.emptywalletsState = document.getElementById('emptywalletsState');
     this.addWalletBtn = document.getElementById('addWalletBtn');
     this.addWalletListBtn = document.getElementById('addWalletListBtn');
-    this.addNewWalletFab = document.getElementById('addNewWalletFab');
     this.firstWalletBtn = this.emptywalletsState.querySelector('#addWalletBtn');
     this.expandedwallets = new Set();
 
@@ -26,11 +25,6 @@ class HuchasManager {
   setupEventListeners() {
     // Hacemos la instancia accesible globalmente para los onclick de los modales
     window.huchasManager = this;
-    
-    // FAB ahora abre el selector de wallets para ingresos
-    if (this.addNewWalletFab) {
-      this.addNewWalletFab.addEventListener('click', () => this.showIncomeWalletSelector());
-    }
 
     if (this.firstWalletBtn) {
       this.firstWalletBtn.addEventListener('click', () => this.openCreateWalletModal());
@@ -72,11 +66,9 @@ class HuchasManager {
 
     if (!wallets.length) {
       this.emptywalletsState.style.display = 'block';
-      this.addNewWalletFab.style.display = 'none';
       this.addWalletListBtn.style.display = 'none';
     } else {
       this.emptywalletsState.style.display = 'none';
-      this.addNewWalletFab.style.display = 'flex';
       this.addWalletListBtn.style.display = 'block';
 
       const walletsHtml = wallets.map(wallet => {

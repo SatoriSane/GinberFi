@@ -128,6 +128,13 @@ class ResumenManager {
         </div>
         
         <div class="resumen-chart-section">
+          <h3>Gastos por Subcategoría</h3>
+          <div class="resumen-chart-wrapper">
+            <canvas id="subcategoryChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="resumen-chart-section">
           <h3>Tendencia de Gastos</h3>
           <div class="resumen-chart-wrapper">
             <canvas id="trendChart"></canvas>
@@ -672,6 +679,7 @@ class ResumenManager {
     const filteredExpenses = this.getFilteredData(expenses);
     
     this.renderCategoryChart(filteredExpenses, categories);
+    this.renderSubcategoryChart(filteredExpenses, categories);
     this.renderTrendChart(filteredExpenses);
     this.renderWalletChart(filteredExpenses, wallets);
   }
@@ -693,6 +701,62 @@ class ResumenManager {
     const colors = this.generateColors(labels.length);
 
     this.charts.category = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: colors,
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const total = data.reduce((sum, val) => sum + val, 0);
+                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                return `${context.label}: ${Helpers.formatCurrency(context.parsed)} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  renderSubcategoryChart(expenses, categories) {
+    const ctx = this.container.querySelector('#subcategoryChart');
+    if (!ctx) return;
+
+    const subcategoryData = {};
+    expenses.forEach(expense => {
+      const category = this.getCategoryForExpense(expense);
+      if (category && category.subcategories) {
+        const subcategory = category.subcategories.find(sub => sub.id === expense.subcategoryId);
+        if (subcategory) {
+          subcategoryData[subcategory.name] = (subcategoryData[subcategory.name] || 0) + expense.amount;
+        }
+      }
+    });
+
+    // Sort by amount and get top 10
+    const sortedSubcategories = Object.entries(subcategoryData)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+
+    const labels = sortedSubcategories.map(item => item[0]);
+    const data = sortedSubcategories.map(item => item[1]);
+    const colors = this.generateColors(labels.length);
+
+    this.charts.subcategory = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels,

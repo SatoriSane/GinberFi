@@ -4,7 +4,6 @@ class PagosManager {
     this.pagosContainer = document.getElementById('pagosContainer');
     this.emptyPagosState = document.getElementById('emptyPagosState');
     this.addPaymentBtn = document.getElementById('addPaymentBtn');
-    this.addPaymentFab = document.getElementById('addPaymentFab');
     
     this.scheduledRepo = new ScheduledPaymentRepository();
     this.payments = [];
@@ -43,11 +42,6 @@ class PagosManager {
       this.openCreatePaymentModal();
     });
 
-    // FAB para agregar pago
-    this.addPaymentFab.addEventListener('click', () => {
-      this.openCreatePaymentModal();
-    });
-
     // Handle form submissions
     document.addEventListener('submit', async (e) => {
       const form = e.target;
@@ -77,10 +71,8 @@ class PagosManager {
       this.pagosContainer.innerHTML = '';
       this.pagosContainer.appendChild(this.emptyPagosState);
       this.emptyPagosState.style.display = 'block';
-      this.addPaymentFab.style.display = 'none';
     } else {
       this.emptyPagosState.style.display = 'none';
-      this.addPaymentFab.style.display = 'flex';
       
       const html = await this.generateHTML();
       this.pagosContainer.innerHTML = html + this.emptyPagosState.outerHTML;
