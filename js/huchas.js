@@ -664,7 +664,7 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
       const header = document.createElement('div');
       header.className = 'income-wallet-header';
       header.innerHTML = `
-        <h3 class="income-wallet-title">¿A qué wallet ingresas?</h3>
+        <h3 class="income-wallet-title">Wallet a ingresar</h3>
         <button class="income-wallet-close" aria-label="Cerrar">×</button>
       `;
       
