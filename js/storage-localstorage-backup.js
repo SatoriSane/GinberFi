@@ -221,7 +221,7 @@ class Storage {
           walletId: fromWalletId,
           type: 'transfer_out',
           amount: -parseFloat(amount),
-          description: `Transferencia a ${toWallet.name}${description ? ': ' + description : ''}`,
+          description: `Transf. a ${toWallet.name}${description ? ': ' + description : ''}`,
           date: timestamp
         });
         
@@ -230,7 +230,7 @@ class Storage {
           walletId: toWalletId,
           type: 'transfer_in',
           amount: parseFloat(amount),
-          description: `Transferencia de ${fromWallet.name}${description ? ': ' + description : ''}`,
+          description: `Transf. de ${fromWallet.name}${description ? ': ' + description : ''}`,
           date: timestamp
         });
         

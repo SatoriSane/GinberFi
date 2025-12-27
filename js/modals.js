@@ -1327,8 +1327,8 @@ static createWalletModal() {
         const labels = {
           'income': 'Ingreso',
           'expense': 'Gasto',
-          'transfer_in': 'Transferencia recibida',
-          'transfer_out': 'Transferencia enviada'
+          'transfer_in': 'Transf. recibida',
+          'transfer_out': 'Transf. enviada'
         };
         return labels[type] || type;
       };
@@ -1947,8 +1947,8 @@ static createQuickExpenseModal() {
       const labels = {
         'income': 'Ingreso',
         'expense': 'Gasto',
-        'transfer_in': 'Transferencia recibida',
-        'transfer_out': 'Transferencia enviada'
+        'transfer_in': 'Transf. recibida',
+        'transfer_out': 'Transf. enviada'
       };
       return labels[type] || type;
     }

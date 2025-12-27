@@ -130,7 +130,7 @@ class TransactionRepository extends BaseRepository {
       walletId: fromWalletId,
       type: 'transfer_out',
       amount: -parseFloat(amount),
-      description: `Transferencia a ${toWalletName}${description ? ': ' + description : ''}`,
+      description: `Transf. a ${toWalletName}${description ? ': ' + description : ''}`,
       date: timestamp
     };
 
@@ -139,7 +139,7 @@ class TransactionRepository extends BaseRepository {
       walletId: toWalletId,
       type: 'transfer_in',
       amount: parseFloat(amount),
-      description: `Transferencia de ${fromWalletName}${description ? ': ' + description : ''}`,
+      description: `Transf. de ${fromWalletName}${description ? ': ' + description : ''}`,
       date: timestamp
     };
 
