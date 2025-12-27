@@ -158,12 +158,12 @@ class QuickActionsManager {
       const content = document.createElement('div');
       content.className = 'transfer-dual-columns';
       content.innerHTML = `
-        <div class="transfer-column">
-          <h4 class="transfer-column-title">Desde</h4>
+        <div class="transfer-column transfer-column-from">
+          <h4 class="transfer-column-title">📤 Desde</h4>
           <div class="transfer-wallet-list" id="transferFromList"></div>
         </div>
-        <div class="transfer-column">
-          <h4 class="transfer-column-title">Hacia</h4>
+        <div class="transfer-column transfer-column-to">
+          <h4 class="transfer-column-title">📥 Hacia</h4>
           <div class="transfer-wallet-list" id="transferToList"></div>
         </div>
       `;
@@ -201,6 +201,12 @@ class QuickActionsManager {
       content.innerHTML = `<div style="grid-column: 1 / -1;">${emptyHTML}</div>`;
     } else {
       this.renderWalletLists(fromList, toList, wallets);
+    }
+    
+    // Resetear scroll al inicio
+    const container = overlay.querySelector('.income-wallet-container');
+    if (container) {
+      container.scrollTop = 0;
     }
     
     // Mostrar overlay con animación

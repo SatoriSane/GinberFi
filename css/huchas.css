@@ -780,13 +780,43 @@
 }
 
 .transfer-column-title {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-dark);
   text-align: center;
   padding: var(--spacing-xs) 0;
   border-bottom: 2px solid var(--border-light);
   margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
+}
+
+/* Diferenciación visual entre origen y destino */
+.transfer-column-from .transfer-column-title {
+  border-bottom-color: rgba(239, 68, 68, 0.3);
+}
+
+.transfer-column-to .transfer-column-title {
+  border-bottom-color: rgba(34, 197, 94, 0.3);
+}
+
+.transfer-column-from .income-wallet-item {
+  border-left: 3px solid rgba(239, 68, 68, 0.4);
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.02), transparent 20%);
+}
+
+.transfer-column-to .income-wallet-item {
+  border-left: 3px solid rgba(34, 197, 94, 0.4);
+  background: linear-gradient(to right, rgba(34, 197, 94, 0.02), transparent 20%);
+}
+
+.transfer-column-from .income-wallet-item.selected {
+  border-left-color: rgba(239, 68, 68, 0.7);
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.05), var(--interactive-bg-hover) 20%);
+}
+
+.transfer-column-to .income-wallet-item.selected {
+  border-left-color: rgba(34, 197, 94, 0.7);
+  background: linear-gradient(to right, rgba(34, 197, 94, 0.05), var(--interactive-bg-hover) 20%);
 }
 
 .transfer-wallet-list {
