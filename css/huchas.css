@@ -761,3 +761,75 @@
     gap: 4px;
   }
 }
+
+/* Transfer Dual Selector - Bottom Sheet con dos columnas */
+.transfer-dual-container {
+  padding: var(--spacing-md) !important;
+}
+
+.transfer-dual-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.transfer-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.transfer-column-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-align: center;
+  padding: var(--spacing-xs) 0;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.transfer-wallet-list {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+/* Estados para items de wallet en selector de transferencia */
+.transfer-dual-container .income-wallet-item {
+  min-height: 56px;
+  transition: none;
+}
+
+.transfer-dual-container .income-wallet-item:hover {
+  transform: none;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.transfer-dual-container .income-wallet-item.selected {
+  border-color: var(--pastel-blue);
+  background: var(--interactive-bg-hover);
+  box-shadow: none;
+  transform: none;
+}
+
+.transfer-dual-container .income-wallet-item.selected::before {
+  opacity: 0.35;
+}
+
+.transfer-dual-container .income-wallet-item.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(60%);
+  pointer-events: none;
+}
+
+.transfer-dual-container .income-wallet-name {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+.transfer-dual-container .income-wallet-icon {
+  display: none;
+}

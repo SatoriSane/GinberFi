@@ -1088,32 +1088,50 @@ static createWalletModal() {
     };
   }
   
-    static createTransferModal(fromWalletId) {
+    static createTransferModal(fromWalletId, toWalletId = null) {
       const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
       const fromWallet = AppState.wallets.find(acc => acc.id === fromWalletId);
+      const toWallet = toWalletId ? AppState.wallets.find(acc => acc.id === toWalletId) : null;
   
       return {
         title: 'Transferir Dinero',
         className: 'transfer-modal',
         body: `
           <form class="modal-form" id="transferForm">
-            <div class="form-group">
-              <label>Desde: ${fromWallet ? fromWallet.name : ''}</label>
-              <div class="wallet-balance">
-                Disponible: ${fromWallet ? Helpers.formatCurrency(fromWallet.balance, fromWallet.currency) : '0.00'}
+            ${toWalletId && toWallet ? `
+              <div class="transfer-route">
+                <div class="transfer-wallet-box">
+                  <div class="transfer-wallet-label">Desde</div>
+                  <div class="transfer-wallet-name">${fromWallet.name}</div>
+                  <div class="transfer-wallet-balance">${Helpers.formatCurrency(fromWallet.balance, fromWallet.currency)}</div>
+                </div>
+                <div class="transfer-arrow">→</div>
+                <div class="transfer-wallet-box">
+                  <div class="transfer-wallet-label">Hacia</div>
+                  <div class="transfer-wallet-name">${toWallet.name}</div>
+                  <div class="transfer-wallet-balance">${Helpers.formatCurrency(toWallet.balance, toWallet.currency)}</div>
+                </div>
+                <input type="hidden" name="toWalletId" value="${toWalletId}">
               </div>
-            </div>
-            <div class="form-group">
-              <label for="transferTo">Transferir a</label>
-              <select id="transferTo" name="toWalletId" required>
-                <option value="">Seleccionar wallet destino</option>
-                ${wallets.map(wallet => `
-                  <option value="${wallet.id}">
-                    ${wallet.name} (${Helpers.formatCurrency(wallet.balance, wallet.currency)})
-                  </option>
-                `).join('')}
-              </select>
-            </div>
+            ` : `
+              <div class="form-group">
+                <label>Desde: ${fromWallet ? fromWallet.name : ''}</label>
+                <div class="wallet-balance">
+                  Disponible: ${fromWallet ? Helpers.formatCurrency(fromWallet.balance, fromWallet.currency) : '0.00'}
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="transferTo">Transferir a</label>
+                <select id="transferTo" name="toWalletId" required>
+                  <option value="">Seleccionar wallet destino</option>
+                  ${wallets.map(wallet => `
+                    <option value="${wallet.id}">
+                      ${wallet.name} (${Helpers.formatCurrency(wallet.balance, wallet.currency)})
+                    </option>
+                  `).join('')}
+                </select>
+              </div>
+            `}
             <div class="form-group">
         <label for="transferAmount">Cantidad</label>
         <div class="input-with-currency">

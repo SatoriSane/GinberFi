@@ -150,26 +150,29 @@ class QuickActionsManager {
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.id = 'transferWalletOverlay';
-      overlay.className = 'income-wallet-overlay'; // Reutilizamos los mismos estilos
+      overlay.className = 'income-wallet-overlay'; // Reutilizar estilos de income
       
       const container = document.createElement('div');
-      container.className = 'income-wallet-container';
+      container.className = 'income-wallet-container transfer-dual-container';
       
-      const header = document.createElement('div');
-      header.className = 'income-wallet-header';
-      header.innerHTML = `
-        <h3 class="income-wallet-title">Origen de la transferencia</h3>
+      const content = document.createElement('div');
+      content.className = 'transfer-dual-columns';
+      content.innerHTML = `
+        <div class="transfer-column">
+          <h4 class="transfer-column-title">Desde</h4>
+          <div class="transfer-wallet-list" id="transferFromList"></div>
+        </div>
+        <div class="transfer-column">
+          <h4 class="transfer-column-title">Hacia</h4>
+          <div class="transfer-wallet-list" id="transferToList"></div>
+        </div>
       `;
       
-      const list = document.createElement('div');
-      list.className = 'income-wallet-list';
-      
-      container.appendChild(header);
-      container.appendChild(list);
+      container.appendChild(content);
       overlay.appendChild(container);
       document.body.appendChild(overlay);
       
-      // Event listener solo para cerrar al hacer click fuera
+      // Event listener para cerrar al hacer click fuera
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           this.hideTransferWalletSelector();
@@ -177,45 +180,95 @@ class QuickActionsManager {
       });
     }
     
+    // Variables para almacenar selecciones
+    this.selectedFromWallet = null;
+    this.selectedToWallet = null;
+    
     // Llenar con las wallets actuales
-    const list = overlay.querySelector('.income-wallet-list');
+    const fromList = overlay.querySelector('#transferFromList');
+    const toList = overlay.querySelector('#transferToList');
+    const content = overlay.querySelector('.transfer-dual-columns');
     const wallets = AppState.wallets;
     
     if (wallets.length < 2) {
-      list.innerHTML = `
+      const emptyHTML = `
         <div class="income-wallet-empty">
           <div class="income-wallet-empty-icon">🐷</div>
           <p>Necesitas al menos 2 wallets</p>
           <span style="font-size: var(--font-size-sm); font-style: italic;">Crea otra wallet para poder transferir dinero</span>
         </div>
       `;
+      content.innerHTML = `<div style="grid-column: 1 / -1;">${emptyHTML}</div>`;
     } else {
-      list.innerHTML = wallets.map(wallet => `
-        <div class="income-wallet-item" data-wallet-id="${wallet.id}">
-          <div class="income-wallet-info">
-            <div class="income-wallet-name">${wallet.name}</div>
-            <div style="font-size: var(--font-size-sm); color: var(--text-light);">
-              ${Helpers.formatCurrency(wallet.balance, wallet.currency)}
-            </div>
-          </div>
-          <div class="income-wallet-icon"></div>
-        </div>
-      `).join('');
-      
-      // Event listeners para cada wallet
-      list.querySelectorAll('.income-wallet-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const walletId = item.dataset.walletId;
-          this.hideTransferWalletSelector();
-          this.openTransferModal(walletId);
-        });
-      });
+      this.renderWalletLists(fromList, toList, wallets);
     }
     
     // Mostrar overlay con animación
     setTimeout(() => {
       overlay.classList.add('active');
     }, 10);
+  }
+  
+  renderWalletLists(fromList, toList, wallets) {
+    const createWalletHTML = (wallet, isDisabled = false, isSelected = false) => `
+      <div class="income-wallet-item ${isDisabled ? 'disabled' : ''} ${isSelected ? 'selected' : ''}" 
+           data-wallet-id="${wallet.id}"
+           ${isDisabled ? 'data-disabled="true"' : ''}>
+        <div class="income-wallet-info">
+          <div class="income-wallet-name">${wallet.name}</div>
+        </div>
+      </div>
+    `;
+    
+    // Renderizar lista FROM
+    fromList.innerHTML = wallets.map(wallet => {
+      const isDisabled = this.selectedToWallet === wallet.id;
+      const isSelected = this.selectedFromWallet === wallet.id;
+      return createWalletHTML(wallet, isDisabled, isSelected);
+    }).join('');
+    
+    // Renderizar lista TO
+    toList.innerHTML = wallets.map(wallet => {
+      const isDisabled = this.selectedFromWallet === wallet.id;
+      const isSelected = this.selectedToWallet === wallet.id;
+      return createWalletHTML(wallet, isDisabled, isSelected);
+    }).join('');
+    
+    // Event listeners para FROM list
+    fromList.querySelectorAll('.income-wallet-item:not(.disabled)').forEach(item => {
+      item.addEventListener('click', () => {
+        const walletId = item.dataset.walletId;
+        this.selectedFromWallet = walletId;
+        
+        // Re-renderizar listas para actualizar estados
+        this.renderWalletLists(fromList, toList, wallets);
+        
+        // Si ambos están seleccionados, abrir modal
+        this.checkAndOpenTransferModal();
+      });
+    });
+    
+    // Event listeners para TO list
+    toList.querySelectorAll('.income-wallet-item:not(.disabled)').forEach(item => {
+      item.addEventListener('click', () => {
+        const walletId = item.dataset.walletId;
+        this.selectedToWallet = walletId;
+        
+        // Re-renderizar listas para actualizar estados
+        this.renderWalletLists(fromList, toList, wallets);
+        
+        // Si ambos están seleccionados, abrir modal
+        this.checkAndOpenTransferModal();
+      });
+    });
+  }
+  
+  checkAndOpenTransferModal() {
+    if (this.selectedFromWallet && this.selectedToWallet) {
+      this.hideTransferWalletSelector();
+      // Pasar ambos IDs al modal
+      this.openTransferModal(this.selectedFromWallet, this.selectedToWallet);
+    }
   }
 
   hideTransferWalletSelector() {
@@ -225,10 +278,10 @@ class QuickActionsManager {
     }
   }
 
-  openTransferModal(fromWalletId) {
+  openTransferModal(fromWalletId, toWalletId = null) {
     // Llama al método del HuchasManager para abrir el modal de transferencia
     if (window.huchasManager && typeof window.huchasManager.openTransferModal === 'function') {
-      window.huchasManager.openTransferModal(fromWalletId);
+      window.huchasManager.openTransferModal(fromWalletId, toWalletId);
     } else {
       console.error('HuchasManager not available or openTransferModal not found');
       Helpers.showToast('Error al abrir el modal de transferencia', 'error');

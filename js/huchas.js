@@ -332,14 +332,14 @@ ${wallet.description ? `<div class="wallet-description">${wallet.description}</d
     }, 100);
   }
 
-  openTransferModal(fromWalletId) {
+  openTransferModal(fromWalletId, toWalletId = null) {
     const wallets = AppState.wallets.filter(acc => acc.id !== fromWalletId);
     if (wallets.length === 0) {
       Helpers.showToast('Necesitas al menos 2 wallets para hacer transferencias', 'warning');
       return;
     }
     
-    const modalData = ModalManager.createTransferModal(fromWalletId);
+    const modalData = ModalManager.createTransferModal(fromWalletId, toWalletId);
     window.appEvents.emit('openModal', modalData);
   }
 
