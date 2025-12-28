@@ -396,6 +396,9 @@ class OpcionesManager {
     // Aplicar tema
     this.applyTheme(theme);
     
+    // Cerrar modal para que el usuario vea el cambio inmediatamente
+    this.closeDesignModal();
+    
     // Actualizar datos para refrescar colores dinámicos
     if (window.appEvents) {
       window.appEvents.emit('dataUpdated');

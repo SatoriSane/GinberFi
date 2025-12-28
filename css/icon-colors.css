@@ -1,281 +1,83 @@
-/* Sistema de Colores para Iconos PNG - Heredan el color del botón padre */
-
 /* ============================================
-   ESTRATEGIA: Los iconos heredan el color del texto del botón
-   usando brightness(0) para convertir a negro y luego aplicar
-   el color del padre con mix-blend-mode o simplemente usar
-   el color directo del botón
+   COLORES PARA ICONOS PNG
+   Los iconos heredan el color del texto usando mask
    ============================================ */
 
-/* IMPORTANTE: Los iconos ahora usan el mismo color que el texto
-   del botón padre gracias a las variables CSS de cada botón:
-   - Gasto: var(--color-error) - Rojo
-   - Ingreso: var(--color-success) - Verde  
-   - Transferir: var(--dark-blue) - Azul
-   - Programar: var(--text-dark) - Gris oscuro
+/* SOLUCIÓN DEFINITIVA:
+   Usar -webkit-mask para que el PNG actúe como máscara
+   y el background-color sea el color del texto (currentColor)
 */
 
-/* Base para todos los iconos - Convierte a negro primero */
-.icon-ingresar,
-.icon-gastar,
-.icon-transferir,
-.icon-programar {
-  /* Convertir imagen a negro puro */
-  filter: brightness(0) saturate(100%);
-  /* El color se aplicará con el contexto del botón padre */
+.action-icon img {
+  /* Ocultar la imagen original */
+  opacity: 0;
+  /* Mantener el espacio */
+  position: relative;
 }
 
-/* Aplicar colores específicos según el botón padre */
-/* Estos se aplicarán sobre el negro base */
-
-/* Ingresar - Verde (hereda de --color-success) */
-.quick-action-btn[data-action="add-income"] .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(64%) sepia(98%) saturate(400%) 
-          hue-rotate(90deg) brightness(95%) contrast(90%);
+/* Crear un pseudo-elemento que use la imagen como máscara */
+.action-icon {
+  position: relative;
 }
 
-/* Gastar - Rojo (hereda de --color-error) */
-.quick-action-btn[data-action="quick-expense"] .icon-gastar {
-  filter: brightness(0) saturate(100%) 
-          invert(35%) sepia(95%) saturate(2500%) 
-          hue-rotate(345deg) brightness(95%) contrast(95%);
+.action-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  
+  /* El color de fondo será el color del texto del botón */
+  background-color: currentColor;
+  
+  /* Usar la imagen como máscara */
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
-/* Transferir - Azul (hereda de --dark-blue) */
-.quick-action-btn[data-action="transfer"] .icon-transferir {
-  filter: brightness(0) saturate(100%) 
-          invert(45%) sepia(95%) saturate(1500%) 
-          hue-rotate(200deg) brightness(95%) contrast(95%);
+/* Aplicar la máscara específica para cada ícono */
+.quick-action-btn[data-action="add-income"] .action-icon::before {
+  -webkit-mask-image: url('../icon-ingresar.png');
+  mask-image: url('../icon-ingresar.png');
 }
 
-/* Programar - Lila/Púrpura */
-.quick-action-btn[data-action="schedule-payment"] .icon-programar {
-  filter: brightness(0) saturate(100%) 
-          invert(45%) sepia(85%) saturate(1800%) 
-          hue-rotate(260deg) brightness(95%) contrast(95%);
+.quick-action-btn[data-action="quick-expense"] .action-icon::before {
+  -webkit-mask-image: url('../icon-gastar.png');
+  mask-image: url('../icon-gastar.png');
 }
 
-/* ============================================
-   ADAPTACIÓN PARA TEMAS OSCUROS
-   ============================================ */
-
-/* Dark Theme */
-body.dark-theme .icon-ingresar,
-body.midnight-theme .icon-ingresar,
-body.starry-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(75%) sepia(50%) saturate(500%) 
-          hue-rotate(90deg) brightness(110%) contrast(90%);
-  /* Verde más claro y brillante para fondos oscuros */
+.quick-action-btn[data-action="transfer"] .action-icon::before {
+  -webkit-mask-image: url('../icon-transferir.png');
+  mask-image: url('../icon-transferir.png');
+  width: 72px;
+  height: 72px;
 }
 
-body.dark-theme .icon-gastar,
-body.midnight-theme .icon-gastar,
-body.starry-theme .icon-gastar {
-  filter: brightness(0) saturate(100%) 
-          invert(55%) sepia(80%) saturate(2000%) 
-          hue-rotate(345deg) brightness(110%) contrast(90%);
-  /* Rojo más claro y brillante para fondos oscuros */
-}
-
-body.dark-theme .icon-transferir,
-body.midnight-theme .icon-transferir,
-body.starry-theme .icon-transferir {
-  filter: brightness(0) saturate(100%) 
-          invert(60%) sepia(70%) saturate(1200%) 
-          hue-rotate(200deg) brightness(110%) contrast(90%);
-  /* Azul más claro y brillante para fondos oscuros */
-}
-
-body.dark-theme .icon-programar,
-body.midnight-theme .icon-programar,
-body.starry-theme .icon-programar {
-  filter: brightness(0) saturate(100%) 
-          invert(60%) sepia(70%) saturate(1500%) 
-          hue-rotate(260deg) brightness(110%) contrast(90%);
-  /* Lila más claro y brillante para fondos oscuros */
-}
-
-/* ============================================
-   ADAPTACIÓN PARA TEMAS ESPECÍFICOS
-   ============================================ */
-
-/* Sunset Theme - Tonos más cálidos */
-body.sunset-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(60%) sepia(80%) saturate(450%) 
-          hue-rotate(80deg) brightness(100%) contrast(90%);
-  /* Verde con tono más cálido */
-}
-
-body.sunset-theme .icon-gastar {
-  filter: brightness(0) saturate(100%) 
-          invert(40%) sepia(100%) saturate(2800%) 
-          hue-rotate(350deg) brightness(100%) contrast(95%);
-  /* Rojo más intenso para Sunset */
-}
-
-body.sunset-theme .icon-transferir {
-  filter: brightness(0) saturate(100%) 
-          invert(50%) sepia(70%) saturate(1200%) 
-          hue-rotate(180deg) brightness(100%) contrast(90%);
-  /* Azul con tono más cálido */
-}
-
-body.sunset-theme .icon-programar {
-  filter: brightness(0) saturate(100%) 
-          invert(50%) sepia(90%) saturate(2000%) 
-          hue-rotate(280deg) brightness(100%) contrast(95%);
-  /* Púrpura/Rosa para Sunset */
-}
-
-/* Ocean Theme - Tonos más fríos y vibrantes */
-body.ocean-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(55%) sepia(80%) saturate(500%) 
-          hue-rotate(120deg) brightness(95%) contrast(95%);
-  /* Verde azulado para Ocean */
-}
-
-body.ocean-theme .icon-transferir {
-  filter: brightness(0) saturate(100%) 
-          invert(50%) sepia(100%) saturate(1800%) 
-          hue-rotate(190deg) brightness(100%) contrast(95%);
-  /* Azul más vibrante para Ocean */
-}
-
-/* Forest Theme - Tonos tierra y naturales */
-body.forest-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(50%) sepia(90%) saturate(600%) 
-          hue-rotate(95deg) brightness(90%) contrast(95%);
-  /* Verde bosque más oscuro */
-}
-
-body.forest-theme .icon-gastar {
-  filter: brightness(0) saturate(100%) 
-          invert(40%) sepia(85%) saturate(2200%) 
-          hue-rotate(10deg) brightness(95%) contrast(95%);
-  /* Rojo tierra/naranja */
-}
-
-/* Lavender Theme - Tonos pastel suaves */
-body.lavender-theme .icon-programar {
-  filter: brightness(0) saturate(100%) 
-          invert(55%) sepia(60%) saturate(1200%) 
-          hue-rotate(250deg) brightness(105%) contrast(90%);
-  /* Lila más suave y pastel */
-}
-
-body.lavender-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(65%) sepia(50%) saturate(400%) 
-          hue-rotate(90deg) brightness(100%) contrast(85%);
-  /* Verde pastel suave */
-}
-
-/* Coral Theme - Tonos cálidos y vibrantes */
-body.coral-theme .icon-gastar {
-  filter: brightness(0) saturate(100%) 
-          invert(50%) sepia(100%) saturate(2500%) 
-          hue-rotate(340deg) brightness(100%) contrast(100%);
-  /* Rojo coral vibrante */
-}
-
-body.coral-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(60%) sepia(70%) saturate(500%) 
-          hue-rotate(100deg) brightness(100%) contrast(90%);
-  /* Verde con tono cálido */
-}
-
-/* Zen Theme - Tonos neutros y calmados */
-body.zen-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(60%) sepia(40%) saturate(300%) 
-          hue-rotate(90deg) brightness(95%) contrast(85%);
-  /* Verde zen suave */
-}
-
-body.zen-theme .icon-gastar {
-  filter: brightness(0) saturate(100%) 
-          invert(45%) sepia(60%) saturate(1500%) 
-          hue-rotate(345deg) brightness(95%) contrast(90%);
-  /* Rojo suave zen */
-}
-
-/* Coastal Theme - Tonos marinos frescos */
-body.coastal-theme .icon-transferir {
-  filter: brightness(0) saturate(100%) 
-          invert(55%) sepia(90%) saturate(1600%) 
-          hue-rotate(185deg) brightness(100%) contrast(95%);
-  /* Azul marino fresco */
-}
-
-body.coastal-theme .icon-ingresar {
-  filter: brightness(0) saturate(100%) 
-          invert(60%) sepia(70%) saturate(450%) 
-          hue-rotate(130deg) brightness(100%) contrast(90%);
-  /* Verde agua marina */
+.quick-action-btn[data-action="schedule-payment"] .action-icon::before {
+  -webkit-mask-image: url('../icon-programar.png');
+  mask-image: url('../icon-programar.png');
 }
 
 /* ============================================
    EFECTOS HOVER Y ACTIVE
    ============================================ */
 
-.quick-action-btn:hover .icon-ingresar,
-.quick-action-btn:hover .icon-gastar,
-.quick-action-btn:hover .icon-transferir,
-.quick-action-btn:hover .icon-programar {
-  filter: brightness(1.15) saturate(110%);
-  transform: scale(1.05);
-  transition: all 0.2s ease;
+.quick-action-btn:hover .action-icon::before {
+  transform: translate(-50%, -50%) scale(1.05);
+  opacity: 0.9;
 }
 
-.quick-action-btn:active .icon-ingresar,
-.quick-action-btn:active .icon-gastar,
-.quick-action-btn:active .icon-transferir,
-.quick-action-btn:active .icon-programar {
-  filter: brightness(0.95) saturate(120%);
-  transform: scale(0.98);
+.quick-action-btn:active .action-icon::before {
+  transform: translate(-50%, -50%) scale(0.98);
+  opacity: 1;
 }
 
-/* ============================================
-   TRANSICIONES SUAVES
-   ============================================ */
-
-.icon-ingresar,
-.icon-gastar,
-.icon-transferir,
-.icon-programar {
-  transition: filter 0.3s ease, transform 0.2s ease;
+.action-icon::before {
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
-
-/* ============================================
-   NOTAS TÉCNICAS
-   ============================================
-   
-   Los filtros CSS funcionan así:
-   
-   1. brightness(0) - Convierte la imagen a negro
-   2. saturate(100%) - Mantiene la saturación
-   3. invert() - Invierte los colores (negro → blanco o viceversa)
-   4. sepia() - Agrega tono sepia para preparar el color
-   5. saturate() - Ajusta la intensidad del color
-   6. hue-rotate() - Rota el matiz al color deseado
-      - 0° = Rojo
-      - 90° = Verde
-      - 180° = Cyan
-      - 200° = Azul
-      - 260° = Púrpura/Lila
-      - 345° = Rojo
-   7. brightness() - Ajusta el brillo final
-   8. contrast() - Ajusta el contraste final
-   
-   Para temas oscuros:
-   - Aumentar brightness() para hacer los colores más claros
-   - Reducir saturate() ligeramente para evitar colores demasiado intensos
-   - Mantener el hue-rotate() igual para conservar el color base
-   
-   ============================================ */
