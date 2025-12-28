@@ -26,8 +26,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   
   /* El color de fondo será el color del texto del botón */
   background-color: currentColor;
@@ -55,8 +55,8 @@
 .quick-action-btn[data-action="transfer"] .action-icon::before {
   -webkit-mask-image: url('../icon-transferir.png');
   mask-image: url('../icon-transferir.png');
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
 }
 
 .quick-action-btn[data-action="schedule-payment"] .action-icon::before {
