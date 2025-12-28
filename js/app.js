@@ -43,6 +43,17 @@ class GinbertFiApp {
       
       console.log('GinbertFi app initialized successfully');
       
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+        console.log('Lucide icons initialized');
+      }
+      
+      // Actualizar iconos según el tema actual
+      if (window.ThemeManager && typeof window.ThemeManager.updateThemeIcons === 'function') {
+        window.ThemeManager.updateThemeIcons();
+      }
+      
       // Emit event to notify all managers that app is ready
       window.appEvents.emit('appInitialized');
       

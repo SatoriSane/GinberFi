@@ -62,6 +62,16 @@
   font-size: var(--font-size-xl); /* versión móvil aplicada */
   margin-bottom: var(--spacing-xs);
   transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon i {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+  color: currentColor;
 }
 
 .nav-tab:hover .nav-icon {

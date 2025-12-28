@@ -79,11 +79,8 @@
     border: 2px solid var(--border-medium);
 }
 
-/* Ajuste de opacidad para los iconos neutrales para que no pesen tanto visualmente */
-.quick-action-btn[data-action="transfer"] .action-icon,
-.quick-action-btn[data-action="schedule-payment"] .action-icon {
-    opacity: 0.7;
-}
+/* Los iconos ahora tienen el mismo color que el texto del botón */
+/* Eliminada la opacidad para que los iconos tengan más protagonismo */
 
 /* Al pulsar, los neutrales se oscurecen un poco para dar feedback */
 .quick-action-btn[data-action="transfer"]:active,
@@ -104,15 +101,42 @@
 .quick-action-btn[data-action="add-income"]:active { border-color: var(--color-success); }
 
 .action-icon {
-    font-size: 35px;
-    margin-bottom: 5px;
+    font-size: 48px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Transferir más grande que los demás */
+.quick-action-btn[data-action="transfer"] .action-icon {
+    font-size: 56px;
+}
+
+.action-icon i {
+    width: 48px;
+    height: 48px;
+    stroke-width: 2;
+    color: currentColor;
+}
+
+.action-icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Transferir más grande */
+.quick-action-btn[data-action="transfer"] .action-icon img {
+    width: 56px;
+    height: 56px;
 }
 
 .action-label {
-    font-size: var(--font-size-xs);
-    font-weight: 700;
+    font-size: 0.85rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 /* Ajuste específico para el FAB cuando el menú está abierto */

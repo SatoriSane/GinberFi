@@ -12,6 +12,13 @@ class ThemeManager {
     return this.isTheme('dark');
   }
 
+  // Detectar si el tema actual es oscuro (dark, midnight, starry, etc.)
+  static isDarkVariant() {
+    const theme = this.getCurrentTheme();
+    const darkThemes = ['dark', 'midnight', 'starry'];
+    return darkThemes.includes(theme);
+  }
+
   // Colores adaptativos para presupuestos según el tema
   static getBudgetColors(percentage) {
     // Usar variables CSS que se adaptan automáticamente al tema
@@ -98,6 +105,14 @@ class ThemeManager {
     });
 
     return observer;
+  }
+
+  // Actualizar iconos según el tema (ahora se hace automáticamente con CSS filters)
+  static updateThemeIcons() {
+    // Los colores de los iconos ahora se adaptan automáticamente con CSS
+    // en /css/icon-colors.css usando filtros según el tema activo
+    // Ya no es necesario cambiar el src de las imágenes
+    console.log('Iconos adaptados automáticamente al tema:', this.getCurrentTheme());
   }
 }
 

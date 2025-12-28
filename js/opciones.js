@@ -170,6 +170,14 @@ class OpcionesManager {
       // Aplicar clase al body
       document.body.classList.add(themeClasses[theme]);
     }
+    
+    // Actualizar iconos que dependen del tema
+    if (window.ThemeManager && typeof window.ThemeManager.updateThemeIcons === 'function') {
+      // Pequeño delay para asegurar que el tema se aplicó
+      setTimeout(() => {
+        window.ThemeManager.updateThemeIcons();
+      }, 100);
+    }
   }
 
   static showDesignOptions() {
