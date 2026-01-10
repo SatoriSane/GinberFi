@@ -1,0 +1,390 @@
+/* Forest Theme - Colores naturales inspirados en el bosque */
+:root {
+  /* Forest Color Palette - Verde bosque/Musgo/Oliva */
+  --pastel-green: #86A873;
+  --pastel-blue: #5F8575;
+  --dark-blue: #2D5016;
+  --pastel-pink: #9AB87A;
+  
+  /* Forest theme specific colors */
+  --light-green: #E8F3E8;
+  --soft-gray: #F0F4ED;
+  --text-dark: #2D3E1F;
+  --text-light: #546E3F;
+  --white: #F5F8F3;
+  --shadow: rgba(95, 133, 117, 0.2);
+  
+  /* Border colors for forest theme */
+  --border-color: #9AB87A;
+  --light-gray: #C5D9B5;
+  
+  /* Budget status colors (forest theme) */
+  --budget-excellent-bg: rgba(232, 243, 232, 0.7);
+  --budget-excellent-border: #86A873;
+  --budget-good-bg: rgba(197, 217, 181, 0.7);
+  --budget-good-border: #9AB87A;
+  --budget-warning-bg: rgba(255, 243, 205, 0.5);
+  --budget-warning-border: #E8C468;
+  --budget-danger-bg: rgba(254, 215, 215, 0.5);
+  --budget-danger-border: #E88B8B;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #F0F4ED;
+  --unclassified-border: #9AB87A;
+  
+  /* State colors (forest theme) */
+  --color-success: #6B9F5A;
+  --color-warning: #D4A029;
+  --color-error: #C94A4A;
+  --color-info: #5F8575;
+  
+  /* Chart colors (forest theme) */
+  --chart-primary: #5F8575;
+  --chart-primary-alpha: rgba(95, 133, 117, 0.15);
+  
+  /* Component backgrounds (forest theme) */
+  --surface-primary: rgba(245, 248, 243, 0.9);
+  --surface-secondary: rgba(232, 243, 232, 0.95);
+  --surface-hover: rgba(95, 133, 117, 0.1);
+  --surface-active: rgba(95, 133, 117, 0.2);
+  
+  /* Transaction colors (forest theme) */
+  --transaction-positive: #6B9F5A;
+  --transaction-negative: #C94A4A;
+  
+  /* Border and shadow variations (forest theme) */
+  --border-light: rgba(154, 184, 122, 0.4);
+  --border-medium: rgba(95, 133, 117, 0.4);
+  --shadow-color: rgba(95, 133, 117, 0.2);
+  
+  /* Interactive colors (forest theme) */
+  --interactive-bg: rgba(95, 133, 117, 0.1);
+  --interactive-bg-hover: rgba(95, 133, 117, 0.15);
+  --interactive-bg-active: rgba(95, 133, 117, 0.25);
+  --interactive-border: rgba(95, 133, 117, 0.3);
+  
+  /* Subcategory specific (forest theme) */
+  --subcategory-bg: rgba(245, 248, 243, 0.8);
+  --subcategory-bg-hover: rgba(232, 243, 232, 1);
+  --subcategory-border-accent: rgba(95, 133, 117, 0.4);
+}
+
+/* Forest theme body styles */
+body.forest-theme {
+  background: linear-gradient(135deg, #F5F8F3 0%, #E8F3E8 50%, #DDE9D5 100%);
+  color: var(--text-dark);
+}
+
+/* Forest theme specific overrides */
+body.forest-theme .app-header {
+  background: 
+    /* Capa 1: Textura de follaje (puntos orgánicos dispersos) */
+    radial-gradient(circle 2px at 12% 30%, rgba(35, 60, 20, 0.25) 0%, transparent 100%),
+    radial-gradient(circle 1.5px at 25% 55%, rgba(40, 65, 22, 0.2) 0%, transparent 100%),
+    radial-gradient(circle 2px at 38% 25%, rgba(38, 63, 21, 0.22) 0%, transparent 100%),
+    radial-gradient(circle 1.8px at 51% 48%, rgba(42, 67, 23, 0.24) 0%, transparent 100%),
+    radial-gradient(circle 2px at 64% 35%, rgba(39, 64, 22, 0.21) 0%, transparent 100%),
+    radial-gradient(circle 1.6px at 77% 52%, rgba(37, 62, 21, 0.23) 0%, transparent 100%),
+    radial-gradient(circle 2px at 88% 28%, rgba(36, 61, 20, 0.25) 0%, transparent 100%),
+    radial-gradient(circle 1.7px at 19% 70%, rgba(41, 66, 22, 0.19) 0%, transparent 100%),
+    radial-gradient(circle 2px at 45% 65%, rgba(38, 63, 21, 0.22) 0%, transparent 100%),
+    radial-gradient(circle 1.5px at 72% 72%, rgba(40, 65, 22, 0.2) 0%, transparent 100%),
+    radial-gradient(circle 1.9px at 91% 68%, rgba(37, 62, 21, 0.21) 0%, transparent 100%),
+    
+    /* Capa 2: Profundidad (overlay vertical sutil) */
+    linear-gradient(to bottom, transparent 0%, rgba(35, 60, 20, 0.08) 100%),
+    
+    /* Capa 3: Vetas verticales sutiles (simulan troncos lejanos) */
+    repeating-linear-gradient(90deg, transparent 0px, transparent 45px, rgba(30, 50, 18, 0.06) 45px, rgba(30, 50, 18, 0.06) 48px),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #5F8575 0%, #86A873 50%, #9AB87A 100%);
+  border-bottom: 1px solid rgba(95, 133, 117, 0.3);
+}
+
+body.forest-theme .balance-selector {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(95, 133, 117, 0.3);
+  box-shadow: 0 2px 8px rgba(95, 133, 117, 0.2);
+}
+
+body.forest-theme .balance-selector:hover {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(95, 133, 117, 0.3);
+}
+
+body.forest-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.forest-theme .wallet-name {
+  color: rgba(45, 62, 31, 0.9);
+}
+
+body.forest-theme .balance-arrow {
+  color: var(--text-dark);
+}
+
+body.forest-theme .balance-dropdown {
+  background: rgba(245, 248, 243, 1);
+  border: 1px solid rgba(95, 133, 117, 0.3);
+  box-shadow: 0 4px 20px rgba(95, 133, 117, 0.2);
+}
+
+body.forest-theme .wallet-item:hover {
+  background: rgba(95, 133, 117, 0.1);
+}
+
+body.forest-theme .wallet-item.selected {
+  background: linear-gradient(135deg, rgba(95, 133, 117, 0.2) 0%, rgba(134, 168, 115, 0.15) 100%);
+  border-left: 3px solid #5F8575;
+}
+
+body.forest-theme .category-wrapper {
+  background: rgba(245, 248, 243, 0.85);
+  border: 1px solid rgba(95, 133, 117, 0.2);
+  box-shadow: 0 4px 20px rgba(95, 133, 117, 0.1);
+}
+
+body.forest-theme .subcategories-container {
+  background: linear-gradient(180deg, rgba(245, 248, 243, 0.7) 0%, rgba(232, 243, 232, 0.9) 100%);
+}
+
+body.forest-theme .subcategory-wrapper {
+  background: rgba(245, 248, 243, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.forest-theme .subcategory-wrapper:hover {
+  background: rgba(232, 243, 232, 1);
+  border-color: rgba(95, 133, 117, 0.4);
+}
+
+body.forest-theme .expense-item {
+  background: rgba(245, 248, 243, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.forest-theme .expense-item:hover {
+  background: rgba(232, 243, 232, 1);
+  border-color: rgba(95, 133, 117, 0.3);
+}
+
+body.forest-theme .wallet-card {
+  background: rgba(245, 248, 243, 0.9);
+  border: 1px solid rgba(95, 133, 117, 0.25);
+  box-shadow: 0 8px 32px rgba(95, 133, 117, 0.15);
+}
+
+body.forest-theme .wallet-header {
+  background: linear-gradient(135deg, rgba(134, 168, 115, 0.3) 0%, rgba(95, 133, 117, 0.25) 100%);
+}
+
+body.forest-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg, rgba(95, 133, 117, 0.25), rgba(134, 168, 115, 0.3));
+}
+
+body.forest-theme .recent-transaction-item {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(95, 133, 117, 0.15);
+}
+
+body.forest-theme .recent-transaction-item:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(95, 133, 117, 0.3);
+  box-shadow: 0 4px 16px rgba(95, 133, 117, 0.15);
+}
+
+body.forest-theme .empty-state {
+  background: linear-gradient(135deg, rgba(245, 248, 243, 0.5) 0%, rgba(232, 243, 232, 0.5) 100%);
+  border: 2px dashed rgba(95, 133, 117, 0.4);
+}
+
+body.forest-theme .modal {
+  background: rgba(245, 248, 243, 0.95);
+  border: 1px solid rgba(95, 133, 117, 0.25);
+  box-shadow: 0 25px 60px rgba(95, 133, 117, 0.2);
+}
+
+body.forest-theme .modal-header {
+  background: linear-gradient(135deg, rgba(232, 243, 232, 0.95) 0%, rgba(245, 248, 243, 0.8) 100%);
+  border-bottom: 1px solid rgba(95, 133, 117, 0.2);
+}
+
+body.forest-theme .modal-title {
+  color: var(--text-dark);
+}
+
+body.forest-theme .option-item {
+  background: #F5F8F3;
+  border: 2px solid var(--border-color);
+}
+
+body.forest-theme .option-item:hover {
+  border-color: var(--pastel-blue);
+  background: rgba(95, 133, 117, 0.1);
+}
+
+body.forest-theme .theme-option {
+  background: #F5F8F3;
+  border: 2px solid var(--border-color);
+}
+
+body.forest-theme .theme-title {
+  color: var(--text-dark);
+}
+
+/* Navigation forest theme */
+body.forest-theme .app-navigation {
+  background: rgba(245, 248, 243, 0.95);
+  border-top: 1px solid rgba(95, 133, 117, 0.3);
+  box-shadow: 0 -2px 10px rgba(95, 133, 117, 0.15);
+}
+
+body.forest-theme .nav-item {
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.forest-theme .nav-item.active {
+  color: #5F8575;
+  background: linear-gradient(135deg, rgba(95, 133, 117, 0.2) 0%, rgba(134, 168, 115, 0.15) 100%);
+  box-shadow: 0 2px 8px rgba(95, 133, 117, 0.2);
+}
+
+/* Form elements forest theme */
+body.forest-theme input,
+body.forest-theme select,
+body.forest-theme textarea {
+  background: #F5F8F3;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+body.forest-theme input:focus,
+body.forest-theme select:focus,
+body.forest-theme textarea:focus {
+  border-color: var(--pastel-blue);
+  box-shadow: 0 0 0 3px rgba(95, 133, 117, 0.15);
+  background: #E8F3E8;
+}
+
+/* Button forest theme overrides */
+body.forest-theme .btn-primary {
+  background: linear-gradient(135deg, #5F8575, #86A873);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(95, 133, 117, 0.3);
+}
+
+body.forest-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #4D6D5E, #6D8A5C);
+  box-shadow: 0 6px 20px rgba(95, 133, 117, 0.4);
+}
+
+body.forest-theme .btn-secondary {
+  background: #F5F8F3;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+body.forest-theme .btn-secondary:hover {
+  background: #E8F3E8;
+  border-color: #86A873;
+}
+
+/* Scrollbar forest theme */
+body.forest-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.forest-theme ::-webkit-scrollbar-track {
+  background: #F5F8F3;
+}
+
+body.forest-theme ::-webkit-scrollbar-thumb {
+  background: #9AB87A;
+  border-radius: 4px;
+}
+
+body.forest-theme ::-webkit-scrollbar-thumb:hover {
+  background: #86A873;
+}
+
+/* FAB forest theme */
+body.forest-theme .fab {
+  background: linear-gradient(135deg, #6B9F5A 0%, #86A873 50%, #9AB87A 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8px 32px rgba(95, 133, 117, 0.4);
+  border: 1px solid rgba(95, 133, 117, 0.3);
+}
+
+body.forest-theme .fab:hover {
+  background: linear-gradient(135deg, #5A8A49 0%, #6D8A5C 50%, #86A873 100%);
+  box-shadow: 0 12px 40px rgba(95, 133, 117, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(134, 168, 115, 0.5);
+}
+
+/* Wallet action buttons forest theme */
+body.forest-theme .move-money-btn,
+body.forest-theme .add-income-btn {
+  background: rgba(95, 133, 117, 0.15);
+  color: #2D5016;
+  border: 1px solid rgba(95, 133, 117, 0.3);
+}
+
+body.forest-theme .move-money-btn:hover,
+body.forest-theme .add-income-btn:hover {
+  background: rgba(95, 133, 117, 0.25);
+  border-color: rgba(95, 133, 117, 0.5);
+  color: #1F3810;
+}
+
+/* Transaction amounts */
+body.forest-theme .transaction-amount.positive {
+  color: #6B9F5A;
+}
+
+body.forest-theme .transaction-amount.negative {
+  color: #C94A4A;
+}
+
+/* Budget amounts */
+body.forest-theme .budget-amount {
+  color: #2D3E1F;
+}
+
+body.forest-theme .budget-percentage {
+  color: #546E3F;
+}
+
+body.forest-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.forest-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.forest-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.forest-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Botón de cerrar modales - Forest theme */
+body.forest-theme .btn-close {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+body.forest-theme .btn-close:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}

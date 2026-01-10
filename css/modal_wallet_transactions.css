@@ -1,0 +1,270 @@
+
+/* Modal de transacciones - Diseño estilizado y amigable */
+.wallet-transactions-modal .modal {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+  }
+
+.wallet-transactions-modal .modal-body {
+    flex: 1;
+    overflow: hidden;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .wallet-transactions-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  /* Lista de transacciones con scroll */
+  .wallet-transactions-modal .transactions-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: var(--spacing-xs);
+    min-height: 0; /* Importante para que flex funcione correctamente */
+    max-height: 60vh; /* Altura máxima para forzar scroll */
+  }
+  
+  /* Scrollbar personalizado */
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar-track {
+    background: var(--surface-primary);
+    border-radius: 3px;
+  }
+  
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar-thumb {
+    background: var(--pastel-blue);
+    border-radius: 3px;
+  }
+  
+  .wallet-transactions-modal .transactions-list::-webkit-scrollbar-thumb:hover {
+    background: var(--interactive-bg);
+  }
+  
+  /* Resumen de wallet compacto */
+  .wallet-transactions-modal .wallet-summary {
+    display: flex;
+    justify-content: space-between; /* nombre izquierda, transacciones derecha */
+    align-items: center;
+    font-size: 0.9rem; /* más compacto */
+    padding: 4px 8px;
+    background: #f9f9f9; /* fondo sutil */
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  
+  .wallet-transactions-modal .wallet-summary span {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* separa emoji/texto */
+  }
+  
+  .wallet-transactions-modal .wallet-balance {
+    font-weight: 600;
+    color: #333;
+    font-size: var(--font-size-base);
+  }
+  
+  .wallet-transactions-modal .transactions-count {
+    font-size: var(--font-size-sm);
+    color: #666;
+  }
+
+  
+  /* Grupos por fecha */
+  .wallet-transactions-modal .transaction-date-group {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .wallet-transactions-modal .date-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(135deg, var(--surface-primary), var(--surface-secondary));
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--pastel-blue);
+  }
+  
+  .wallet-transactions-modal .date-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--dark-blue);
+    text-transform: capitalize;
+  }
+  
+  
+  .wallet-transactions-modal .date-transactions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  /* Items de transacción con 3 columnas */
+  .wallet-transactions-modal .transaction-item-modal {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .wallet-transactions-modal .transaction-item-modal:hover {
+    background: var(--surface-hover);
+    border-color: var(--interactive-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .wallet-transactions-modal .transaction-item-modal:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Información principal de la transacción */
+  .wallet-transactions-modal .transaction-item-modal .transaction-info {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  
+  .wallet-transactions-modal .transaction-item-modal .transaction-type {
+    font-weight: 600;
+    color: var(--dark-blue);
+    font-size: var(--font-size-base);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .wallet-transactions-modal .transaction-item-modal .transaction-description {
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+    opacity: 0.8;
+  }
+  
+  /* Meta información */
+  .wallet-transactions-modal .transaction-item-modal .transaction-meta {
+    grid-column: 2;
+    color: var(--text-light);
+    font-size: var(--font-size-xs);
+    text-align: center;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: var(--surface-secondary);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+  }
+  
+  /* Monto destacado */
+  .wallet-transactions-modal .transaction-item-modal .transaction-amount {
+    grid-column: 3;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    text-align: right;
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    min-width: 80px;
+  }
+  
+  .wallet-transactions-modal .transaction-item-modal .transaction-amount.positive {
+    color: #16a34a;
+  }
+  
+  .wallet-transactions-modal .transaction-item-modal .transaction-amount.negative {
+    color: #dc2626;
+  }
+  
+  /* Estado vacío estilizado */
+  .wallet-transactions-modal .empty-transactions {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    color: var(--text-light);
+    background: var(--surface-primary);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--border-light);
+  }
+  
+  .wallet-transactions-modal .empty-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.6;
+  }
+  
+  .wallet-transactions-modal .empty-transactions h3 {
+    color: var(--dark-blue);
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+  }
+  
+  .wallet-transactions-modal .empty-transactions p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    opacity: 0.8;
+  }
+  
+  /* Indicador de carga */
+  .wallet-transactions-modal .loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+  }
+  
+  .wallet-transactions-modal .spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--surface-secondary);
+    border-top-color: var(--pastel-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Footer sticky siempre visible */
+  .wallet-transactions-modal .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--white);
+    border-top: 1px solid var(--border-light);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+  }
+  
+  

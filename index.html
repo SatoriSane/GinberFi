@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Aplicación para gestionar tus finanzas personales, presupuestos y gastos">
+    <title>GinbertFi</title>
+    
+    <meta name="theme-color" content="#4A90E2">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="GinbertFi">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/gastos.css">
+    <link rel="stylesheet" href="css/pagos.css">
+    <link rel="stylesheet" href="css/huchas.css">
+    <link rel="stylesheet" href="css/resumen.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/modal_opciones.css">
+    <link rel="stylesheet" href="css/modal_wallet_transactions.css">
+    <link rel="stylesheet" href="css/quick-actions.css">
+    <link rel="stylesheet" href="css/icon-colors.css">
+</head>
+<body>
+    <header role="banner" class="app-header">
+        <div class="header-content">
+            <h1 class="app-name">GinbertFi</h1>
+            <div class="balance-selector" id="balanceSelector">
+                <div class="balance-info">
+                    <span class="wallet-name" id="currentWalletName">Wallet por defecto</span>
+                    <span class="balance-amount" id="balanceAmount">0.00 BOB</span>
+                </div>
+                <span class="balance-arrow">▼</span>
+            </div>
+        </div>
+        
+        <div class="balance-dropdown" id="balanceDropdown">
+            <div class="dropdown-header">
+                <span class="dropdown-title">
+                    <img src="rank-piggy.png" alt="Hucha" class="icon" />
+                    Wallet por defecto
+                  </span>
+                              </div>
+            <div class="wallets-list" id="walletsList"></div>
+            <button class="options-btn" id="optionsBtn">
+                ⚙️ Opciones
+            </button>
+        </div>
+        
+    </header>
+
+    <main class="app-main">
+        <div class="tab-content active" id="gastosTab">
+            <div class="categories-container" id="categoriesContainer">
+                <div class="empty-state" id="emptyCategoriesState">
+                    <p>No hay categorías creadas</p>
+                    <button class="add-category-btn" id="addCategoryBtn">Crear Primera Categoría</button>
+                </div>
+                </div>
+
+            <button class="add-category-list-btn" id="addCategoryListBtn">+ Añadir categoría</button>
+        </div>
+
+        <div class="tab-content" id="pagosTab">
+            <div class="pagos-container" id="pagosContainer">
+                <div class="empty-state" id="emptyPagosState">
+                    <p>No hay pagos programados</p>
+                    <button class="add-payment-btn" id="addPaymentBtn">Programar Primer Pago</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="huchasTab">
+            <div class="wallets-container" id="walletsContainer">
+                <div class="empty-state" id="emptywalletsState">
+                    <p>No hay wallets creadas</p>
+                    <button class="add-wallet-btn" id="addWalletBtn">Crear Primera Wallet</button>
+                </div>
+            </div>
+
+            <button class="add-category-list-btn" id="addWalletListBtn">+ Añadir wallet</button>
+        </div>
+
+        <div class="tab-content" id="resumenTab">
+            <div id="resumenContainer"></div>
+        </div>
+    </main>
+
+    <nav role="tablist" class="app-navigation">
+        <button role="tab" class="nav-tab" data-tab="huchas" id="huchasNavBtn">
+            <span class="nav-icon"><i data-lucide="wallet"></i></span>
+            <span class="nav-label">Wallets</span>
+        </button>
+        <button role="tab" class="nav-tab" data-tab="pagos" id="pagosNavBtn">
+            <span class="nav-icon"><i data-lucide="calendar-check"></i></span>
+            <span class="nav-label">Pagos</span>
+        </button>
+        
+        <!-- Central FAB Button -->
+        <button class="central-fab" id="centralFabBtn" aria-label="Acciones rápidas">
+            <span class="fab-icon">+</span>
+        </button>
+        
+        <button role="tab" class="nav-tab active" data-tab="gastos" id="gastosNavBtn">
+            <span class="nav-icon"><i data-lucide="receipt"></i></span>
+            <span class="nav-label">Gastos</span>
+          </button>
+        <button role="tab" class="nav-tab" data-tab="resumen" id="resumenNavBtn">
+            <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span>
+            <span class="nav-label">Resumen</span>
+        </button>
+    </nav>
+
+    <div class="modals-container" id="modalsContainer"></div>
+
+    <!-- Quick Actions Menu Overlay -->
+<div class="quick-actions-overlay" id="quickActionsOverlay">
+    <div class="quick-actions-menu">
+        <button class="quick-action-btn" data-action="transfer">
+            <span class="action-icon"><img src="icon-transferir.png" alt="Transferir" class="icon-transferir"></span>
+            <span class="action-label">Transferir</span>
+        </button>
+        <button class="quick-action-btn" data-action="schedule-payment">
+            <span class="action-icon"><img src="icon-programar.png" alt="Programar" class="icon-programar"></span>
+            <span class="action-label">Programar</span>
+        </button>
+<button class="quick-action-btn" data-action="add-income">
+    <span class="action-icon"><img src="icon-ingresar.png" alt="Ingresar" class="icon-ingresar"></span>
+    <span class="action-label">Ingresar</span>
+</button>
+        <button class="quick-action-btn" data-action="quick-expense">
+            <span class="action-icon"><img src="icon-gastar.png" alt="Gasto" class="icon-gastar"></span>
+            <span class="action-label">Gasto</span>
+        </button>
+    </div>
+</div>
+
+    <script src="js/icons.js"></script>
+    <script src="js/base.js"></script>
+    <!-- IndexedDB Layer -->
+    <script src="js/db/db-config.js"></script>
+    <script src="js/db/base-repository.js"></script>
+    <script src="js/db/wallet-repository.js"></script>
+    <script src="js/db/category-repository.js"></script>
+    <script src="js/db/expense-repository.js"></script>
+    <script src="js/db/transaction-repository.js"></script>
+    <script src="js/db/scheduled-payment-repository.js"></script>
+    <script src="js/db/migration-service.js"></script>
+    <script src="js/db/upgrade-db-v2.js"></script>
+    <script src="js/storage-indexeddb.js"></script>
+    <!-- App Scripts -->
+    <script src="js/helpers.js"></script>
+    <script src="js/theme-manager.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/gastos.js"></script>
+    <script src="js/pagos.js"></script>
+    <script src="js/huchas.js"></script>
+    <script src="js/resumen.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/opciones.js"></script>
+    <script src="js/quick-actions.js"></script>
+    <script src="js/app.js"></script>
+    
+</body>
+</html>

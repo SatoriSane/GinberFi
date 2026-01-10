@@ -1,0 +1,388 @@
+/* Coral Theme - Colores vibrantes inspirados en el coral */
+:root {
+  /* Coral Color Palette - Coral/Salmón/Melocotón */
+  --pastel-green: #FFB69E;
+  --pastel-blue: #FFA17A;
+  --dark-blue: #8B3A2E;
+  --pastel-pink: #FFCBB8;
+  
+  /* Coral theme specific colors */
+  --light-green: #FFF3EF;
+  --soft-gray: #FFF8F5;
+  --text-dark: #7A2E1F;
+  --text-light: #B85A47;
+  --white: #FFF9F7;
+  --shadow: rgba(255, 161, 122, 0.2);
+  
+  /* Border colors for coral theme */
+  --border-color: #FFCBB8;
+  --light-gray: #FFE0D5;
+  
+  /* Budget status colors (coral theme) */
+  --budget-excellent-bg: rgba(255, 243, 239, 0.7);
+  --budget-excellent-border: #FFB69E;
+  --budget-good-bg: rgba(255, 224, 213, 0.7);
+  --budget-good-border: #FFA17A;
+  --budget-warning-bg: rgba(255, 243, 205, 0.5);
+  --budget-warning-border: #E8C468;
+  --budget-danger-bg: rgba(254, 215, 215, 0.5);
+  --budget-danger-border: #E88B8B;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #FFF8F5;
+  --unclassified-border: #FFCBB8;
+  
+  /* State colors (coral theme) */
+  --color-success: #FF9A7A;
+  --color-warning: #D4A029;
+  --color-error: #C94A4A;
+  --color-info: #FFA17A;
+  
+  /* Chart colors (coral theme) */
+  --chart-primary: #FFA17A;
+  --chart-primary-alpha: rgba(255, 161, 122, 0.15);
+  
+  /* Component backgrounds (coral theme) */
+  --surface-primary: rgba(255, 249, 247, 0.9);
+  --surface-secondary: rgba(255, 243, 239, 0.95);
+  --surface-hover: rgba(255, 161, 122, 0.1);
+  --surface-active: rgba(255, 161, 122, 0.2);
+  
+  /* Transaction colors (coral theme) */
+  --transaction-positive: #FF9A7A;
+  --transaction-negative: #C94A4A;
+  
+  /* Border and shadow variations (coral theme) */
+  --border-light: rgba(255, 203, 184, 0.4);
+  --border-medium: rgba(255, 161, 122, 0.4);
+  --shadow-color: rgba(255, 161, 122, 0.2);
+  
+  /* Interactive colors (coral theme) */
+  --interactive-bg: rgba(255, 161, 122, 0.1);
+  --interactive-bg-hover: rgba(255, 161, 122, 0.15);
+  --interactive-bg-active: rgba(255, 161, 122, 0.25);
+  --interactive-border: rgba(255, 161, 122, 0.3);
+  
+  /* Subcategory specific (coral theme) */
+  --subcategory-bg: rgba(255, 249, 247, 0.8);
+  --subcategory-bg-hover: rgba(255, 243, 239, 1);
+  --subcategory-border-accent: rgba(255, 161, 122, 0.4);
+}
+
+/* Coral theme body styles */
+body.coral-theme {
+  background: linear-gradient(135deg, #FFF9F7 0%, #FFF3EF 50%, #FFE8DF 100%);
+  color: var(--text-dark);
+}
+
+/* Coral theme specific overrides */
+body.coral-theme .app-header {
+  background: 
+    /* Burbujas ascendentes */
+    radial-gradient(circle 1.8px at 15% 75%, rgba(255, 255, 255, 0.22) 0%, transparent 100%),
+    radial-gradient(circle 1.4px at 28% 55%, rgba(255, 255, 255, 0.18) 0%, transparent 100%),
+    radial-gradient(circle 2px at 42% 68%, rgba(255, 255, 255, 0.24) 0%, transparent 100%),
+    radial-gradient(circle 1.5px at 58% 45%, rgba(255, 255, 255, 0.19) 0%, transparent 100%),
+    radial-gradient(circle 1.7px at 72% 62%, rgba(255, 255, 255, 0.21) 0%, transparent 100%),
+    radial-gradient(circle 1.9px at 85% 52%, rgba(255, 255, 255, 0.23) 0%, transparent 100%),
+    
+    /* Textura de arrecife abstracta (formas orgánicas) */
+    radial-gradient(ellipse 30px 12px at 10% 100%, rgba(234, 88, 12, 0.15) 0%, transparent 80%),
+    radial-gradient(ellipse 35px 15px at 35% 100%, rgba(234, 88, 12, 0.12) 0%, transparent 80%),
+    radial-gradient(ellipse 28px 11px at 65% 100%, rgba(234, 88, 12, 0.14) 0%, transparent 80%),
+    radial-gradient(ellipse 32px 13px at 90% 100%, rgba(234, 88, 12, 0.13) 0%, transparent 80%),
+    
+    /* Profundidad marina */
+    linear-gradient(to bottom, transparent 50%, rgba(234, 88, 12, 0.08) 100%),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #FF8C5A 0%, #FFA17A 50%, #FFB69E 100%);
+  border-bottom: 1px solid rgba(255, 140, 90, 0.3);
+}
+
+body.coral-theme .balance-selector {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 161, 122, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 161, 122, 0.2);
+}
+
+body.coral-theme .balance-selector:hover {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(255, 161, 122, 0.3);
+}
+
+body.coral-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.coral-theme .wallet-name {
+  color: rgba(122, 46, 31, 0.9);
+}
+
+body.coral-theme .balance-arrow {
+  color: var(--text-dark);
+}
+
+body.coral-theme .balance-dropdown {
+  background: rgba(255, 249, 247, 1);
+  border: 1px solid rgba(255, 161, 122, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 161, 122, 0.2);
+}
+
+body.coral-theme .wallet-item:hover {
+  background: rgba(255, 161, 122, 0.1);
+}
+
+body.coral-theme .wallet-item.selected {
+  background: linear-gradient(135deg, rgba(255, 161, 122, 0.2) 0%, rgba(255, 182, 158, 0.15) 100%);
+  border-left: 3px solid #FFA17A;
+}
+
+body.coral-theme .category-wrapper {
+  background: rgba(255, 249, 247, 0.85);
+  border: 1px solid rgba(255, 161, 122, 0.2);
+  box-shadow: 0 4px 20px rgba(255, 161, 122, 0.1);
+}
+
+body.coral-theme .subcategories-container {
+  background: linear-gradient(180deg, rgba(255, 249, 247, 0.7) 0%, rgba(255, 243, 239, 0.9) 100%);
+}
+
+body.coral-theme .subcategory-wrapper {
+  background: rgba(255, 249, 247, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.coral-theme .subcategory-wrapper:hover {
+  background: rgba(255, 243, 239, 1);
+  border-color: rgba(255, 161, 122, 0.4);
+}
+
+body.coral-theme .expense-item {
+  background: rgba(255, 249, 247, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.coral-theme .expense-item:hover {
+  background: rgba(255, 243, 239, 1);
+  border-color: rgba(255, 161, 122, 0.3);
+}
+
+body.coral-theme .wallet-card {
+  background: rgba(255, 249, 247, 0.9);
+  border: 1px solid rgba(255, 161, 122, 0.25);
+  box-shadow: 0 8px 32px rgba(255, 161, 122, 0.15);
+}
+
+body.coral-theme .wallet-header {
+  background: linear-gradient(135deg, rgba(255, 182, 158, 0.3) 0%, rgba(255, 161, 122, 0.25) 100%);
+}
+
+body.coral-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg, rgba(255, 161, 122, 0.25), rgba(255, 182, 158, 0.3));
+}
+
+body.coral-theme .recent-transaction-item {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 161, 122, 0.15);
+}
+
+body.coral-theme .recent-transaction-item:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 161, 122, 0.3);
+  box-shadow: 0 4px 16px rgba(255, 161, 122, 0.15);
+}
+
+body.coral-theme .empty-state {
+  background: linear-gradient(135deg, rgba(255, 249, 247, 0.5) 0%, rgba(255, 243, 239, 0.5) 100%);
+  border: 2px dashed rgba(255, 161, 122, 0.4);
+}
+
+body.coral-theme .modal {
+  background: rgba(255, 249, 247, 0.95);
+  border: 1px solid rgba(255, 161, 122, 0.25);
+  box-shadow: 0 25px 60px rgba(255, 161, 122, 0.2);
+}
+
+body.coral-theme .modal-header {
+  background: linear-gradient(135deg, rgba(255, 243, 239, 0.95) 0%, rgba(255, 249, 247, 0.8) 100%);
+  border-bottom: 1px solid rgba(255, 161, 122, 0.2);
+}
+
+body.coral-theme .modal-title {
+  color: var(--text-dark);
+}
+
+body.coral-theme .option-item {
+  background: #FFF9F7;
+  border: 2px solid var(--border-color);
+}
+
+body.coral-theme .option-item:hover {
+  border-color: var(--pastel-blue);
+  background: rgba(255, 161, 122, 0.1);
+}
+
+body.coral-theme .theme-option {
+  background: #FFF9F7;
+  border: 2px solid var(--border-color);
+}
+
+body.coral-theme .theme-title {
+  color: var(--text-dark);
+}
+
+/* Navigation coral theme */
+body.coral-theme .app-navigation {
+  background: rgba(255, 249, 247, 0.95);
+  border-top: 1px solid rgba(255, 161, 122, 0.3);
+  box-shadow: 0 -2px 10px rgba(255, 161, 122, 0.15);
+}
+
+body.coral-theme .nav-item {
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.coral-theme .nav-item.active {
+  color: #FF8C5A;
+  background: linear-gradient(135deg, rgba(255, 161, 122, 0.2) 0%, rgba(255, 182, 158, 0.15) 100%);
+  box-shadow: 0 2px 8px rgba(255, 161, 122, 0.2);
+}
+
+/* Form elements coral theme */
+body.coral-theme input,
+body.coral-theme select,
+body.coral-theme textarea {
+  background: #FFF9F7;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+body.coral-theme input:focus,
+body.coral-theme select:focus,
+body.coral-theme textarea:focus {
+  border-color: var(--pastel-blue);
+  box-shadow: 0 0 0 3px rgba(255, 161, 122, 0.15);
+  background: #FFF3EF;
+}
+
+/* Button coral theme overrides */
+body.coral-theme .btn-primary {
+  background: linear-gradient(135deg, #FFA17A, #FFB69E);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(255, 161, 122, 0.3);
+}
+
+body.coral-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #FF8C5A, #FFA17A);
+  box-shadow: 0 6px 20px rgba(255, 161, 122, 0.4);
+}
+
+body.coral-theme .btn-secondary {
+  background: #FFF9F7;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+body.coral-theme .btn-secondary:hover {
+  background: #FFF3EF;
+  border-color: #FFB69E;
+}
+
+/* Scrollbar coral theme */
+body.coral-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.coral-theme ::-webkit-scrollbar-track {
+  background: #FFF9F7;
+}
+
+body.coral-theme ::-webkit-scrollbar-thumb {
+  background: #FFCBB8;
+  border-radius: 4px;
+}
+
+body.coral-theme ::-webkit-scrollbar-thumb:hover {
+  background: #FFB69E;
+}
+
+/* FAB coral theme */
+body.coral-theme .fab {
+  background: linear-gradient(135deg, #FF9A7A 0%, #FFA17A 50%, #FFB69E 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8px 32px rgba(255, 161, 122, 0.4);
+  border: 1px solid rgba(255, 161, 122, 0.3);
+}
+
+body.coral-theme .fab:hover {
+  background: linear-gradient(135deg, #FF8562 0%, #FF8C5A 50%, #FFA17A 100%);
+  box-shadow: 0 12px 40px rgba(255, 161, 122, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(255, 182, 158, 0.5);
+}
+
+/* Wallet action buttons coral theme */
+body.coral-theme .move-money-btn,
+body.coral-theme .add-income-btn {
+  background: rgba(255, 161, 122, 0.15);
+  color: #8B3A2E;
+  border: 1px solid rgba(255, 161, 122, 0.3);
+}
+
+body.coral-theme .move-money-btn:hover,
+body.coral-theme .add-income-btn:hover {
+  background: rgba(255, 161, 122, 0.25);
+  border-color: rgba(255, 161, 122, 0.5);
+  color: #7A2E1F;
+}
+
+/* Transaction amounts */
+body.coral-theme .transaction-amount.positive {
+  color: #FF9A7A;
+}
+
+body.coral-theme .transaction-amount.negative {
+  color: #C94A4A;
+}
+
+/* Budget amounts */
+body.coral-theme .budget-amount {
+  color: #7A2E1F;
+}
+
+body.coral-theme .budget-percentage {
+  color: #B85A47;
+}
+
+body.coral-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.coral-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.coral-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.coral-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Botón de cerrar modales - Coral theme */
+body.coral-theme .btn-close {
+  background: linear-gradient(135deg, #FB7185 0%, #F472B6 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(251, 113, 133, 0.3);
+}
+
+body.coral-theme .btn-close:hover {
+  background: linear-gradient(135deg, #F43F5E 0%, #EC4899 100%);
+  border-color: rgba(251, 113, 133, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 113, 133, 0.4);
+}

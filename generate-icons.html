@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Iconos PWA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4A90E2;
+            margin-bottom: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #4A90E2;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .upload-area:hover {
+            background: #f0f8ff;
+        }
+        .upload-area.dragover {
+            background: #e6f3ff;
+            border-color: #2171d1;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        button {
+            background: #4A90E2;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #357ABD;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        #preview img {
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .icon-item {
+            text-align: center;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .icon-item img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .icon-item p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Generador de Iconos PWA para GinbertFi</h1>
+        
+        <div class="instructions">
+            <h3>📋 Instrucciones:</h3>
+            <ol>
+                <li>Arrastra una imagen o haz clic en el área de abajo para seleccionar un archivo</li>
+                <li>Se recomienda una imagen cuadrada de al menos 512x512px</li>
+                <li>Haz clic en "Generar Iconos"</li>
+                <li>Descarga cada icono haciendo clic derecho → "Guardar imagen como..."</li>
+                <li>Guarda los iconos en la carpeta raíz de tu proyecto con los nombres mostrados</li>
+            </ol>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <p>📁 Arrastra una imagen aquí o haz clic para seleccionar</p>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div id="preview"></div>
+
+        <button id="generateBtn" disabled>Generar Iconos</button>
+        <button id="downloadAllBtn" style="display:none;">Descargar Todos</button>
+
+        <div id="iconsContainer" class="icons-grid"></div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const iconsContainer = document.getElementById('iconsContainer');
+        
+        let selectedImage = null;
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedImage = new Image();
+                selectedImage.onload = () => {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <p>Imagen cargada: ${file.name} (${selectedImage.width}x${selectedImage.height}px)</p>
+                    `;
+                    generateBtn.disabled = false;
+                };
+                selectedImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        generateBtn.addEventListener('click', generateIcons);
+
+        function generateIcons() {
+            if (!selectedImage) return;
+
+            iconsContainer.innerHTML = '';
+            generateBtn.disabled = true;
+
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // Fill with white background
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, size, size);
+
+                // Draw image centered and scaled
+                const scale = Math.min(size / selectedImage.width, size / selectedImage.height) * 0.8;
+                const scaledWidth = selectedImage.width * scale;
+                const scaledHeight = selectedImage.height * scale;
+                const x = (size - scaledWidth) / 2;
+                const y = (size - scaledHeight) / 2;
+
+                ctx.drawImage(selectedImage, x, y, scaledWidth, scaledHeight);
+
+                // Convert to blob and create download link
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const iconItem = document.createElement('div');
+                    iconItem.className = 'icon-item';
+                    iconItem.innerHTML = `
+                        <img src="${url}" alt="Icon ${size}x${size}">
+                        <p>icon-${size}x${size}.png</p>
+                        <button onclick="downloadIcon('${url}', 'icon-${size}x${size}.png')">Descargar</button>
+                    `;
+                    iconsContainer.appendChild(iconItem);
+                });
+            });
+
+            downloadAllBtn.style.display = 'inline-block';
+            preview.innerHTML += '<p class="success">✅ Iconos generados correctamente</p>';
+        }
+
+        function downloadIcon(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        downloadAllBtn.addEventListener('click', () => {
+            const images = iconsContainer.querySelectorAll('img');
+            images.forEach((img, index) => {
+                setTimeout(() => {
+                    downloadIcon(img.src, `icon-${sizes[index]}x${sizes[index]}.png`);
+                }, index * 500);
+            });
+        });
+    </script>
+</body>
+</html>

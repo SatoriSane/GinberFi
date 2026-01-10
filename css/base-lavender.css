@@ -1,0 +1,387 @@
+/* Lavender Theme - Colores elegantes inspirados en la lavanda */
+:root {
+  /* Lavender Color Palette - Púrpura/Lavanda/Rosa suave */
+  --pastel-green: #C8A2D0;
+  --pastel-blue: #B8A2D0;
+  --dark-blue: #5B3A6B;
+  --pastel-pink: #E0B8E0;
+  
+  /* Lavender theme specific colors */
+  --light-green: #F5EBFA;
+  --soft-gray: #FAF7FC;
+  --text-dark: #4A2B5A;
+  --text-light: #7D5E8D;
+  --white: #FAF6FD;
+  --shadow: rgba(184, 162, 208, 0.2);
+  
+  /* Border colors for lavender theme */
+  --border-color: #D4B8E0;
+  --light-gray: #E8D8F0;
+  
+  /* Budget status colors (lavender theme) */
+  --budget-excellent-bg: rgba(245, 235, 250, 0.7);
+  --budget-excellent-border: #C8A2D0;
+  --budget-good-bg: rgba(232, 216, 240, 0.7);
+  --budget-good-border: #B8A2D0;
+  --budget-warning-bg: rgba(255, 243, 205, 0.5);
+  --budget-warning-border: #E8C468;
+  --budget-danger-bg: rgba(254, 215, 230, 0.5);
+  --budget-danger-border: #E88BA8;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #FAF7FC;
+  --unclassified-border: #D4B8E0;
+  
+  /* State colors (lavender theme) */
+  --color-success: #A67FB8;
+  --color-warning: #D4A029;
+  --color-error: #C94A6A;
+  --color-info: #B8A2D0;
+  
+  /* Chart colors (lavender theme) */
+  --chart-primary: #B8A2D0;
+  --chart-primary-alpha: rgba(184, 162, 208, 0.15);
+  
+  /* Component backgrounds (lavender theme) */
+  --surface-primary: rgba(250, 246, 253, 0.9);
+  --surface-secondary: rgba(245, 235, 250, 0.95);
+  --surface-hover: rgba(184, 162, 208, 0.1);
+  --surface-active: rgba(184, 162, 208, 0.2);
+  
+  /* Transaction colors (lavender theme) */
+  --transaction-positive: #A67FB8;
+  --transaction-negative: #C94A6A;
+  
+  /* Border and shadow variations (lavender theme) */
+  --border-light: rgba(212, 184, 224, 0.4);
+  --border-medium: rgba(184, 162, 208, 0.4);
+  --shadow-color: rgba(184, 162, 208, 0.2);
+  
+  /* Interactive colors (lavender theme) */
+  --interactive-bg: rgba(184, 162, 208, 0.1);
+  --interactive-bg-hover: rgba(184, 162, 208, 0.15);
+  --interactive-bg-active: rgba(184, 162, 208, 0.25);
+  --interactive-border: rgba(184, 162, 208, 0.3);
+  
+  /* Subcategory specific (lavender theme) */
+  --subcategory-bg: rgba(250, 246, 253, 0.8);
+  --subcategory-bg-hover: rgba(245, 235, 250, 1);
+  --subcategory-border-accent: rgba(184, 162, 208, 0.4);
+}
+
+/* Lavender theme body styles */
+body.lavender-theme {
+  background: linear-gradient(135deg, #FAF6FD 0%, #F5EBFA 50%, #EDD8F5 100%);
+  color: var(--text-dark);
+}
+
+/* Lavender theme specific overrides */
+body.lavender-theme .app-header {
+  background: 
+    /* Pétalos dispersos */
+    radial-gradient(ellipse 3px 4px at 12% 32%, rgba(250, 246, 253, 0.3) 0%, transparent 100%),
+    radial-gradient(ellipse 2.5px 3.5px at 25% 58%, rgba(250, 246, 253, 0.25) 0%, transparent 100%),
+    radial-gradient(ellipse 3.2px 4.2px at 38% 42%, rgba(250, 246, 253, 0.28) 0%, transparent 100%),
+    radial-gradient(ellipse 2.8px 3.8px at 52% 68%, rgba(250, 246, 253, 0.26) 0%, transparent 100%),
+    radial-gradient(ellipse 3px 4px at 67% 35%, rgba(250, 246, 253, 0.3) 0%, transparent 100%),
+    radial-gradient(ellipse 2.6px 3.6px at 78% 55%, rgba(250, 246, 253, 0.24) 0%, transparent 100%),
+    radial-gradient(ellipse 3.1px 4.1px at 88% 48%, rgba(250, 246, 253, 0.29) 0%, transparent 100%),
+    
+    /* Patrón floral abstracto */
+    radial-gradient(ellipse 25px 8px at 20% 40%, rgba(255, 255, 255, 0.08) 0%, transparent 80%),
+    radial-gradient(ellipse 22px 7px at 70% 65%, rgba(255, 255, 255, 0.07) 0%, transparent 80%),
+    
+    /* Bruma aromática */
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #8B6BA8 0%, #B8A2D0 50%, #C8A2D0 100%);
+  border-bottom: 1px solid rgba(184, 162, 208, 0.3);
+}
+
+body.lavender-theme .balance-selector {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(184, 162, 208, 0.3);
+  box-shadow: 0 2px 8px rgba(184, 162, 208, 0.2);
+}
+
+body.lavender-theme .balance-selector:hover {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(184, 162, 208, 0.3);
+}
+
+body.lavender-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.lavender-theme .wallet-name {
+  color: rgba(74, 43, 90, 0.9);
+}
+
+body.lavender-theme .balance-arrow {
+  color: var(--text-dark);
+}
+
+body.lavender-theme .balance-dropdown {
+  background: rgba(250, 246, 253, 1);
+  border: 1px solid rgba(184, 162, 208, 0.3);
+  box-shadow: 0 4px 20px rgba(184, 162, 208, 0.2);
+}
+
+body.lavender-theme .wallet-item:hover {
+  background: rgba(184, 162, 208, 0.1);
+}
+
+body.lavender-theme .wallet-item.selected {
+  background: linear-gradient(135deg, rgba(184, 162, 208, 0.2) 0%, rgba(200, 162, 208, 0.15) 100%);
+  border-left: 3px solid #B8A2D0;
+}
+
+body.lavender-theme .category-wrapper {
+  background: rgba(250, 246, 253, 0.85);
+  border: 1px solid rgba(184, 162, 208, 0.2);
+  box-shadow: 0 4px 20px rgba(184, 162, 208, 0.1);
+}
+
+body.lavender-theme .subcategories-container {
+  background: linear-gradient(180deg, rgba(250, 246, 253, 0.7) 0%, rgba(245, 235, 250, 0.9) 100%);
+}
+
+body.lavender-theme .subcategory-wrapper {
+  background: rgba(250, 246, 253, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.lavender-theme .subcategory-wrapper:hover {
+  background: rgba(245, 235, 250, 1);
+  border-color: rgba(184, 162, 208, 0.4);
+}
+
+body.lavender-theme .expense-item {
+  background: rgba(250, 246, 253, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.lavender-theme .expense-item:hover {
+  background: rgba(245, 235, 250, 1);
+  border-color: rgba(184, 162, 208, 0.3);
+}
+
+body.lavender-theme .wallet-card {
+  background: rgba(250, 246, 253, 0.9);
+  border: 1px solid rgba(184, 162, 208, 0.25);
+  box-shadow: 0 8px 32px rgba(184, 162, 208, 0.15);
+}
+
+body.lavender-theme .wallet-header {
+  background: linear-gradient(135deg, rgba(200, 162, 208, 0.3) 0%, rgba(184, 162, 208, 0.25) 100%);
+}
+
+body.lavender-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg, rgba(184, 162, 208, 0.25), rgba(200, 162, 208, 0.3));
+}
+
+body.lavender-theme .recent-transaction-item {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(184, 162, 208, 0.15);
+}
+
+body.lavender-theme .recent-transaction-item:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(184, 162, 208, 0.3);
+  box-shadow: 0 4px 16px rgba(184, 162, 208, 0.15);
+}
+
+body.lavender-theme .empty-state {
+  background: linear-gradient(135deg, rgba(250, 246, 253, 0.5) 0%, rgba(245, 235, 250, 0.5) 100%);
+  border: 2px dashed rgba(184, 162, 208, 0.4);
+}
+
+body.lavender-theme .modal {
+  background: rgba(250, 246, 253, 0.95);
+  border: 1px solid rgba(184, 162, 208, 0.25);
+  box-shadow: 0 25px 60px rgba(184, 162, 208, 0.2);
+}
+
+body.lavender-theme .modal-header {
+  background: linear-gradient(135deg, rgba(245, 235, 250, 0.95) 0%, rgba(250, 246, 253, 0.8) 100%);
+  border-bottom: 1px solid rgba(184, 162, 208, 0.2);
+}
+
+body.lavender-theme .modal-title {
+  color: var(--text-dark);
+}
+
+body.lavender-theme .option-item {
+  background: #FAF6FD;
+  border: 2px solid var(--border-color);
+}
+
+body.lavender-theme .option-item:hover {
+  border-color: var(--pastel-blue);
+  background: rgba(184, 162, 208, 0.1);
+}
+
+body.lavender-theme .theme-option {
+  background: #FAF6FD;
+  border: 2px solid var(--border-color);
+}
+
+body.lavender-theme .theme-title {
+  color: var(--text-dark);
+}
+
+/* Navigation lavender theme */
+body.lavender-theme .app-navigation {
+  background: rgba(250, 246, 253, 0.95);
+  border-top: 1px solid rgba(184, 162, 208, 0.3);
+  box-shadow: 0 -2px 10px rgba(184, 162, 208, 0.15);
+}
+
+body.lavender-theme .nav-item {
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.lavender-theme .nav-item.active {
+  color: #8B6BA8;
+  background: linear-gradient(135deg, rgba(184, 162, 208, 0.2) 0%, rgba(200, 162, 208, 0.15) 100%);
+  box-shadow: 0 2px 8px rgba(184, 162, 208, 0.2);
+}
+
+/* Form elements lavender theme */
+body.lavender-theme input,
+body.lavender-theme select,
+body.lavender-theme textarea {
+  background: #FAF6FD;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+body.lavender-theme input:focus,
+body.lavender-theme select:focus,
+body.lavender-theme textarea:focus {
+  border-color: var(--pastel-blue);
+  box-shadow: 0 0 0 3px rgba(184, 162, 208, 0.15);
+  background: #F5EBFA;
+}
+
+/* Button lavender theme overrides */
+body.lavender-theme .btn-primary {
+  background: linear-gradient(135deg, #B8A2D0, #C8A2D0);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(184, 162, 208, 0.3);
+}
+
+body.lavender-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #A085B8, #B088C0);
+  box-shadow: 0 6px 20px rgba(184, 162, 208, 0.4);
+}
+
+body.lavender-theme .btn-secondary {
+  background: #FAF6FD;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+body.lavender-theme .btn-secondary:hover {
+  background: #F5EBFA;
+  border-color: #C8A2D0;
+}
+
+/* Scrollbar lavender theme */
+body.lavender-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.lavender-theme ::-webkit-scrollbar-track {
+  background: #FAF6FD;
+}
+
+body.lavender-theme ::-webkit-scrollbar-thumb {
+  background: #D4B8E0;
+  border-radius: 4px;
+}
+
+body.lavender-theme ::-webkit-scrollbar-thumb:hover {
+  background: #B8A2D0;
+}
+
+/* FAB lavender theme */
+body.lavender-theme .fab {
+  background: linear-gradient(135deg, #A67FB8 0%, #B8A2D0 50%, #C8A2D0 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8px 32px rgba(184, 162, 208, 0.4);
+  border: 1px solid rgba(184, 162, 208, 0.3);
+}
+
+body.lavender-theme .fab:hover {
+  background: linear-gradient(135deg, #8E67A0 0%, #A085B8 50%, #B088C0 100%);
+  box-shadow: 0 12px 40px rgba(184, 162, 208, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(200, 162, 208, 0.5);
+}
+
+/* Wallet action buttons lavender theme */
+body.lavender-theme .move-money-btn,
+body.lavender-theme .add-income-btn {
+  background: rgba(184, 162, 208, 0.15);
+  color: #5B3A6B;
+  border: 1px solid rgba(184, 162, 208, 0.3);
+}
+
+body.lavender-theme .move-money-btn:hover,
+body.lavender-theme .add-income-btn:hover {
+  background: rgba(184, 162, 208, 0.25);
+  border-color: rgba(184, 162, 208, 0.5);
+  color: #4A2B5A;
+}
+
+/* Transaction amounts */
+body.lavender-theme .transaction-amount.positive {
+  color: #A67FB8;
+}
+
+body.lavender-theme .transaction-amount.negative {
+  color: #C94A6A;
+}
+
+/* Budget amounts */
+body.lavender-theme .budget-amount {
+  color: #4A2B5A;
+}
+
+body.lavender-theme .budget-percentage {
+  color: #7D5E8D;
+}
+
+body.lavender-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.lavender-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.lavender-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.lavender-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Botón de cerrar modales - Lavender theme */
+body.lavender-theme .btn-close {
+  background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+body.lavender-theme .btn-close:hover {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}

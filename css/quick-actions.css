@@ -1,0 +1,210 @@
+/* quick-actions.css */
+
+.quick-actions-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 82, 130, 0.4); /* Azul oscuro con transparencia */
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-end; /* Estilo Bottom Sheet */
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.quick-actions-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.quick-actions-menu {
+    width: 100%;
+    max-width: 500px;
+    background: var(--white);
+    border-radius: 30px 30px 0 0; /* Súper redondeado arriba */
+    padding: var(--spacing-md);
+    /* Espacio para que el pulgar no choque con la nav-bar */
+    padding-bottom: calc(40px + var(--spacing-xl)); 
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); /* Efecto pop-up */
+}
+
+.quick-actions-overlay.active .quick-actions-menu {
+    transform: translateY(0);
+}
+
+.quick-action-btn {
+    height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xl);
+    
+    /* FONTO IGUAL PARA TODOS */
+    background: var(--surface-primary); 
+    
+    /* BORDE BASE DE 2PX */
+    border: 2px solid var(--border-medium); 
+    transition: all 0.2s ease;
+}
+/* 1. GASTO (Borde Rojo) */
+.quick-action-btn[data-action="quick-expense"] {
+    color: var(--color-error);
+    border: 2px solid var(--color-error); /* Usamos el rojo directo para que resalte */
+}
+
+/* 2. INGRESO (Borde Verde) */
+.quick-action-btn[data-action="add-income"] {
+    color: var(--color-success);
+    border: 2px solid var(--color-success); /* Borde verde de 2px en los 4 lados */
+}
+
+/* 3. TRANSFERIR (Borde Azul/Neutral) */
+.quick-action-btn[data-action="transfer"] {
+    color: var(--dark-blue);
+    border: 2px solid var(--interactive-border);
+}
+
+/* 4. PROGRAMAR (Borde Gris) */
+.quick-action-btn[data-action="schedule-payment"] {
+    color: var(--text-dark);
+    border: 2px solid var(--border-medium);
+}
+
+/* Los iconos ahora tienen el mismo color que el texto del botón */
+/* Eliminada la opacidad para que los iconos tengan más protagonismo */
+
+/* Al pulsar, los neutrales se oscurecen un poco para dar feedback */
+.quick-action-btn[data-action="transfer"]:active,
+.quick-action-btn[data-action="schedule-payment"]:active {
+    background: var(--surface-active);
+}
+
+/* --- FEEDBACK VISUAL --- */
+
+.quick-action-btn:active {
+    transform: scale(0.92);
+    /* Al presionar, el fondo cambia ligeramente para dar feedback */
+    background: var(--surface-active); 
+}
+
+/* Para que el borde verde/rojo no se pierda al pulsar */
+.quick-action-btn[data-action="quick-expense"]:active { border-color: var(--color-error); }
+.quick-action-btn[data-action="add-income"]:active { border-color: var(--color-success); }
+
+.action-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Transferir más grande que los demás */
+.quick-action-btn[data-action="transfer"] .action-icon {
+    font-size: 56px;
+}
+
+.action-icon i {
+    width: 48px;
+    height: 48px;
+    stroke-width: 2;
+    color: currentColor;
+}
+
+.action-icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Transferir más grande */
+.quick-action-btn[data-action="transfer"] .action-icon img {
+    width: 56px;
+    height: 56px;
+}
+
+.action-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Ajuste específico para el FAB cuando el menú está abierto */
+/* Si el botón FAB tiene la clase .active, asegúrate de que esté por encima */
+#centralFabBtn.active {
+    z-index: 10000;
+}
+
+
+
+
+/* Contenedor del icono */
+.piggy-icon-container {
+    position: relative;
+    width: 60px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* La ranura de la hucha */
+.piggy-slot {
+    width: 40px;
+    height: 6px;
+    background: var(--dark-blue);
+    border-radius: 10px;
+    position: absolute;
+    bottom: 10px;
+    opacity: 0.3;
+}
+
+/* La moneda personalizada */
+.piggy-coin {
+    width: 28px;
+    height: 28px;
+    background: #FFD700; /* Oro */
+    border: 2px solid #E6B800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 900;
+    color: #B8860B;
+    position: absolute;
+    top: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: deposit-animation 2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+/* Animación de depósito profesional */
+@keyframes deposit-animation {
+    0% {
+        transform: translateY(-10px) scale(1);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+    50% {
+        transform: translateY(12px) scale(0.9); /* Entra en la ranura */
+        opacity: 1;
+    }
+    60%, 100% {
+        transform: translateY(15px) scale(0.7);
+        opacity: 0;
+    }
+}

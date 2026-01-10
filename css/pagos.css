@@ -1,0 +1,255 @@
+/* Pagos Tab Styles - Scheduled Payments */
+
+.pagos-container {
+  padding: var(--spacing-lg) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Payment Item - Balanced & Clean */
+.payment-item {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 0;
+  margin: 0 var(--spacing-md);
+  border: 1.5px solid var(--border-light);
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.payment-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+}
+
+.payment-item:hover {
+  border-color: var(--pastel-blue);
+  background: var(--surface-primary);
+  transform: translateY(-1px);
+}
+
+
+/* Header - Clean category only */
+.payment-item-header {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.payment-category-header {
+  font-size: 0.8125rem;
+  color: var(--text-light);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Body - Balanced proportions */
+.payment-item-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  align-items: center;
+}
+
+/* Info section */
+.payment-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+/* Action section */
+.payment-action-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.payment-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.35;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Badges group */
+.payment-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+
+/* Badges - Proportional */
+.payment-date-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: var(--radius-lg);
+  background: var(--pastel-blue);
+  color: var(--dark-blue);
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.payment-date-badge.overdue {
+  background: var(--budget-danger-bg);
+  color: var(--color-error);
+}
+
+.payment-recurring-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: var(--radius-lg);
+  background: var(--budget-excellent-bg);
+  color: var(--color-success);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Amount - Prominent but balanced */
+.payment-amount {
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: var(--dark-blue);
+  line-height: 1;
+  text-align: right;
+  letter-spacing: -0.02em;
+}
+
+/* Action button - Proportional */
+.payment-action-btn {
+  padding: 9px 20px;
+  border: none;
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.payment-action-btn:hover {
+  opacity: 0.85;
+}
+
+/* Empty State (reused from gastos.css) */
+.pagos-container .empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+  background: linear-gradient(135deg, rgba(209, 250, 229, 0.3) 0%, rgba(191, 219, 254, 0.3) 100%);
+  border-radius: 20px;
+  margin: var(--spacing-md);
+  border: 2px dashed rgba(66, 153, 225, 0.3);
+}
+
+.pagos-container .empty-state p {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  color: var(--dark-blue);
+}
+
+.add-payment-btn {
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-payment-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pagos-list-container {
+    margin: var(--spacing-sm);
+    border-radius: 12px;
+  }
+
+  .pagos-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .pagos-title {
+    font-size: 0.875rem;
+  }
+
+  .pagos-total {
+    font-size: 1rem;
+  }
+
+  .pagos-container {
+    padding: var(--spacing-md) 0;
+    gap: var(--spacing-md);
+  }
+
+  .payment-item {
+    margin: 0 var(--spacing-sm);
+  }
+
+  .payment-item-header {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .payment-category-header {
+    font-size: 0.75rem;
+  }
+
+  .payment-item-body {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .payment-title {
+    font-size: 1.2rem;
+  }
+
+  .payment-amount {
+    font-size: 1.375rem;
+  }
+
+  .payment-date-badge,
+  .payment-recurring-badge {
+    font-size: 0.6875rem;
+    padding: 4px 9px;
+  }
+
+  .payment-action-btn {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+  }
+}
+

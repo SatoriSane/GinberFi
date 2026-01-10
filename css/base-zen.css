@@ -1,0 +1,360 @@
+/* 
+ * ============================================
+ * ZEN THEME - Minimalista Profesional
+ * ============================================
+ * Este tema usa una paleta de grises neutros
+ * Solo cambia COLORES, mantiene todo el layout base
+ * Funciona perfectamente en responsive
+ * ============================================
+ */
+
+/* ===== BODY Y BACKGROUNDS ===== */
+body.zen-theme {
+  background: #FFFFFF;
+}
+
+/* ===== HEADER ===== */
+body.zen-theme .app-header {
+  background: 
+    /* Círculos concéntricos zen (ondas de agua) */
+    radial-gradient(circle at 22% 50%, transparent 0%, transparent 18px, rgba(107, 114, 128, 0.03) 18px, rgba(107, 114, 128, 0.03) 19px, transparent 19px),
+    radial-gradient(circle at 22% 50%, transparent 0%, transparent 28px, rgba(107, 114, 128, 0.025) 28px, rgba(107, 114, 128, 0.025) 29px, transparent 29px),
+    radial-gradient(circle at 22% 50%, transparent 0%, transparent 38px, rgba(107, 114, 128, 0.02) 38px, rgba(107, 114, 128, 0.02) 39px, transparent 39px),
+    
+    radial-gradient(circle at 78% 50%, transparent 0%, transparent 15px, rgba(107, 114, 128, 0.03) 15px, rgba(107, 114, 128, 0.03) 16px, transparent 16px),
+    radial-gradient(circle at 78% 50%, transparent 0%, transparent 25px, rgba(107, 114, 128, 0.025) 25px, rgba(107, 114, 128, 0.025) 26px, transparent 26px),
+    
+    /* Textura minimalista de meditación */
+    linear-gradient(to bottom, transparent 0%, rgba(243, 244, 246, 0.3) 100%),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 50%, #F3F4F6 100%);
+  border-bottom: 1px solid rgba(209, 213, 219, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.zen-theme .app-name {
+  color: #111827;
+}
+
+body.zen-theme .balance-selector {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .balance-selector:hover {
+  background: #F3F4F6;
+}
+
+body.zen-theme .balance-info .wallet-name {
+  color: #111827 !important;
+}
+
+body.zen-theme .balance-amount {
+  color: #6B7280;
+}
+
+body.zen-theme .balance-arrow {
+  color: #9CA3AF;
+}
+
+body.zen-theme .balance-dropdown {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .wallet-item:hover {
+  background: #F9FAFB;
+}
+
+body.zen-theme .wallet-item.selected {
+  background: #F3F4F6;
+  border-left-color: #4B5563;
+}
+
+/* ===== WALLETS ===== */
+body.zen-theme .wallet-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .wallet-header {
+  background: #FFFFFF;
+}
+
+body.zen-theme .wallet-name-header {
+  color: #111827;
+}
+
+body.zen-theme .wallet-description {
+  color: #9CA3AF;
+}
+
+body.zen-theme .wallet-balance-compact {
+  color: #111827;
+}
+
+body.zen-theme .expand-indicator svg {
+  stroke: #9CA3AF;
+}
+
+body.zen-theme .edit-wallet-btn {
+  background: rgba(249, 250, 251, 0.9);
+  border-color: #E5E7EB;
+}
+
+body.zen-theme .edit-wallet-btn:hover {
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+}
+
+body.zen-theme .move-money-btn,
+body.zen-theme .add-income-btn {
+  background: #F9FAFB;
+  color: #111827;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .move-money-btn:hover,
+body.zen-theme .add-income-btn:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+body.zen-theme .recent-transaction-item {
+  background: transparent;
+  border-bottom-color: #F3F4F6;
+}
+
+body.zen-theme .recent-transaction-item:hover {
+  background: #F9FAFB;
+}
+
+/* ===== CATEGORÍAS Y GASTOS ===== */
+body.zen-theme .category-wrapper {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .subcategory-wrapper {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .subcategory-wrapper:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+body.zen-theme .expense-item {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .expense-item:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+
+body.zen-theme .category-name,
+body.zen-theme .subcategory-name,
+body.zen-theme .expense-description {
+  color: #111827;
+}
+
+/* ===== MODALES ===== */
+body.zen-theme .modal {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .modal-header {
+  background: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+body.zen-theme .modal-title {
+  color: #111827;
+}
+
+/* ===== NAVEGACIÓN ===== */
+body.zen-theme .app-navigation {
+  background: #FFFFFF;
+  border-top: 1px solid #E5E7EB;
+}
+
+body.zen-theme .nav-item {
+  color: #9CA3AF;
+}
+
+body.zen-theme .nav-item.active {
+  color: #374151;
+  border-top-color: #4B5563;
+}
+
+/* ===== FORMULARIOS ===== */
+body.zen-theme input,
+body.zen-theme select,
+body.zen-theme textarea {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  color: #111827;
+}
+
+body.zen-theme input:focus,
+body.zen-theme select:focus,
+body.zen-theme textarea:focus {
+  border-color: #6B7280;
+  background: #FFFFFF;
+}
+
+/* ===== BOTONES ===== */
+body.zen-theme .btn-primary {
+  background: #4B5563;
+  color: #FFFFFF;
+}
+
+body.zen-theme .btn-primary:hover {
+  background: #374151;
+}
+
+body.zen-theme .btn-secondary {
+  background: #F9FAFB;
+  color: #111827;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .btn-secondary:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+body.zen-theme .fab {
+  background: #4B5563;
+  color: #FFFFFF;
+}
+
+body.zen-theme .fab:hover {
+  background: #374151;
+}
+
+body.zen-theme .add-payment-btn,
+body.zen-theme .add-category-btn,
+body.zen-theme .add-category-list-btn {
+  background: #4B5563;
+  color: #FFFFFF;
+}
+
+body.zen-theme .add-payment-btn:hover,
+body.zen-theme .add-category-btn:hover,
+body.zen-theme .add-category-list-btn:hover {
+  background: #374151;
+}
+
+/* ===== PAGOS PROGRAMADOS ===== */
+body.zen-theme .payment-date-badge {
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .payment-date-badge.overdue {
+  background: #FEF2F2;
+  color: #DC2626;
+  border-color: #FECACA;
+}
+
+body.zen-theme .payment-recurring-badge {
+  background: #F0FDF4;
+  color: #16A34A;
+  border-color: #BBF7D0;
+}
+
+body.zen-theme .payment-action-btn {
+  background: #4B5563;
+  color: #FFFFFF;
+}
+
+body.zen-theme .payment-action-btn:hover {
+  background: #374151;
+}
+
+body.zen-theme .payment-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+body.zen-theme .payment-card:hover {
+  border-color: #D1D5DB;
+}
+
+/* ===== ESTADOS Y TRANSACCIONES ===== */
+body.zen-theme .empty-state {
+  background: #F9FAFB;
+  border: 2px dashed #D1D5DB;
+}
+
+body.zen-theme .empty-state p {
+  color: #4B5563;
+}
+
+body.zen-theme .transaction-amount.positive {
+  color: #10B981;
+}
+
+body.zen-theme .transaction-amount.negative {
+  color: #EF4444;
+}
+
+/* ===== OPCIONES Y TEMAS ===== */
+body.zen-theme .option-item {
+  background: #F9FAFB;
+  border: 2px solid #E5E7EB;
+}
+
+body.zen-theme .option-item:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+body.zen-theme .theme-option {
+  background: #F9FAFB;
+  border: 2px solid #E5E7EB;
+}
+
+body.zen-theme .theme-option.selected {
+  border-color: #4B5563;
+  background: #FFFFFF;
+}
+
+body.zen-theme .theme-option:hover {
+  border-color: #9CA3AF;
+  background: #FFFFFF;
+}
+
+/* ===== SCROLLBAR ===== */
+body.zen-theme ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.zen-theme ::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+}
+
+body.zen-theme ::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}
+
+/* Botón de cerrar modales - Zen theme */
+body.zen-theme .btn-close {
+  background: #4B5563;
+  color: #FFFFFF;
+  border: 1px solid #6B7280;
+}
+
+body.zen-theme .btn-close:hover {
+  background: #374151;
+  border-color: #9CA3AF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
+}

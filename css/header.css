@@ -1,0 +1,180 @@
+/* Header Styles */
+.app-header {
+  background: linear-gradient(135deg, var(--pastel-green) 0%, var(--pastel-blue) 100%);
+
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  max-width: 100%;
+}
+
+.app-name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--dark-blue);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Selector de Balance - Estilo de Vidrio Esmerilado */
+.balance-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.2); /* Fondo transparente para mostrar el header */
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.5); 
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.balance-selector:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.4); 
+}
+
+.balance-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  position: relative;
+}
+
+/* Nombre de la Wallet - Alta Especificidad para asegurar color y peso */
+.balance-info .wallet-name { 
+  font-size: var(--font-size-base);
+  font-weight: 700; /* Asegura Bold */
+  color: var(--dark-blue) !important; 
+  line-height: 1.1;
+  max-width: 235px;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+
+  /* Efecto de sombra para hacerlo flotar */
+  text-shadow: 
+    0 1px 1px rgba(0, 0, 0, 0.1),
+    0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+.balance-amount {
+  font-size: 11px;
+  font-weight: 500; /* Lo bajé a 500 para que el nombre de la wallet (700) tenga jerarquía */
+  color: var(--text-light);
+  line-height: 1;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  letter-spacing: 0.2px;
+  opacity: 0.8;
+}
+
+.balance-arrow {
+  color: var(--dark-blue);
+  font-size: var(--font-size-sm);
+  transition: transform 0.2s ease;
+}
+
+.balance-selector.open .balance-arrow {
+  transform: rotate(180deg);
+}
+
+/* Balance Dropdown */
+.balance-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 2%;
+  right: 2%;
+  background: var(--white);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg); 
+  box-shadow: var(--shadow-lg);
+  width: 96%;
+  max-width: none;
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.balance-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+
+.wallets-list {
+  padding: var(--spacing-md);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.wallet-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: var(--spacing-sm);
+}
+
+.wallet-item:hover {
+  background: var(--light-green);
+}
+
+.wallet-item.selected {
+  background: var(--pastel-green);
+  font-weight: 600;
+}
+
+/* IMPORTANTE: El .wallet-name duplicado y menos específico ha sido eliminado de aquí */
+
+.wallet-balance {
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+.wallet-currency {
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+  margin-left: var(--spacing-xs);
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid rgba(44, 82, 130, 0.1);
+  background: linear-gradient(135deg, rgba(209, 250, 229, 0.3) 0%, rgba(191, 219, 254, 0.3) 100%);
+}
+
+.dropdown-title {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--dark-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+.dropdown-title img.icon {
+  width: 32px;
+  height: 32px;
+  margin-top: -7px;
+  margin-right: 0px;
+}
+
+.empty-wallets-message {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--text-light);
+  font-style: italic;
+}

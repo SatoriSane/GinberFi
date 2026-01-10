@@ -1,0 +1,424 @@
+/* Dark Theme Override - Variables and Styles */
+:root {
+  /* Dark Color Palette - Elegante y Sofisticada */
+  --pastel-green: #34D399;
+  --pastel-blue: #60A5FA;
+  --dark-blue: #F1F5F9;
+  --pastel-pink: #F472B6;
+  
+  /* Dark theme specific colors - Elegante pero no extremo */
+  --light-green: #1E293B;
+  --soft-gray: #0F172A;
+  --text-dark: #F1F5F9;
+  --text-light: #94A3B8;
+  --white: #1E293B;
+  --shadow: rgba(0, 0, 0, 0.4);
+  
+  /* Border colors for dark theme - Sutiles pero definidos */
+  --border-color: #1E293B;
+  --light-gray: #27272A;
+  
+  /* Budget status colors (dark theme) - Elegantes y refinados */
+  --budget-excellent-bg: rgba(6, 78, 59, 0.3);
+  --budget-excellent-border: #34D399;
+  --budget-good-bg: rgba(15, 118, 110, 0.25);
+  --budget-good-border: #22D3EE;
+  --budget-warning-bg: rgba(120, 53, 15, 0.3);
+  --budget-warning-border: #FBBF24;
+  --budget-danger-bg: rgba(153, 27, 27, 0.3);
+  --budget-danger-border: #F87171;
+  
+  /* Unclassified colors - Más sofisticados */
+  --unclassified-bg: #18181B;
+  --unclassified-border: #3F3F46;
+  
+  /* State colors (dark theme) - Vibrantes pero elegantes */
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-error: #F87171;
+  --color-info: #60A5FA;
+  
+  /* Chart colors (dark theme) - Más vibrantes */
+  --chart-primary: #60A5FA;
+  --chart-primary-alpha: rgba(96, 165, 250, 0.15);
+  
+  /* Component backgrounds (dark theme) - Elegantes pero legibles */
+  --surface-primary: rgba(30, 41, 59, 0.8);
+  --surface-secondary: rgba(51, 65, 85, 0.9);
+  --surface-hover: rgba(96, 165, 250, 0.1);
+  --surface-active: rgba(96, 165, 250, 0.2);
+  
+  /* Transaction colors (dark theme) - Más vibrantes */
+  --transaction-positive: #34D399;
+  --transaction-negative: #F87171;
+  
+  /* Border and shadow variations (dark theme) - Más sutiles */
+  --border-light: rgba(39, 39, 42, 0.6);
+  --border-medium: rgba(96, 165, 250, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  
+  /* Interactive colors (dark theme) - Más refinados */
+  --interactive-bg: rgba(96, 165, 250, 0.08);
+  --interactive-bg-hover: rgba(96, 165, 250, 0.12);
+  --interactive-bg-active: rgba(96, 165, 250, 0.2);
+  --interactive-border: rgba(96, 165, 250, 0.25);
+  
+  /* Subcategory specific (dark theme) - Más elegantes */
+  --subcategory-bg: rgba(12, 20, 38, 0.6);
+  --subcategory-bg-hover: rgba(24, 24, 27, 0.8);
+  --subcategory-border-accent: rgba(96, 165, 250, 0.4);
+}
+
+/* Dark theme body styles - Elegante pero no extremo */
+body.dark-theme {
+  background: linear-gradient(135deg, #000000 0%, #1E293B 50%, #000000 100%);
+  color: var(--text-dark);
+}
+
+/* Dark theme specific overrides */
+body.dark-theme .app-header {
+  background: linear-gradient(135deg, #000000 0%, #161c25 50%, #000000 100%);
+  border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+body.dark-theme .balance-selector {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .balance-selector:hover {
+  background: rgba(30, 41, 59, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.dark-theme .wallet-name {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+body.dark-theme .balance-arrow {
+  color: var(--text-dark);
+}
+
+body.dark-theme .balance-dropdown {
+  background: rgba(30, 41, 59, 1);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .wallet-item:hover {
+  background: rgba(96, 165, 250, 0.08);
+}
+
+body.dark-theme .wallet-item.selected {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.2) 0%, rgba(52, 211, 153, 0.15) 100%);
+  border-left: 3px solid #60A5FA;
+}
+
+body.dark-theme .category-wrapper {
+  background: rgba(12, 20, 38, 0.6);
+  border: 1px solid rgba(96, 165, 250, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .subcategories-container {
+  background: linear-gradient(180deg, rgba(3, 7, 18, 0.7) 0%, rgba(12, 20, 38, 0.9) 100%);
+}
+
+body.dark-theme .subcategory-wrapper {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--border-color);
+}
+
+body.dark-theme .subcategory-wrapper:hover {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+body.dark-theme .expense-item {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.dark-theme .expense-item:hover {
+  background: rgba(30, 41, 59, 1);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+body.dark-theme .wallet-card {
+  background: rgba(12, 20, 38, 0.7);
+  border: 1px solid rgba(96, 165, 250, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .wallet-header {
+  background: linear-gradient(135deg, rgba(12, 20, 38, 0.8) 0%, rgba(30, 58, 138, 0.3) 100%);
+}
+body.dark-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(12, 20, 38, 0.8));
+}
+body.dark-theme .recent-transaction-item {
+  background: rgba(24, 24, 27, 0.6);
+  border: 1px solid rgba(96, 165, 250, 0.08);
+}
+
+body.dark-theme .recent-transaction-item:hover {
+  background: rgba(24, 24, 27, 0.8);
+  border-color: rgba(96, 165, 250, 0.2);
+  box-shadow: 0 4px 16px rgba(96, 165, 250, 0.1);
+}
+
+body.dark-theme .empty-state {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.4) 100%);
+  border: 2px dashed rgba(59, 130, 246, 0.3);
+}
+
+body.dark-theme .modal {
+  background: rgba(12, 20, 38, 0.9);
+  border: 1px solid rgba(96, 165, 250, 0.15);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-theme .modal-header {
+  background: linear-gradient(135deg, rgba(12, 20, 38, 0.95) 0%, rgba(24, 24, 27, 0.8) 100%);
+  border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+}
+
+body.dark-theme .modal-title {
+  color: var(--text-dark);
+}
+
+body.dark-theme .option-item {
+  background: #0F172A;
+  border: 2px solid var(--border-color);
+}
+
+body.dark-theme .option-item:hover {
+  border-color: var(--pastel-blue);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+body.dark-theme .theme-option {
+  background: #0F172A;
+  border: 2px solid var(--border-color);
+}
+
+body.dark-theme .theme-title {
+  color: var(--text-dark);
+}
+
+/* Navigation dark theme - Elegante y legible */
+body.dark-theme .app-navigation {
+  background: rgba(30, 41, 59, 0.95);
+  border-top: 1px solid rgba(96, 165, 250, 0.2);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .nav-item {
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.dark-theme .nav-item.active {
+  color: #60A5FA;
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.15) 0%, rgba(52, 211, 153, 0.1) 100%);
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
+}
+
+/* Form elements dark theme */
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+  background: #1E293B;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+body.dark-theme input:focus,
+body.dark-theme select:focus,
+body.dark-theme textarea:focus {
+  border-color: var(--pastel-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: #0F172A;
+}
+
+/* Button dark theme overrides */
+body.dark-theme .btn-primary {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  color: #F8FAFC;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+body.dark-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+body.dark-theme .btn-secondary {
+  background: #1E293B;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+body.dark-theme .btn-secondary:hover {
+  background: #334155;
+  border-color: #475569;
+}
+
+/* Scrollbar dark theme */
+body.dark-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.dark-theme ::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+
+body.dark-theme ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+body.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* FAB dark theme - Elegante y llamativo */
+body.dark-theme .fab {
+  background: linear-gradient(135deg, #2e916d 0%, #119d6f 50%, #057e57 100%);
+  color: #0C1426;
+  box-shadow: 0 8px 32px rgba(52, 211, 153, 0.4);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+body.dark-theme .fab:hover {
+  background: linear-gradient(135deg, #2ebbd1 0%, #2ca076 50%, #28aa7f 100%);
+  box-shadow: 0 12px 40px rgba(52, 211, 153, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(34, 211, 238, 0.5);
+}
+
+/* Wallet action buttons dark theme */
+body.dark-theme .move-money-btn,
+body.dark-theme .add-income-btn {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93C5FD;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+body.dark-theme .move-money-btn:hover,
+body.dark-theme .add-income-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #BFDBFE;
+}
+
+/* Add expense/subcategory buttons dark theme */
+body.dark-theme .add-expense-btn {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93C5FD;
+}
+
+body.dark-theme .add-expense-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  color: #BFDBFE;
+}
+
+body.dark-theme .add-subcategory-btn {
+  background: rgba(30, 41, 59, 0.9);
+  color: #94A3B8;
+}
+
+body.dark-theme .add-subcategory-btn:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #E2E8F0;
+}
+
+/* Category/subcategory edit buttons */
+body.dark-theme .edit-category-btn,
+body.dark-theme .edit-subcategory-btn {
+  background: rgba(30, 41, 59, 0.9);
+  color: #94A3B8;
+}
+
+body.dark-theme .edit-category-btn:hover,
+body.dark-theme .edit-subcategory-btn:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #E2E8F0;
+}
+
+/* Add category button */
+body.dark-theme .add-category-btn {
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: #F8FAFC;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+body.dark-theme .add-category-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+body.dark-theme .add-category-list-btn {
+  background: rgba(15, 23, 42, 0.9);
+  color: #94A3B8;
+  border-color: rgba(30, 41, 59, 0.5);
+}
+
+body.dark-theme .add-category-list-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #E2E8F0;
+}
+
+/* Transaction amounts */
+body.dark-theme .transaction-amount.positive {
+  color: #34D399;
+}
+
+body.dark-theme .transaction-amount.negative {
+  color: #F87171;
+}
+
+/* Budget amounts */
+body.dark-theme .budget-amount {
+  color: #E2E8F0;
+}
+
+body.dark-theme .budget-percentage {
+  color: #94A3B8;
+}
+body.dark-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.dark-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.dark-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.dark-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Botón de cerrar modales - Dark theme */
+body.dark-theme .btn-close {
+  background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+body.dark-theme .btn-close:hover {
+  background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}

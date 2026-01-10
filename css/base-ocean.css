@@ -1,0 +1,401 @@
+/* Ocean Theme - Azules profesionales inspirados en el océano */
+:root {
+  /* Ocean Color Palette - Azul marino/Turquesa */
+  --pastel-green: #06B6D4;
+  --pastel-blue: #0EA5E9;
+  --dark-blue: #0C4A6E;
+  --pastel-pink: #22D3EE;
+  
+  /* Ocean theme specific colors */
+  --light-green: #E0F2FE;
+  --soft-gray: #F0F9FF;
+  --text-dark: #075985;
+  --text-light: #0284C7;
+  --white: #F0F9FF;
+  --shadow: rgba(14, 165, 233, 0.2);
+  
+  /* Border colors for ocean theme */
+  --border-color: #7DD3FC;
+  --light-gray: #BAE6FD;
+  
+  /* Budget status colors (ocean theme) */
+  --budget-excellent-bg: rgba(224, 242, 254, 0.7);
+  --budget-excellent-border: #22D3EE;
+  --budget-good-bg: rgba(186, 230, 253, 0.7);
+  --budget-good-border: #06B6D4;
+  --budget-warning-bg: rgba(254, 240, 138, 0.5);
+  --budget-warning-border: #FBBF24;
+  --budget-danger-bg: rgba(254, 202, 202, 0.5);
+  --budget-danger-border: #F87171;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #F0F9FF;
+  --unclassified-border: #7DD3FC;
+  
+  /* State colors (ocean theme) */
+  --color-success: #06B6D4;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #0EA5E9;
+  
+  /* Chart colors (ocean theme) */
+  --chart-primary: #0EA5E9;
+  --chart-primary-alpha: rgba(14, 165, 233, 0.15);
+  
+  /* Component backgrounds (ocean theme) */
+  --surface-primary: rgba(240, 249, 255, 0.9);
+  --surface-secondary: rgba(224, 242, 254, 0.95);
+  --surface-hover: rgba(14, 165, 233, 0.1);
+  --surface-active: rgba(14, 165, 233, 0.2);
+  
+  /* Transaction colors (ocean theme) */
+  --transaction-positive: #06B6D4;
+  --transaction-negative: #EF4444;
+  
+  /* Border and shadow variations (ocean theme) */
+  --border-light: rgba(125, 211, 252, 0.4);
+  --border-medium: rgba(14, 165, 233, 0.4);
+  --shadow-color: rgba(14, 165, 233, 0.2);
+  
+  /* Interactive colors (ocean theme) */
+  --interactive-bg: rgba(14, 165, 233, 0.1);
+  --interactive-bg-hover: rgba(14, 165, 233, 0.15);
+  --interactive-bg-active: rgba(14, 165, 233, 0.25);
+  --interactive-border: rgba(14, 165, 233, 0.3);
+  
+  /* Subcategory specific (ocean theme) */
+  --subcategory-bg: rgba(240, 249, 255, 0.8);
+  --subcategory-bg-hover: rgba(224, 242, 254, 1);
+  --subcategory-border-accent: rgba(14, 165, 233, 0.4);
+}
+
+/* Ocean theme body styles */
+body.ocean-theme {
+  background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 50%, #BAE6FD 100%);
+  color: var(--text-dark);
+}
+
+/* Ocean theme specific overrides */
+body.ocean-theme .app-header {
+  background: 
+    /* Burbujas dispersas */
+    radial-gradient(circle 2px at 18% 35%, rgba(224, 242, 254, 0.25) 0%, transparent 100%),
+    radial-gradient(circle 1.5px at 32% 58%, rgba(224, 242, 254, 0.2) 0%, transparent 100%),
+    radial-gradient(circle 1.8px at 48% 42%, rgba(224, 242, 254, 0.22) 0%, transparent 100%),
+    radial-gradient(circle 1.3px at 65% 65%, rgba(224, 242, 254, 0.18) 0%, transparent 100%),
+    radial-gradient(circle 1.6px at 78% 38%, rgba(224, 242, 254, 0.23) 0%, transparent 100%),
+    radial-gradient(circle 2.2px at 88% 55%, rgba(224, 242, 254, 0.2) 0%, transparent 100%),
+    
+    /* Ondas concéntricas sutiles */
+    radial-gradient(circle at 25% 40%, transparent 0%, transparent 20px, rgba(224, 242, 254, 0.04) 20px, rgba(224, 242, 254, 0.04) 22px, transparent 22px),
+    radial-gradient(circle at 70% 60%, transparent 0%, transparent 25px, rgba(224, 242, 254, 0.05) 25px, rgba(224, 242, 254, 0.05) 27px, transparent 27px),
+    
+    /* Corrientes marinas */
+    linear-gradient(to bottom, transparent 0%, rgba(12, 74, 110, 0.15) 100%),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #0C4A6E 0%, #0369A1 50%, #0284C7 100%);
+  border-bottom: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .balance-selector {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+body.ocean-theme .balance-selector:hover {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .balance-amount {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+body.ocean-theme .balance-selector .wallet-name {
+  color: rgba(255, 255, 255, 0.95) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+body.ocean-theme .balance-arrow {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+body.ocean-theme .app-name {
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.ocean-theme .balance-dropdown {
+  background: rgba(240, 249, 255, 1);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.2);
+}
+
+body.ocean-theme .balance-dropdown .wallet-name {
+  color: #075985 !important;
+  text-shadow: none;
+}
+
+body.ocean-theme .wallet-item:hover {
+  background: rgba(14, 165, 233, 0.1);
+}
+
+body.ocean-theme .wallet-item.selected {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%);
+  border-left: 3px solid #0EA5E9;
+}
+
+body.ocean-theme .wallet-item .wallet-balance {
+  color: #0369A1;
+}
+
+body.ocean-theme .category-wrapper {
+  background: rgba(240, 249, 255, 0.85);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.1);
+}
+
+body.ocean-theme .subcategories-container {
+  background: linear-gradient(180deg, rgba(240, 249, 255, 0.7) 0%, rgba(224, 242, 254, 0.9) 100%);
+}
+
+body.ocean-theme .subcategory-wrapper {
+  background: rgba(240, 249, 255, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.ocean-theme .subcategory-wrapper:hover {
+  background: rgba(224, 242, 254, 1);
+  border-color: rgba(14, 165, 233, 0.4);
+}
+
+body.ocean-theme .expense-item {
+  background: rgba(240, 249, 255, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.ocean-theme .expense-item:hover {
+  background: rgba(224, 242, 254, 1);
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .wallet-card {
+  background: rgba(240, 249, 255, 0.9);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.15);
+}
+
+body.ocean-theme .wallet-header {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(6, 182, 212, 0.25) 100%);
+}
+
+body.ocean-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(14, 165, 233, 0.3));
+}
+
+body.ocean-theme .recent-transaction-item {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+}
+
+body.ocean-theme .recent-transaction-item:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+}
+
+body.ocean-theme .empty-state {
+  background: linear-gradient(135deg, rgba(240, 249, 255, 0.5) 0%, rgba(224, 242, 254, 0.5) 100%);
+  border: 2px dashed rgba(14, 165, 233, 0.4);
+}
+
+body.ocean-theme .modal {
+  background: rgba(240, 249, 255, 0.95);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  box-shadow: 0 25px 60px rgba(14, 165, 233, 0.2);
+}
+
+body.ocean-theme .modal-header {
+  background: linear-gradient(135deg, rgba(224, 242, 254, 0.95) 0%, rgba(240, 249, 255, 0.8) 100%);
+  border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+body.ocean-theme .modal-title {
+  color: var(--text-dark);
+}
+
+body.ocean-theme .option-item {
+  background: #F0F9FF;
+  border: 2px solid var(--border-color);
+}
+
+body.ocean-theme .option-item:hover {
+  border-color: var(--pastel-blue);
+  background: rgba(14, 165, 233, 0.1);
+}
+
+body.ocean-theme .theme-option {
+  background: #F0F9FF;
+  border: 2px solid var(--border-color);
+}
+
+body.ocean-theme .theme-title {
+  color: var(--text-dark);
+}
+
+/* Navigation ocean theme */
+body.ocean-theme .app-navigation {
+  background: rgba(240, 249, 255, 0.95);
+  border-top: 1px solid rgba(14, 165, 233, 0.3);
+  box-shadow: 0 -2px 10px rgba(14, 165, 233, 0.15);
+}
+
+body.ocean-theme .nav-item {
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.ocean-theme .nav-item.active {
+  color: #0EA5E9;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+/* Form elements ocean theme */
+body.ocean-theme input,
+body.ocean-theme select,
+body.ocean-theme textarea {
+  background: #F0F9FF;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+body.ocean-theme input:focus,
+body.ocean-theme select:focus,
+body.ocean-theme textarea:focus {
+  border-color: var(--pastel-blue);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  background: #E0F2FE;
+}
+
+/* Button ocean theme overrides */
+body.ocean-theme .btn-primary {
+  background: linear-gradient(135deg, #0EA5E9, #06B6D4);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #0284C7, #0891B2);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+}
+
+body.ocean-theme .btn-secondary {
+  background: #F0F9FF;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+body.ocean-theme .btn-secondary:hover {
+  background: #E0F2FE;
+  border-color: #0EA5E9;
+}
+
+/* Scrollbar ocean theme */
+body.ocean-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.ocean-theme ::-webkit-scrollbar-track {
+  background: #F0F9FF;
+}
+
+body.ocean-theme ::-webkit-scrollbar-thumb {
+  background: #7DD3FC;
+  border-radius: 4px;
+}
+
+body.ocean-theme ::-webkit-scrollbar-thumb:hover {
+  background: #0EA5E9;
+}
+
+/* FAB ocean theme */
+body.ocean-theme .fab {
+  background: linear-gradient(135deg, #06B6D4 0%, #0EA5E9 50%, #22D3EE 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.4);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .fab:hover {
+  background: linear-gradient(135deg, #0891B2 0%, #0284C7 50%, #06B6D4 100%);
+  box-shadow: 0 12px 40px rgba(14, 165, 233, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(6, 182, 212, 0.5);
+}
+
+/* Wallet action buttons ocean theme */
+body.ocean-theme .move-money-btn,
+body.ocean-theme .add-income-btn {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0369A1;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .move-money-btn:hover,
+body.ocean-theme .add-income-btn:hover {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: rgba(14, 165, 233, 0.5);
+  color: #075985;
+}
+
+/* Transaction amounts */
+body.ocean-theme .transaction-amount.positive {
+  color: #06B6D4;
+}
+
+body.ocean-theme .transaction-amount.negative {
+  color: #EF4444;
+}
+
+/* Budget amounts */
+body.ocean-theme .budget-amount {
+  color: #075985;
+}
+
+body.ocean-theme .budget-percentage {
+  color: #0284C7;
+}
+
+body.ocean-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.ocean-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.ocean-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.ocean-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Botón de cerrar modales - Ocean theme */
+body.ocean-theme .btn-close {
+  background: linear-gradient(135deg, #06B6D4 0%, #0EA5E9 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+body.ocean-theme .btn-close:hover {
+  background: linear-gradient(135deg, #0891B2 0%, #0284C7 100%);
+  border-color: rgba(14, 165, 233, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}

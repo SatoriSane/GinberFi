@@ -1,0 +1,384 @@
+/* Sunset Theme - Colores cálidos inspirados en el atardecer */
+:root {
+  /* Sunset Color Palette - Rosa/Naranja/Púrpura */
+  --pastel-green: #FBBF24;
+  --pastel-blue: #F472B6;
+  --dark-blue: #831843;
+  --pastel-pink: #FB923C;
+  
+  /* Sunset theme specific colors */
+  --light-green: #FEF3C7;
+  --soft-gray: #FFF7ED;
+  --text-dark: #7C2D12;
+  --text-light: #9A3412;
+  --white: #FFFBEB;
+  --shadow: rgba(251, 146, 60, 0.2);
+  
+  /* Border colors for sunset theme */
+  --border-color: #FDBA74;
+  --light-gray: #FED7AA;
+  
+  /* Budget status colors (sunset theme) */
+  --budget-excellent-bg: rgba(254, 243, 199, 0.5);
+  --budget-excellent-border: #FCD34D;
+  --budget-good-bg: rgba(253, 230, 138, 0.5);
+  --budget-good-border: #FBBF24;
+  --budget-warning-bg: rgba(254, 215, 170, 0.5);
+  --budget-warning-border: #FB923C;
+  --budget-danger-bg: rgba(254, 202, 202, 0.5);
+  --budget-danger-border: #F87171;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #FFF7ED;
+  --unclassified-border: #FDBA74;
+  
+  /* State colors (sunset theme) */
+  --color-success: #F59E0B;
+  --color-warning: #FB923C;
+  --color-error: #F43F5E;
+  --color-info: #F472B6;
+  
+  /* Chart colors (sunset theme) */
+  --chart-primary: #F472B6;
+  --chart-primary-alpha: rgba(244, 114, 182, 0.15);
+  
+  /* Component backgrounds (sunset theme) */
+  --surface-primary: rgba(255, 247, 237, 0.8);
+  --surface-secondary: rgba(254, 243, 199, 0.9);
+  --surface-hover: rgba(251, 146, 60, 0.1);
+  --surface-active: rgba(251, 146, 60, 0.2);
+  
+  /* Transaction colors (sunset theme) */
+  --transaction-positive: #F59E0B;
+  --transaction-negative: #F43F5E;
+  
+  /* Border and shadow variations (sunset theme) */
+  --border-light: rgba(253, 186, 116, 0.3);
+  --border-medium: rgba(251, 146, 60, 0.4);
+  --shadow-color: rgba(251, 146, 60, 0.2);
+  
+  /* Interactive colors (sunset theme) */
+  --interactive-bg: rgba(244, 114, 182, 0.1);
+  --interactive-bg-hover: rgba(244, 114, 182, 0.15);
+  --interactive-bg-active: rgba(244, 114, 182, 0.25);
+  --interactive-border: rgba(244, 114, 182, 0.3);
+  
+  /* Subcategory specific (sunset theme) */
+  --subcategory-bg: rgba(255, 251, 235, 0.7);
+  --subcategory-bg-hover: rgba(254, 243, 199, 1);
+  --subcategory-border-accent: rgba(251, 146, 60, 0.4);
+}
+
+/* Sunset theme body styles */
+body.sunset-theme {
+  background: linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 50%, #FFEDD5 100%);
+  color: var(--text-dark);
+}
+
+/* Sunset theme specific overrides */
+body.sunset-theme .app-header {
+  background: 
+    /* Rayos de sol radiales desde el horizonte */
+    linear-gradient(95deg, transparent 48%, rgba(255, 255, 255, 0.08) 49%, rgba(255, 255, 255, 0.08) 50%, transparent 51%),
+    linear-gradient(100deg, transparent 48%, rgba(255, 255, 255, 0.06) 49%, rgba(255, 255, 255, 0.06) 50%, transparent 51%),
+    linear-gradient(105deg, transparent 48%, rgba(255, 255, 255, 0.07) 49%, rgba(255, 255, 255, 0.07) 50%, transparent 51%),
+    linear-gradient(110deg, transparent 48%, rgba(255, 255, 255, 0.05) 49%, rgba(255, 255, 255, 0.05) 50%, transparent 51%),
+    
+    /* Nubes horizontales abstractas */
+    radial-gradient(ellipse 120px 15px at 20% 40%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 100px 12px at 75% 65%, rgba(255, 255, 255, 0.1) 0%, transparent 70%),
+    
+    /* Profundidad del atardecer */
+    linear-gradient(to bottom, transparent 0%, rgba(131, 24, 67, 0.1) 100%),
+    
+    /* Gradiente base */
+    linear-gradient(135deg, #FB923C 0%, #F472B6 50%, #E879F9 100%);
+  border-bottom: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+body.sunset-theme .balance-selector {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(251, 146, 60, 0.3);
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+}
+
+body.sunset-theme .balance-selector:hover {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(251, 146, 60, 0.3);
+}
+
+body.sunset-theme .balance-amount {
+  color: var(--text-dark);
+}
+
+body.sunset-theme .wallet-name {
+  color: rgba(124, 45, 18, 0.9);
+}
+
+body.sunset-theme .balance-arrow {
+  color: var(--text-dark);
+}
+
+body.sunset-theme .balance-dropdown {
+  background: rgba(255, 251, 235, 1);
+  border: 1px solid rgba(251, 146, 60, 0.3);
+  box-shadow: 0 4px 20px rgba(251, 146, 60, 0.2);
+}
+
+body.sunset-theme .wallet-item:hover {
+  background: rgba(251, 146, 60, 0.1);
+}
+
+body.sunset-theme .wallet-item.selected {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(244, 114, 182, 0.15) 100%);
+  border-left: 3px solid #F472B6;
+}
+
+body.sunset-theme .category-wrapper {
+  background: rgba(255, 251, 235, 0.8);
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  box-shadow: 0 4px 20px rgba(251, 146, 60, 0.1);
+}
+
+body.sunset-theme .subcategories-container {
+  background: linear-gradient(180deg, rgba(255, 247, 237, 0.7) 0%, rgba(254, 243, 199, 0.9) 100%);
+}
+
+body.sunset-theme .subcategory-wrapper {
+  background: rgba(255, 251, 235, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.sunset-theme .subcategory-wrapper:hover {
+  background: rgba(254, 243, 199, 1);
+  border-color: rgba(251, 146, 60, 0.4);
+}
+
+body.sunset-theme .expense-item {
+  background: rgba(255, 251, 235, 0.9);
+  border: 1px solid var(--border-color);
+}
+
+body.sunset-theme .expense-item:hover {
+  background: rgba(254, 243, 199, 1);
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+body.sunset-theme .wallet-card {
+  background: rgba(255, 251, 235, 0.9);
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  box-shadow: 0 8px 32px rgba(251, 146, 60, 0.15);
+}
+
+body.sunset-theme .wallet-header {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.4) 0%, rgba(244, 114, 182, 0.3) 100%);
+}
+
+body.sunset-theme .wallet-card.collapsed .wallet-header:active {
+  background: linear-gradient(135deg, rgba(244, 114, 182, 0.3), rgba(251, 191, 36, 0.4));
+}
+
+body.sunset-theme .recent-transaction-item {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(251, 146, 60, 0.15);
+}
+
+body.sunset-theme .recent-transaction-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(251, 146, 60, 0.3);
+  box-shadow: 0 4px 16px rgba(251, 146, 60, 0.15);
+}
+
+body.sunset-theme .empty-state {
+  background: linear-gradient(135deg, rgba(255, 247, 237, 0.5) 0%, rgba(254, 243, 199, 0.5) 100%);
+  border: 2px dashed rgba(251, 146, 60, 0.4);
+}
+
+body.sunset-theme .modal {
+  background: rgba(255, 251, 235, 0.95);
+  border: 1px solid rgba(251, 146, 60, 0.25);
+  box-shadow: 0 25px 60px rgba(251, 146, 60, 0.2);
+}
+
+body.sunset-theme .modal-header {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.95) 0%, rgba(255, 247, 237, 0.8) 100%);
+  border-bottom: 1px solid rgba(251, 146, 60, 0.2);
+}
+
+body.sunset-theme .modal-title {
+  color: var(--text-dark);
+}
+
+body.sunset-theme .option-item {
+  background: #FFFBEB;
+  border: 2px solid var(--border-color);
+}
+
+body.sunset-theme .option-item:hover {
+  border-color: var(--pastel-blue);
+  background: rgba(244, 114, 182, 0.1);
+}
+
+body.sunset-theme .theme-option {
+  background: #FFFBEB;
+  border: 2px solid var(--border-color);
+}
+
+body.sunset-theme .theme-title {
+  color: var(--text-dark);
+}
+
+/* Navigation sunset theme */
+body.sunset-theme .app-navigation {
+  background: rgba(255, 251, 235, 0.95);
+  border-top: 1px solid rgba(251, 146, 60, 0.3);
+  box-shadow: 0 -2px 10px rgba(251, 146, 60, 0.15);
+}
+
+body.sunset-theme .nav-item {
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.sunset-theme .nav-item.active {
+  color: #F472B6;
+  background: linear-gradient(135deg, rgba(244, 114, 182, 0.2) 0%, rgba(251, 191, 36, 0.15) 100%);
+  box-shadow: 0 2px 8px rgba(244, 114, 182, 0.2);
+}
+
+/* Form elements sunset theme */
+body.sunset-theme input,
+body.sunset-theme select,
+body.sunset-theme textarea {
+  background: #FFFBEB;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+body.sunset-theme input:focus,
+body.sunset-theme select:focus,
+body.sunset-theme textarea:focus {
+  border-color: var(--pastel-blue);
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15);
+  background: #FFF7ED;
+}
+
+/* Button sunset theme overrides */
+body.sunset-theme .btn-primary {
+  background: linear-gradient(135deg, #F472B6, #E879F9);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3);
+}
+
+body.sunset-theme .btn-primary:hover {
+  background: linear-gradient(135deg, #E879F9, #D946EF);
+  box-shadow: 0 6px 20px rgba(244, 114, 182, 0.4);
+}
+
+body.sunset-theme .btn-secondary {
+  background: #FFFBEB;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+body.sunset-theme .btn-secondary:hover {
+  background: #FEF3C7;
+  border-color: #FBBF24;
+}
+
+/* Scrollbar sunset theme */
+body.sunset-theme ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.sunset-theme ::-webkit-scrollbar-track {
+  background: #FFF7ED;
+}
+
+body.sunset-theme ::-webkit-scrollbar-thumb {
+  background: #FDBA74;
+  border-radius: 4px;
+}
+
+body.sunset-theme ::-webkit-scrollbar-thumb:hover {
+  background: #FB923C;
+}
+
+/* FAB sunset theme */
+body.sunset-theme .fab {
+  background: linear-gradient(135deg, #F472B6 0%, #FB923C 50%, #FBBF24 100%);
+  color: #7C2D12;
+  box-shadow: 0 8px 32px rgba(244, 114, 182, 0.4);
+  border: 1px solid rgba(244, 114, 182, 0.3);
+}
+
+body.sunset-theme .fab:hover {
+  background: linear-gradient(135deg, #E879F9 0%, #F472B6 50%, #FB923C 100%);
+  box-shadow: 0 12px 40px rgba(244, 114, 182, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(232, 121, 249, 0.5);
+}
+
+/* Wallet action buttons sunset theme */
+body.sunset-theme .move-money-btn,
+body.sunset-theme .add-income-btn {
+  background: rgba(244, 114, 182, 0.15);
+  color: #BE185D;
+  border: 1px solid rgba(244, 114, 182, 0.3);
+}
+
+body.sunset-theme .move-money-btn:hover,
+body.sunset-theme .add-income-btn:hover {
+  background: rgba(244, 114, 182, 0.25);
+  border-color: rgba(244, 114, 182, 0.5);
+  color: #9F1239;
+}
+
+/* Transaction amounts */
+body.sunset-theme .transaction-amount.positive {
+  color: #F59E0B;
+}
+
+body.sunset-theme .transaction-amount.negative {
+  color: #F43F5E;
+}
+
+/* Budget amounts */
+body.sunset-theme .budget-amount {
+  color: #7C2D12;
+}
+
+body.sunset-theme .budget-percentage {
+  color: #9A3412;
+}
+
+body.sunset-theme .wallet-transactions-modal .wallet-summary {
+  background: var(--surface-primary);
+  box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+body.sunset-theme .wallet-transactions-modal .wallet-summary span {
+  color: var(--text-dark);
+}
+
+body.sunset-theme .wallet-transactions-modal .wallet-balance {
+  color: var(--text-dark);
+}
+
+body.sunset-theme .wallet-transactions-modal .transactions-count {
+  color: var(--text-light);
+}
+
+/* Botón de cerrar modales - Sunset theme */
+body.sunset-theme .btn-close {
+  background: linear-gradient(135deg, #F472B6 0%, #FB923C 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+body.sunset-theme .btn-close:hover {
+  background: linear-gradient(135deg, #EC4899 0%, #F97316 100%);
+  border-color: rgba(251, 146, 60, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
+}

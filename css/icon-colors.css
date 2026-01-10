@@ -1,0 +1,83 @@
+/* ============================================
+   COLORES PARA ICONOS PNG
+   Los iconos heredan el color del texto usando mask
+   ============================================ */
+
+/* SOLUCIÓN DEFINITIVA:
+   Usar -webkit-mask para que el PNG actúe como máscara
+   y el background-color sea el color del texto (currentColor)
+*/
+
+.action-icon img {
+  /* Ocultar la imagen original */
+  opacity: 0;
+  /* Mantener el espacio */
+  position: relative;
+}
+
+/* Crear un pseudo-elemento que use la imagen como máscara */
+.action-icon {
+  position: relative;
+}
+
+.action-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  
+  /* El color de fondo será el color del texto del botón */
+  background-color: currentColor;
+  
+  /* Usar la imagen como máscara */
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* Aplicar la máscara específica para cada ícono */
+.quick-action-btn[data-action="add-income"] .action-icon::before {
+  -webkit-mask-image: url('../icon-ingresar.png');
+  mask-image: url('../icon-ingresar.png');
+}
+
+.quick-action-btn[data-action="quick-expense"] .action-icon::before {
+  -webkit-mask-image: url('../icon-gastar.png');
+  mask-image: url('../icon-gastar.png');
+}
+
+.quick-action-btn[data-action="transfer"] .action-icon::before {
+  -webkit-mask-image: url('../icon-transferir.png');
+  mask-image: url('../icon-transferir.png');
+  width: 64px;
+  height: 64px;
+}
+
+.quick-action-btn[data-action="schedule-payment"] .action-icon::before {
+  -webkit-mask-image: url('../icon-programar.png');
+  mask-image: url('../icon-programar.png');
+}
+
+/* ============================================
+   EFECTOS HOVER Y ACTIVE
+   ============================================ */
+
+.quick-action-btn:hover .action-icon::before {
+  transform: translate(-50%, -50%) scale(1.05);
+  opacity: 0.9;
+}
+
+.quick-action-btn:active .action-icon::before {
+  transform: translate(-50%, -50%) scale(0.98);
+  opacity: 1;
+}
+
+.action-icon::before {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}

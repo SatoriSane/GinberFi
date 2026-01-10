@@ -1,0 +1,366 @@
+/* Base CSS - Variables and Global Styles */
+:root {
+  /* Pastel Color Palette */
+  --pastel-green: #B8E6B8;
+  --pastel-blue: #B8E0FF;
+  --dark-blue: #2C5282;
+  --pastel-pink: #FFB8E6;
+  
+  /* Additional colors for better design */
+  --light-green: #E8F5E8;
+  --soft-gray: #F5F7FA;
+  --text-dark: #2D3748;
+  --text-light: #718096;
+  --white: #FFFFFF;
+  --shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: 1rem;
+  --font-size-sm: 1.1rem;
+  --font-size-base: 1.2rem;
+  --font-size-lg: 1.3rem;
+  --font-size-xl: 1.4rem;
+  --font-size-2xl: 1.5rem;
+  
+  /* Spacing */
+  --spacing-xs: 0.35rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Budget status colors (light theme) */
+  --budget-excellent-bg: #D1FAE5;
+  --budget-excellent-border: #6EE7B7;
+  --budget-good-bg: #E6FFFA;
+  --budget-good-border: #81E6D9;
+  --budget-warning-bg: #FEF3C7;
+  --budget-warning-border: #FCD34D;
+  --budget-danger-bg: #FEE2E2;
+  --budget-danger-border: #FCA5A5;
+  
+  /* Unclassified colors */
+  --unclassified-bg: #f5f5f5;
+  --unclassified-border: #ddd;
+  
+  /* State colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+  --color-info: #2563EB;
+  
+  /* Chart colors */
+  --chart-primary: #4A90E2;
+  --chart-primary-alpha: rgba(74, 144, 226, 0.1);
+  
+  /* Component backgrounds */
+  --surface-primary: rgba(248, 250, 252, 0.5);
+  --surface-secondary: rgba(241, 245, 249, 0.8);
+  --surface-hover: rgba(0, 0, 0, 0.05);
+  --surface-active: rgba(0, 0, 0, 0.1);
+  
+  /* Transaction colors */
+  --transaction-positive: #059669;
+  --transaction-negative: #F87171;
+  
+  /* Border and shadow variations */
+  --border-light: rgba(0, 0, 0, 0.05);
+  --border-medium: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  
+  /* Interactive colors */
+  --interactive-bg: rgba(66, 153, 225, 0.1);
+  --interactive-bg-hover: rgba(66, 153, 225, 0.15);
+  --interactive-bg-active: rgba(66, 153, 225, 0.25);
+  --interactive-border: rgba(66, 153, 225, 0.3);
+  
+  /* Subcategory specific */
+  --subcategory-bg: rgba(255, 255, 255, 0.7);
+  --subcategory-bg-hover: rgba(255, 255, 255, 1);
+  --subcategory-border-accent: rgba(66, 153, 225, 0.3);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-dark);
+  background: linear-gradient(135deg, var(--light-green) 0%, var(--soft-gray) 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Typography differentiation */
+.budget-amount {
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.3px;
+}
+
+/* Layout */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.app-main {
+  padding-top: 60px;
+  padding-bottom: 60px;
+  min-height: 100vh;
+
+}
+
+.app-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  padding: var(--spacing-sm);
+  position: relative;
+  min-height: calc(100vh - 160px); /* 80px header + 80px nav */
+}
+#gastosTab {
+  padding: var(--spacing-xs);
+}
+.tab-content.active {
+  display: block;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-light);
+}
+
+.empty-state p {
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-lg);
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+button:focus {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.btn-primary {
+  background: var(--dark-blue);
+  color: var(--white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #1A365D;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--pastel-blue);
+  color: var(--dark-blue);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background: #9ECAFF;
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: var(--pastel-green);
+  color: var(--dark-blue);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 500;
+}
+
+.btn-success:hover {
+  background: #A3E0A3;
+  transform: translateY(-1px);
+}
+
+.add-category-btn,
+.add-wallet-btn {
+  background: var(--pastel-pink);
+  color: var(--dark-blue);
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-category-btn:hover,
+.add-wallet-btn:hover {
+  background: #FF9EDB;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Form Elements */
+input, select, textarea {
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--pastel-blue);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--text-dark);
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--dark-blue);
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.hidden { display: none !important; }
+.visible { display: block !important; }
+
+
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.nav-tab {
+  display: flex;           
+  align-items: center;     
+  gap: 0px;                /* espacio entre icono y texto */
+  background: none;
+  border: none;
+}
+
+.nav-icon img {
+  width: 35px;   /* tamaño del icono */
+  height: 35px;
+  margin-bottom: -10px;
+
+}
+.dollar-svg {
+  scale: 1.25;
+}
+
+.info-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #555;
+}
+/* Options Button */
+.options-btn {
+  background: var(--pastel-blue); /* azul pastel suave */
+  color: var(--dark-blue);        /* azul oscuro para texto */
+  padding: var(--spacing-md);
+  border: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-top: 1px solid rgba(44, 82, 130, 0.1);
+  transition: all 0.2s ease;
+}
+
+.options-btn:hover {
+  background: #A8D6E0;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Animación shake para modal de error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}

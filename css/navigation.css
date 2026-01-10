@@ -1,0 +1,236 @@
+/* Navigation Styles */
+/* Navigation Styles */
+.app-navigation {
+  display: flex;
+  background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-green) 100%);
+  box-shadow: 0 -4px 6px -1px var(--shadow);
+  /* CORRECCIÓN CRÍTICA: Debe estar por encima del overlay de quick-actions */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000; 
+}
+
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+  background: transparent;
+  color: var(--dark-blue);
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 60px;
+}
+/* Las pestañas mantienen espaciado uniforme - el FAB se sobrepone */
+.nav-tab[data-tab="pagos"] {
+  margin-right: 0;
+}
+
+.nav-tab[data-tab="gastos"] {
+  margin-left: 0;
+}
+
+.nav-tab:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.nav-tab.active {
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-4px);
+}
+
+.nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: var(--dark-blue);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  animation: tabSlide 0.3s ease-out;
+}
+
+.nav-icon {
+  font-size: var(--font-size-xl); /* versión móvil aplicada */
+  margin-bottom: var(--spacing-xs);
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon i {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+  color: currentColor;
+}
+
+.nav-tab:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-tab.active .nav-icon {
+  transform: scale(1.15);
+}
+
+/* Evitar que el texto se desborde en pantallas pequeñas */
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.nav-tab.active .nav-label {
+  color: var(--dark-blue);
+  font-weight: 700;
+}
+
+/* Tab indicator animation */
+@keyframes tabSlide {
+  from {
+      transform: translateX(-50%) scaleX(0);
+  }
+  to {
+      transform: translateX(-50%) scaleX(1);
+  }
+}
+
+/* ===================================
+   Central FAB Button - Circular Modern
+   =================================== */
+.central-fab {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pastel-green) 0%, var(--pastel-blue) 100%);
+  border: 2px solid var(--white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-12px);
+  /* El Z-index aquí es relativo a .app-navigation */
+  z-index: 101; 
+}
+
+.central-fab::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 230, 184, 0.15), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.central-fab:hover {
+  transform: translateY(-14px) scale(1.05);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    0 3px 8px rgba(0, 0, 0, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.central-fab:hover::before {
+  opacity: 1;
+}
+
+.central-fab:active {
+  transform: translateY(-10px) scale(1.02);
+}
+
+/* Cambiamos el color "activo" para que no sea un rojo tan fuerte, 
+   o que combine con tu lógica de cerrar */
+.central-fab.active {
+  transform: translateY(-12px) rotate(0deg); /* La rotación la manejamos en el icono */
+  background: var(--white);
+  border-color: var(--color-error); /* Usamos tu variable de base.css */
+}
+
+.central-fab.active .fab-icon {
+  transform: rotate(45deg);
+  color: var(--color-error); /* El '+' se vuelve una 'X' roja */
+}
+
+
+
+.fab-icon {
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--white);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+}
+
+
+/* ===================================
+   Responsive Adjustments
+   =================================== */
+@media (max-width: 480px) {
+.central-fab {
+    width: 52px;
+    height: 52px;
+    transform: translateY(-10px);
+  }
+
+  .central-fab:hover {
+    transform: translateY(-12px) scale(1.05);
+  }
+
+  .central-fab:active {
+    transform: translateY(-8px) scale(1.02);
+  }
+
+  .central-fab.active {
+    transform: translateY(-10px);
+  }
+
+  .fab-icon {
+    font-size: 26px;
+  }
+  .nav-tab {
+    min-height: 55px;
+  }
+
+
+
+}
+
+@media (max-width: 360px) {
+  .central-fab {
+    width: 48px;
+    height: 48px;
+    transform: translateY(-8px);
+    margin: 0;
+  }
+
+  .central-fab:hover {
+    transform: translateY(-10px) scale(1.05);
+  }
+
+  .central-fab:active {
+    transform: translateY(-6px) scale(1.02);
+  }
+
+  .central-fab.active {
+    transform: translateY(-8px);
+  }
+
+  .fab-icon {
+    font-size: 24px;
+  }
+}
