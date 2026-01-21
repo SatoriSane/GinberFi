@@ -147,10 +147,16 @@ class DBConfig {
    */
   static async getDB() {
     if (this._dbInstance) {
-      return this._dbInstance;
+      try {
+        const testTransaction = this._dbInstance.transaction([this.STORES.SETTINGS], 'readonly');
+        testTransaction.abort();
+        return this._dbInstance;
+      } catch (error) {
+        console.warn('Cached DB connection is invalid, reconnecting...', error);
+        this._dbInstance = null;
+      }
     }
     
-    // Si no existe, inicializar
     return await this.initDB();
   }
 
