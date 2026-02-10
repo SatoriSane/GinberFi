@@ -3,26 +3,18 @@ class UpdateNotifier {
   static STORAGE_KEY = 'ginberfi_last_seen_version';
   
   // Current app version - UPDATE THIS with each release
-  static CURRENT_VERSION = '1.1.0';
+  static CURRENT_VERSION = '1.1.1';
   
   // Changelog entries - ADD NEW ENTRIES AT THE TOP
   static CHANGELOG = [
     {
-      version: '1.1.0',
+      version: '1.1.1',
       date: '2026-02-10',
       title: 'Mejoras en Pagos Programados',
       changes: [
         {
-          type: 'feature',
-          text: 'Nueva experiencia para eliminar pagos recurrentes con opciones claras'
-        },
-        {
           type: 'improvement',
-          text: 'Opción para omitir una ocurrencia o finalizar el pago recurrente'
-        },
-        {
-          type: 'fix',
-          text: 'Corrección de error de conexión a base de datos tras inactividad prolongada'
+          text: 'Ahora las opciones para eliminar un pago programado sustituirán el contenido del modal de edición evitando que el usuario deba hacer scroll para verlas'
         }
       ]
     }

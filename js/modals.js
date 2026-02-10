@@ -1798,98 +1798,101 @@ static createQuickExpenseModal() {
       title: 'Editar Pago Programado',
       className: 'payment-modal',
       body: `
-        <form class="modal-form" id="editScheduledPaymentForm">
-          <input type="hidden" name="paymentId" value="${payment.id}">
-          
-          <div class="form-group">
-            <label for="editPaymentName">Nombre del Pago</label>
-            <input type="text" id="editPaymentName" name="name" required value="${payment.name}">
-          </div>
-          
-          <div class="form-row">
+        <!-- Sección de edición -->
+        <div id="editPaymentSection">
+          <form class="modal-form" id="editScheduledPaymentForm">
+            <input type="hidden" name="paymentId" value="${payment.id}">
+            
             <div class="form-group">
-              <label for="editPaymentAmount">Monto</label>
-              <input type="number" id="editPaymentAmount" name="amount" step="0.01" required value="${payment.amount}">
+              <label for="editPaymentName">Nombre del Pago</label>
+              <input type="text" id="editPaymentName" name="name" required value="${payment.name}">
             </div>
-            <div class="form-group">
-              <label for="editPaymentDate">Fecha de Vencimiento</label>
-              <input type="date" id="editPaymentDate" name="dueDate" required value="${payment.dueDate}">
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editPaymentAmount">Monto</label>
+                <input type="number" id="editPaymentAmount" name="amount" step="0.01" required value="${payment.amount}">
+              </div>
+              <div class="form-group">
+                <label for="editPaymentDate">Fecha de Vencimiento</label>
+                <input type="date" id="editPaymentDate" name="dueDate" required value="${payment.dueDate}">
+              </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="editPaymentWallet">Pagar con Wallet</label>
-            <select id="editPaymentWallet" name="walletId" required>
-              ${walletOptions}
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="editPaymentSubcategory">Categoría / Subcategoría</label>
-            <select id="editPaymentSubcategory" name="subcategoryId" required>
-              ${subcategoryOptions}
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="editPaymentRecurring" name="isRecurring" value="true" ${payment.isRecurring ? 'checked' : ''}>
-              Pago Recurrente
-            </label>
-          </div>
-
-          <div id="editRecurrenceOptions" style="display: ${payment.isRecurring ? 'block' : 'none'};">
             <div class="form-group">
-              <label for="editPaymentRecurrence">Frecuencia</label>
-              <select id="editPaymentRecurrence" name="recurrence">
-                <option value="weekly" ${payment.recurrence === 'weekly' ? 'selected' : ''}>Semanal</option>
-                <option value="biweekly" ${payment.recurrence === 'biweekly' ? 'selected' : ''}>Quincenal</option>
-                <option value="monthly" ${payment.recurrence === 'monthly' ? 'selected' : ''}>Mensual</option>
-                <option value="quarterly" ${payment.recurrence === 'quarterly' ? 'selected' : ''}>Trimestral</option>
-                <option value="yearly" ${payment.recurrence === 'yearly' ? 'selected' : ''}>Anual</option>
+              <label for="editPaymentWallet">Pagar con Wallet</label>
+              <select id="editPaymentWallet" name="walletId" required>
+                ${walletOptions}
               </select>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="editPaymentNotify">Notificar con X días de anticipación</label>
-            <input type="number" id="editPaymentNotify" name="notifyDaysBefore" value="${payment.notifyDaysBefore || 3}" min="0" max="30">
-          </div>
+            <div class="form-group">
+              <label for="editPaymentSubcategory">Categoría / Subcategoría</label>
+              <select id="editPaymentSubcategory" name="subcategoryId" required>
+                ${subcategoryOptions}
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label for="editPaymentNotes">Notas</label>
-            <textarea id="editPaymentNotes" name="notes" rows="2">${payment.notes || ''}</textarea>
-          </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="editPaymentRecurring" name="isRecurring" value="true" ${payment.isRecurring ? 'checked' : ''}>
+                Pago Recurrente
+              </label>
+            </div>
 
-          <div class="form-group danger-zone">
-            <button type="button" class="btn-text-danger" id="triggerDeletePaymentBtn">🗑️ Eliminar pago programado</button>
-          </div>
-
-          <!-- Sección de eliminación -->
-          <div id="deletePaymentSection" style="display: none; margin-top: 1rem;">
-            ${payment.isRecurring ? `
-              <p style="margin-bottom: 1rem;">¿Qué deseas hacer con este pago recurrente?</p>
-              <div class="delete-options">
-                <div class="delete-option" data-delete-option="skip">
-                  <h4>⏭️ Omitir esta ocurrencia</h4>
-                  <p>Se saltará el pago actual y se programará automáticamente la siguiente fecha.</p>
-                </div>
-                <div class="delete-option" data-delete-option="end">
-                  <h4>🛑 Finalizar pago recurrente</h4>
-                  <p>Se cancelará este pago y no se generarán más ocurrencias futuras.</p>
-                </div>
+            <div id="editRecurrenceOptions" style="display: ${payment.isRecurring ? 'block' : 'none'};">
+              <div class="form-group">
+                <label for="editPaymentRecurrence">Frecuencia</label>
+                <select id="editPaymentRecurrence" name="recurrence">
+                  <option value="weekly" ${payment.recurrence === 'weekly' ? 'selected' : ''}>Semanal</option>
+                  <option value="biweekly" ${payment.recurrence === 'biweekly' ? 'selected' : ''}>Quincenal</option>
+                  <option value="monthly" ${payment.recurrence === 'monthly' ? 'selected' : ''}>Mensual</option>
+                  <option value="quarterly" ${payment.recurrence === 'quarterly' ? 'selected' : ''}>Trimestral</option>
+                  <option value="yearly" ${payment.recurrence === 'yearly' ? 'selected' : ''}>Anual</option>
+                </select>
               </div>
-            ` : `
-              <p style="margin-bottom: 1rem;">¿Estás seguro de que deseas eliminar este pago programado?</p>
-              <div class="delete-options">
-                <div class="delete-option selected" data-delete-option="delete">
-                  <h4>🗑️ Eliminar pago</h4>
-                  <p>El pago programado será eliminado permanentemente.</p>
-                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editPaymentNotify">Notificar con X días de anticipación</label>
+              <input type="number" id="editPaymentNotify" name="notifyDaysBefore" value="${payment.notifyDaysBefore || 3}" min="0" max="30">
+            </div>
+
+            <div class="form-group">
+              <label for="editPaymentNotes">Notas</label>
+              <textarea id="editPaymentNotes" name="notes" rows="2">${payment.notes || ''}</textarea>
+            </div>
+
+            <div class="form-group danger-zone">
+              <button type="button" class="btn-text-danger" id="triggerDeletePaymentBtn">🗑️ Eliminar pago programado</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Sección de eliminación (reemplaza la sección de edición) -->
+        <div id="deletePaymentSection" style="display: none;">
+          ${payment.isRecurring ? `
+            <p style="margin-bottom: 1rem;">¿Qué deseas hacer con este pago recurrente?</p>
+            <div class="delete-options">
+              <div class="delete-option" data-delete-option="skip">
+                <h4>⏭️ Omitir esta ocurrencia</h4>
+                <p>Se saltará el pago actual y se programará automáticamente la siguiente fecha.</p>
               </div>
-            `}
-          </div>
-        </form>
+              <div class="delete-option" data-delete-option="end">
+                <h4>🛑 Finalizar pago recurrente</h4>
+                <p>Se cancelará este pago y no se generarán más ocurrencias futuras.</p>
+              </div>
+            </div>
+          ` : `
+            <p style="margin-bottom: 1rem;">¿Estás seguro de que deseas eliminar este pago programado?</p>
+            <div class="delete-options">
+              <div class="delete-option selected" data-delete-option="delete">
+                <h4>🗑️ Eliminar pago</h4>
+                <p>El pago programado será eliminado permanentemente.</p>
+              </div>
+            </div>
+          `}
+        </div>
       `,
       footer: `
         <button type="button" class="btn-secondary" id="editPaymentCancelBtn">Cancelar</button>
@@ -1898,7 +1901,7 @@ static createQuickExpenseModal() {
       onShow: async (modal) => {
         const recurringCheckbox = modal.querySelector('#editPaymentRecurring');
         const recurrenceOptions = modal.querySelector('#editRecurrenceOptions');
-        const editForm = modal.querySelector('#editScheduledPaymentForm');
+        const editSection = modal.querySelector('#editPaymentSection');
         const deleteSection = modal.querySelector('#deletePaymentSection');
         const triggerDeleteBtn = modal.querySelector('#triggerDeletePaymentBtn');
         const cancelBtn = modal.querySelector('#editPaymentCancelBtn');
@@ -1917,12 +1920,13 @@ static createQuickExpenseModal() {
           if (isDeleteMode) {
             // Volver a modo edición
             isDeleteMode = false;
+            editSection.style.display = 'block';
             deleteSection.style.display = 'none';
-            triggerDeleteBtn.style.display = 'block';
             modalTitle.textContent = 'Editar Pago Programado';
             submitBtn.textContent = 'Guardar Cambios';
             submitBtn.classList.remove('btn-danger');
             submitBtn.classList.add('btn-primary');
+            submitBtn.setAttribute('form', 'editScheduledPaymentForm');
             selectedDeleteOption = payment.isRecurring ? null : 'delete';
             modal.querySelectorAll('.delete-option').forEach(o => o.classList.remove('selected'));
             if (!payment.isRecurring) {
@@ -1936,12 +1940,13 @@ static createQuickExpenseModal() {
         // Activar modo eliminación
         triggerDeleteBtn.addEventListener('click', () => {
           isDeleteMode = true;
+          editSection.style.display = 'none';
           deleteSection.style.display = 'block';
-          triggerDeleteBtn.style.display = 'none';
           modalTitle.textContent = 'Eliminar Pago Programado';
           submitBtn.textContent = payment.isRecurring ? 'Confirmar' : 'Eliminar';
           submitBtn.classList.remove('btn-primary');
           submitBtn.classList.add('btn-danger');
+          submitBtn.removeAttribute('form');
         });
 
         // Selección de opción de eliminación
@@ -1954,77 +1959,85 @@ static createQuickExpenseModal() {
           });
         });
 
-        // Manejar submit del formulario
+        // Handler para ejecutar eliminación
+        const executeDelete = async () => {
+          if (!selectedDeleteOption) {
+            Helpers.showToast('Selecciona una opción para continuar', 'error');
+            return;
+          }
+
+          const repo = new ScheduledPaymentRepository();
+          
+          if (selectedDeleteOption === 'skip') {
+            await repo.skipPayment(payment.id, 'Omitido por el usuario');
+            Helpers.showToast('Ocurrencia omitida, próxima fecha programada', 'success');
+          } else if (selectedDeleteOption === 'end') {
+            await repo.cancelPayment(payment.id);
+            Helpers.showToast('Pago recurrente finalizado', 'success');
+          } else if (selectedDeleteOption === 'delete') {
+            await repo.delete(payment.id);
+            Helpers.showToast('Pago programado eliminado', 'success');
+          }
+          
+          window.appEvents.emit('closeModal');
+          window.appEvents.emit('dataUpdated');
+        };
+
+        // Click en botón submit cuando está en modo eliminación
+        submitBtn.addEventListener('click', async (e) => {
+          if (isDeleteMode) {
+            e.preventDefault();
+            await executeDelete();
+          }
+        });
+
+        // Manejar submit del formulario (modo edición)
+        const editForm = modal.querySelector('#editScheduledPaymentForm');
         editForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           
-          if (isDeleteMode) {
-            // Modo eliminación
-            if (!selectedDeleteOption) {
-              Helpers.showToast('Selecciona una opción para continuar', 'error');
-              return;
-            }
+          // Solo procesar si NO estamos en modo eliminación
+          if (isDeleteMode) return;
+          
+          const formData = new FormData(editForm);
+          const paymentId = formData.get('paymentId');
+          
+          const updatedData = {
+            name: Helpers.sanitizeInput(formData.get('name')),
+            amount: parseFloat(formData.get('amount')),
+            dueDate: formData.get('dueDate'),
+            walletId: formData.get('walletId'),
+            subcategoryId: formData.get('subcategoryId'),
+            isRecurring: formData.get('isRecurring') === 'true',
+            recurrence: formData.get('recurrence') || 'monthly',
+            notifyDaysBefore: parseInt(formData.get('notifyDaysBefore')) || 3,
+            notes: Helpers.sanitizeInput(formData.get('notes') || '')
+          };
 
-            const repo = new ScheduledPaymentRepository();
-            
-            if (selectedDeleteOption === 'skip') {
-              // Omitir esta ocurrencia (saltar a la siguiente)
-              await repo.skipPayment(payment.id, 'Omitido por el usuario');
-              Helpers.showToast('Ocurrencia omitida, próxima fecha programada', 'success');
-            } else if (selectedDeleteOption === 'end') {
-              // Finalizar pago recurrente
-              await repo.cancelPayment(payment.id);
-              Helpers.showToast('Pago recurrente finalizado', 'success');
-            } else if (selectedDeleteOption === 'delete') {
-              // Eliminar pago no recurrente
-              await repo.delete(payment.id);
-              Helpers.showToast('Pago programado eliminado', 'success');
-            }
-            
+          const category = AppState.categories.find(cat =>
+            cat.subcategories.some(sub => sub.id === updatedData.subcategoryId)
+          );
+          
+          if (category) {
+            updatedData.categoryId = category.id;
+          }
+
+          const repo = new ScheduledPaymentRepository();
+          const existingPayment = await repo.getById(paymentId);
+          if (!existingPayment) {
+            Helpers.showToast('Pago no encontrado', 'error');
+            return;
+          }
+
+          Object.assign(existingPayment, updatedData);
+          
+          const success = await repo.update(existingPayment);
+          if (success) {
+            Helpers.showToast('Pago actualizado exitosamente', 'success');
             window.appEvents.emit('closeModal');
             window.appEvents.emit('dataUpdated');
           } else {
-            // Modo edición normal - dejar que el handler existente lo maneje
-            const formData = new FormData(editForm);
-            const paymentId = formData.get('paymentId');
-            
-            const updatedData = {
-              name: Helpers.sanitizeInput(formData.get('name')),
-              amount: parseFloat(formData.get('amount')),
-              dueDate: formData.get('dueDate'),
-              walletId: formData.get('walletId'),
-              subcategoryId: formData.get('subcategoryId'),
-              isRecurring: formData.get('isRecurring') === 'true',
-              recurrence: formData.get('recurrence') || 'monthly',
-              notifyDaysBefore: parseInt(formData.get('notifyDaysBefore')) || 3,
-              notes: Helpers.sanitizeInput(formData.get('notes') || '')
-            };
-
-            const category = AppState.categories.find(cat =>
-              cat.subcategories.some(sub => sub.id === updatedData.subcategoryId)
-            );
-            
-            if (category) {
-              updatedData.categoryId = category.id;
-            }
-
-            const repo = new ScheduledPaymentRepository();
-            const existingPayment = await repo.getById(paymentId);
-            if (!existingPayment) {
-              Helpers.showToast('Pago no encontrado', 'error');
-              return;
-            }
-
-            Object.assign(existingPayment, updatedData);
-            
-            const success = await repo.update(existingPayment);
-            if (success) {
-              Helpers.showToast('Pago actualizado exitosamente', 'success');
-              window.appEvents.emit('closeModal');
-              window.appEvents.emit('dataUpdated');
-            } else {
-              Helpers.showToast('Error al actualizar el pago', 'error');
-            }
+            Helpers.showToast('Error al actualizar el pago', 'error');
           }
         });
       }
