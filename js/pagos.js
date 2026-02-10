@@ -51,10 +51,6 @@ class PagosManager {
           e.preventDefault();
           await this.handleCreatePayment(form);
           break;
-        case 'editScheduledPaymentForm':
-          e.preventDefault();
-          await this.handleEditPayment(form);
-          break;
         case 'executePaymentForm':
           e.preventDefault();
           await this.handleExecutePayment(form);
@@ -280,49 +276,6 @@ class PagosManager {
       this.render();
     } else {
       Helpers.showToast('Error al crear el pago programado', 'error');
-    }
-  }
-
-  async handleEditPayment(form) {
-    const formData = new FormData(form);
-    const paymentId = formData.get('paymentId');
-    
-    const updatedData = {
-      name: Helpers.sanitizeInput(formData.get('name')),
-      amount: parseFloat(formData.get('amount')),
-      dueDate: formData.get('dueDate'),
-      walletId: formData.get('walletId'),
-      subcategoryId: formData.get('subcategoryId'),
-      isRecurring: formData.get('isRecurring') === 'true',
-      recurrence: formData.get('recurrence') || 'monthly',
-      notifyDaysBefore: parseInt(formData.get('notifyDaysBefore')) || 3,
-      notes: Helpers.sanitizeInput(formData.get('notes') || '')
-    };
-
-    // Find category from subcategory
-    const category = AppState.categories.find(cat =>
-      cat.subcategories.some(sub => sub.id === updatedData.subcategoryId)
-    );
-    
-    if (category) {
-      updatedData.categoryId = category.id;
-    }
-
-    const payment = await this.scheduledRepo.getById(paymentId);
-    if (!payment) {
-      Helpers.showToast('Pago no encontrado', 'error');
-      return;
-    }
-
-    Object.assign(payment, updatedData);
-    
-    const success = await this.scheduledRepo.update(payment);
-    if (success) {
-      Helpers.showToast('Pago actualizado exitosamente', 'success');
-      window.appEvents.emit('closeModal');
-      this.render();
-    } else {
-      Helpers.showToast('Error al actualizar el pago', 'error');
     }
   }
 
