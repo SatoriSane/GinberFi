@@ -1,0 +1,101 @@
+/* Update Notifier Modal Styles */
+
+.update-modal .modal-body {
+  padding: var(--spacing-lg);
+}
+
+.update-content {
+  text-align: center;
+}
+
+.update-version-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.update-version-badge {
+  background: linear-gradient(135deg, var(--pastel-green), var(--pastel-blue));
+  color: var(--dark-blue);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.update-version-date {
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+}
+
+.update-version-title {
+  font-size: var(--font-size-xl);
+  color: var(--dark-blue);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 600;
+}
+
+.update-changes-list {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.update-change-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--pastel-blue);
+  border-radius: var(--radius-md);
+}
+
+.update-change-icon {
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+}
+
+.update-change-text {
+  color: var(--text-dark);
+  font-size: var(--font-size-base);
+  line-height: 1.4;
+}
+
+/* Theme: Coastal */
+body.coastal-theme .update-version-badge {
+  background: linear-gradient(135deg, #EE8E3B, #2F606B);
+  color: #FCECD4;
+}
+
+body.coastal-theme .update-version-title {
+  color: #EE8E3B;
+}
+
+body.coastal-theme .update-change-item {
+  background: rgba(47, 96, 107, 0.4);
+}
+
+body.coastal-theme .update-change-text {
+  color: #FCECD4;
+}
+
+/* Theme: Midnight */
+body.midnight-theme .update-version-badge {
+  background: linear-gradient(135deg, #FBBF24, #334155);
+  color: #F1F5F9;
+}
+
+body.midnight-theme .update-version-title {
+  color: #FBBF24;
+}
+
+body.midnight-theme .update-change-item {
+  background: rgba(51, 65, 85, 0.6);
+}
+
+body.midnight-theme .update-change-text {
+  color: #F1F5F9;
+}
