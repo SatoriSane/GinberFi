@@ -3,19 +3,20 @@ class UpdateNotifier {
   static STORAGE_KEY = 'ginberfi_last_seen_version';
   
   // Current app version - UPDATE THIS with each release
-  static CURRENT_VERSION = '1.1.1';
+  static CURRENT_VERSION = '1.2.0';
   
   // Changelog entries - ADD NEW ENTRIES AT THE TOP
   static CHANGELOG = [
     {
-      version: '1.1.1',
-      date: '2026-02-10',
-      title: 'Mejoras en Pagos Programados',
+      version: '1.2.0',
+      date: '2026-02-13',
+      title: 'Lista de Compra y Mejoras',
       changes: [
         {
-          type: 'improvement',
-          text: 'Ahora las opciones para eliminar un pago programado sustituirán el contenido del modal de edición evitando que el usuario deba hacer scroll para verlas'
+          type: 'feature',
+          text: 'Nueva lista de compra accesible desde el icono del carrito en la cabecera. Añade productos, márcalos como comprados y reordénalos arrastrando.'
         }
+
       ]
     }
   ];

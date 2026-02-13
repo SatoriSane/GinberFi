@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'ginbertfi-v4.0';
+const CACHE_NAME = 'ginbertfi-v4.1';
 const urlsToCache = [
   './',
   'index.html',
@@ -26,6 +26,8 @@ const urlsToCache = [
   'css/icon-colors.css',
   'css/modal_opciones.css',
   'css/modal_wallet_transactions.css',
+  'css/update-notifier.css',
+  'css/shopping-list.css',
   'js/base.js',
   'js/icons.js',
   'js/storage-indexeddb.js',
@@ -50,6 +52,8 @@ const urlsToCache = [
   'js/db/scheduled-payment-repository.js',
   'js/db/migration-service.js',
   'js/db/upgrade-db-v2.js',
+  'js/update-notifier.js',
+  'js/shopping-list.js',
   'icon-ingresar.png',
   'icon-gastar.png',
   'icon-transferir.png',
